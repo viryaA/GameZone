@@ -1,5 +1,4 @@
 export default {
-    add_button: "+ Add Playstation Type",
     search_placeholder: "Search Playstation type...",
     loading: "Loading data...",
     success: "Success",
@@ -25,4 +24,9 @@ export default {
     filter: "Filter",
     close: 'Close',
     leave_empty_for_all: "leave empty for all",
+    reset: "Reset",
+    delete_title_jps: "Playstation Type",
+    delete: 'Delete',
+    delete_confirm_jps: "This Playstation Type will be deleted.",
+    cancel: "Cancel",
 };

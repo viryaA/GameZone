@@ -25,4 +25,9 @@ export default {
     filter: "Filter",
     close: 'Tutup',
     leave_empty_for_all: "Kosongkan Semua",
+    reset: "Reset",
+    delete_title_jps: "Hapus Jenis Playstation",
+    delete: 'Hapus',
+    delete_confirm_jps: "Data Jenis Playstation akan dihapus.",
+    cancel: "Batal",
 };

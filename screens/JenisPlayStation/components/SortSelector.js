@@ -16,6 +16,11 @@ export default function BottomSortModal({ visible, onClose, sortBy, sortOrder, o
         onClose();
     };
 
+    const handleReset = () => {
+        onSortChange(null, 'asc');
+        onClose();
+    };
+
     return (
         <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
             <TouchableWithoutFeedback onPress={onClose}>
@@ -44,6 +49,13 @@ export default function BottomSortModal({ visible, onClose, sortBy, sortOrder, o
                                 </TouchableOpacity>
                             );
                         })}
+
+                        <TouchableOpacity
+                            onPress={handleReset}
+                            className="mt-6 px-4 py-2 bg-red-100 rounded-full items-center"
+                        >
+                            <Text className="text-red-700 font-medium">{i18n.t('reset')}</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </TouchableWithoutFeedback>

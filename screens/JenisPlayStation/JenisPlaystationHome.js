@@ -36,7 +36,7 @@ export default function JenisPlaystationHome() {
     const [sortOrder, setSortOrder] = useState('asc'); // or 'desc'
     const [sortModalVisible, setSortModalVisible] = useState(false);
     const [filterModalVisible, setFilterModalVisible] = useState(false);
-    const [selectedStatus, setSelectedStatus] = useState('All');
+    const [selectedStatus, setSelectedStatus] = useState('Aktif');
     const [selectedMaxPlayer, setSelectedMaxPlayer] = useState('All');
 
 
@@ -133,13 +133,47 @@ export default function JenisPlaystationHome() {
             .finally(() => setDeleteItem(null));
     };
 
+    const applyAll = (baseData, searchQuery, status, maxPlayer, sortKey, sortOrder) => {
+        let filtered = [...baseData];
+
+        // Apply filter
+        if (status !== 'All') {
+            filtered = filtered.filter(item => item.jps_status === status);
+        }
+        if (maxPlayer !== 'All') {
+            filtered = filtered.filter(item => item.jps_max_pemain.toString() === maxPlayer);
+        }
+
+        // Apply search
+        if (searchQuery) {
+            const lowerQuery = searchQuery.toLowerCase();
+            filtered = filtered.filter(item =>
+                item.jps_nama.toLowerCase().includes(lowerQuery)
+            );
+        }
+
+        // Apply sort
+        if (sortKey) {
+            filtered.sort((a, b) => {
+                const aVal = a[sortKey];
+                const bVal = b[sortKey];
+
+                if (typeof aVal === 'number') {
+                    return sortOrder === 'asc' ? aVal - bVal : bVal - aVal;
+                }
+                return sortOrder === 'asc'
+                    ? aVal.localeCompare(bVal)
+                    : bVal.localeCompare(aVal);
+            });
+        }
+
+        setFilteredData(filtered);
+    };
+
+
     const handleSearch = (query) => {
         setSearchQuery(query);
-        const lowerQuery = query.toLowerCase();
-        const filtered = data.filter(item =>
-            item.jps_nama.toLowerCase().includes(lowerQuery)
-        );
-        applySort(filtered, sortBy, sortOrder);
+        applyAll(data, query, selectedStatus, selectedMaxPlayer, sortBy, sortOrder);
     };
 
     const applySort = (items, key, order) => {
@@ -246,7 +280,9 @@ export default function JenisPlaystationHome() {
             </Text>
 
             {/* Hint */}
-            <Text className="text-sm text-green-700 mt-3 italic">{i18n.t("tap_for_details")}</Text>
+            {item.jps_status === 'Aktif' && (
+                <Text className="text-sm text-green-700 mt-3 italic">{i18n.t("tap_for_details")}</Text>
+            )}
         </Pressable>
     );
 
@@ -272,20 +308,23 @@ export default function JenisPlaystationHome() {
                 />
             </View>
 
-            <TouchableOpacity
-                onPress={() => setSortModalVisible(true)}
-                className="self-end mb-2 px-4 py-1 rounded-full bg-green-600"
-            >
-                <Text className="text-white font-medium">{i18n.t('sort_by')}</Text>
-            </TouchableOpacity>
+            <View className="flex-row justify-end gap-2 mb-4">
+                <TouchableOpacity
+                    onPress={() => setSortModalVisible(true)}
+                    className="flex-row items-center px-4 py-2 rounded-full bg-green-600"
+                >
+                    <Ionicons name="swap-vertical-outline" size={18} color="white" />
+                    <Text className="text-white font-medium ml-2">{i18n.t('sort_by')}</Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity
-                onPress={() => setFilterModalVisible(true)}
-                className="self-end mb-2 px-4 py-1 rounded-full bg-blue-600"
-            >
-                <Text className="text-white font-medium">{i18n.t('filter')}</Text>
-            </TouchableOpacity>
-
+                <TouchableOpacity
+                    onPress={() => setFilterModalVisible(true)}
+                    className="flex-row items-center px-4 py-2 rounded-full bg-blue-600"
+                >
+                    <Ionicons name="filter-outline" size={18} color="white" />
+                    <Text className="text-white font-medium ml-2">{i18n.t('filter')}</Text>
+                </TouchableOpacity>
+            </View>
 
             {loading ? (
                 <View className="flex-1 justify-center items-center mt-10">

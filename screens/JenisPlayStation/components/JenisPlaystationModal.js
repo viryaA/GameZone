@@ -71,23 +71,38 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item, 
                     <View className="flex-1 bg-black/50 justify-center items-center">
                         <View className="bg-white p-6 rounded-xl w-11/12">
                             <Text className="text-lg font-semibold text-red-700 mb-2">
-                                {i18n.t("delete_title")}
+                                {i18n.t("delete_title_jps")}
                             </Text>
                             <Text className="text-center text-gray-700 mb-4">
-                                {i18n.t("delete_confirm", { name: deleteItem?.jps_nama })}
+                                {i18n.t("delete_confirm_jps", { name: deleteItem?.jps_nama })}
                             </Text>
-                            <View className="flex-row justify-end space-x-4 mt-2">
+                            <View className="flex-row mt-4">
                                 <TouchableOpacity
-                                    className="bg-gray-300 px-4 py-2 rounded-lg"
+                                    className="flex-1 mr-2 py-3 rounded-xl bg-gray-200 items-center shadow"
                                     onPress={onDeleteCancel}
+                                    style={{
+                                        shadowColor: '#000',
+                                        shadowOffset: { width: 0, height: 2 },
+                                        shadowOpacity: 0.1,
+                                        shadowRadius: 2,
+                                        elevation: 3,
+                                    }}
                                 >
-                                    <Text className="text-gray-800 font-medium">{i18n.t("cancel")}</Text>
+                                    <Text className="text-gray-800 font-semibold text-base">{i18n.t("cancel")}</Text>
                                 </TouchableOpacity>
+
                                 <TouchableOpacity
-                                    className="bg-red-500 px-4 py-2 rounded-lg"
+                                    className="flex-1 ml-2 py-3 rounded-xl bg-red-600 items-center shadow"
                                     onPress={onDeleteConfirm}
+                                    style={{
+                                        shadowColor: '#000',
+                                        shadowOffset: { width: 0, height: 2 },
+                                        shadowOpacity: 0.1,
+                                        shadowRadius: 2,
+                                        elevation: 3,
+                                    }}
                                 >
-                                    <Text className="text-white font-medium">{i18n.t("delete")}</Text>
+                                    <Text className="text-white font-semibold text-base">{i18n.t("delete")}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -182,14 +197,21 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item, 
                                     </Picker>
                                 </View>
 
-                                {/* Buttons */}
-                                <View className="flex-row justify-end space-x-4 mt-4">
+                                <View className="flex-row mt-6">
                                     <TouchableOpacity
                                         onPress={onClose}
-                                        className="bg-gray-300 px-4 py-2 rounded-lg"
+                                        className="flex-1 mr-2 py-3 rounded-xl bg-gray-200 items-center shadow"
+                                        style={{
+                                            shadowColor: '#000',
+                                            shadowOffset: { width: 0, height: 2 },
+                                            shadowOpacity: 0.1,
+                                            shadowRadius: 2,
+                                            elevation: 3,
+                                        }}
                                     >
-                                        <Text className="text-gray-800 font-medium">{i18n.t('batal')}</Text>
+                                        <Text className="text-gray-800 font-semibold text-base">{i18n.t('batal')}</Text>
                                     </TouchableOpacity>
+
                                     <TouchableOpacity
                                         onPress={() => {
                                             if (validateForm()) {
@@ -197,9 +219,20 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item, 
                                             }
                                         }}
                                         disabled={!form.jps_nama || !form.jps_tahun_rilis || !form.jps_max_pemain || !form.jps_deskripsi}
-                                        className={`px-4 py-2 rounded-lg ${form.jps_nama && form.jps_tahun_rilis && form.jps_max_pemain && form.jps_deskripsi ? 'bg-green-600' : 'bg-green-300'}`}
+                                        className={`flex-1 ml-2 py-3 rounded-xl items-center shadow ${
+                                            form.jps_nama && form.jps_tahun_rilis && form.jps_max_pemain && form.jps_deskripsi
+                                                ? 'bg-green-600'
+                                                : 'bg-green-300'
+                                        }`}
+                                        style={{
+                                            shadowColor: '#000',
+                                            shadowOffset: { width: 0, height: 2 },
+                                            shadowOpacity: 0.1,
+                                            shadowRadius: 2,
+                                            elevation: 3,
+                                        }}
                                     >
-                                        <Text className="text-white font-medium">{i18n.t('simpan')}</Text>
+                                        <Text className="text-white font-semibold text-base">{i18n.t('simpan')}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
