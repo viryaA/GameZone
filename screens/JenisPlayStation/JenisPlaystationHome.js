@@ -107,7 +107,6 @@ export default function JenisPlaystationHome() {
     };
 
     const applySort = (items, key, order) => {
-        // console.log(items);
         if (!key) {
             setFilteredData(items);
             return;
@@ -289,10 +288,7 @@ export default function JenisPlaystationHome() {
                 onSortChange={(key, order) => {
                     setSortBy(key);
                     setSortOrder(order);
-                    console.log(key)
                     if (key === 'jps_status') {
-                        console.log("hddhdhdh")
-                        console.log(data)
                         applySort(data, key, order); // show all
                     } else {
                         const aktifOnly = data.filter(item => item.jps_status === 'Aktif');
