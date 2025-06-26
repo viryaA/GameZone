@@ -20,4 +20,6 @@ export default {
     jps_nama: 'Jenis Playstation',
     jps_max_pemain: 'Max Pemain',
     jps_status: 'Status',
+    no_data: 'Tidak Ada Data',
+    sort_by: 'Urutkan',
 };

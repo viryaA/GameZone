@@ -4,8 +4,8 @@ import {
     FlatList,
     TouchableOpacity,
     ActivityIndicator,
-    TextInput,
     Pressable,
+    TextInput,
     Modal,
     Keyboard,
     TouchableWithoutFeedback
@@ -13,10 +13,12 @@ import {
 import { useEffect, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
-import JenisPlaystationModal from './JenisPlaystationModal';
+import JenisPlaystationModal from './components/JenisPlaystationModal';
 import Toast from 'react-native-toast-message';
-import i18n from '../locale/i18n';
-import "../global.css";
+import i18n from '../../locale/i18n';
+import "../../global.css";
+import SortSelector from './components/SortSelector';
+
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
 
@@ -31,7 +33,7 @@ export default function JenisPlaystationHome() {
     const [deleteItem, setDeleteItem] = useState(null);
     const [sortBy, setSortBy] = useState(null); // e.g. 'jps_nama'
     const [sortOrder, setSortOrder] = useState('asc'); // or 'desc'
-
+    const [sortModalVisible, setSortModalVisible] = useState(false);
 
     const fetchData = () => {
         setLoading(true);
@@ -45,7 +47,7 @@ export default function JenisPlaystationHome() {
                     initialData = initialData.filter(item => item.jps_status === 'Aktif');
                 }
 
-                setData(initialData);
+                setData(json);
                 applySort(initialData, sortBy, sortOrder);
                 setLoading(false);
             })
@@ -105,6 +107,7 @@ export default function JenisPlaystationHome() {
     };
 
     const applySort = (items, key, order) => {
+        // console.log(items);
         if (!key) {
             setFilteredData(items);
             return;
@@ -221,7 +224,7 @@ export default function JenisPlaystationHome() {
 
 
     return (
-        <View className="flex-1 bg-white px-4 pt-6">
+        <View className="flex-1 bg-white px-4 pt-4">
             <TouchableOpacity
                 onPress={handleAdd}
                 className="absolute bottom-6 right-6 w-16 h-16 bg-green-500 rounded-full justify-center items-center"
@@ -231,34 +234,22 @@ export default function JenisPlaystationHome() {
                 <Text className="text-white text-3xl font-bold">+</Text>
             </TouchableOpacity>
 
-            <View className="flex-row items-center border border-gray-300 rounded-xl px-4 py-2 mb-4 bg-white">
-                <Ionicons name="search" size={20} color="gray" />
+            <View className="flex-row items-center border border-gray-300 rounded-xl px-2 py-1 mb-4 bg-white">
+                <Ionicons name="search" size={18} color="gray" />
                 <TextInput
                     placeholder={i18n.t("search_placeholder")}
                     value={searchQuery}
                     onChangeText={handleSearch}
-                    className="ml-2 flex-1 text-base text-gray-800"
+                    className="ml-2 flex-1 text-base text-gray-800 p-0"
                 />
             </View>
 
-            <View className="flex-row justify-around mb-2">
-                {['jps_nama', 'jps_max_pemain', 'jps_status'].map((key) => (
-                    <TouchableOpacity
-                        key={key}
-                        onPress={() => {
-                            const nextOrder = (sortBy === key && sortOrder === 'asc') ? 'desc' : 'asc';
-                            setSortBy(key);
-                            setSortOrder(nextOrder);
-                            applySort(data, key, nextOrder);
-                        }}
-                    >
-                        <Text className={`font-semibold text-sm ${sortBy === key ? 'text-green-700' : 'text-gray-700'}`}>
-                            {i18n.t(key)} {sortBy === key ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
-                        </Text>
-                    </TouchableOpacity>
-                ))}
-            </View>
-
+            <TouchableOpacity
+                onPress={() => setSortModalVisible(true)}
+                className="self-end mb-2 px-4 py-1 rounded-full bg-green-600"
+            >
+                <Text className="text-white font-medium">{i18n.t('sort_by')}</Text>
+            </TouchableOpacity>
 
             {loading ? (
                 <View className="flex-1 justify-center items-center mt-10">
@@ -285,45 +276,31 @@ export default function JenisPlaystationHome() {
                 item={selectedItem}
                 onClose={() => setModalVisible(false)}
                 onSave={handleSave}
+                deleteItem={deleteItem}
+                onDeleteCancel={() => setDeleteItem(null)}
+                onDeleteConfirm={confirmDelete}
             />
 
-            {/* Delete Modal */}
-            <Modal
-                visible={!!deleteItem}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setDeleteItem(null)}
-            >
-                <TouchableWithoutFeedback onPress={() => {
-                    Keyboard.dismiss();
-                    setDeleteItem(null);
-                }}>
-                    <View className="flex-1 bg-black/50 justify-center items-center">
-                        <View className="bg-white p-6 rounded-xl w-11/12">
-                            <Text className="text-lg font-semibold text-red-700 mb-2">
-                                {i18n.t("delete_title")}
-                            </Text>
-                            <Text className="text-center text-gray-700 mb-4">
-                                {i18n.t("delete_confirm", { name: deleteItem?.jps_nama })}
-                            </Text>
-                            <View className="flex-row justify-end space-x-4 mt-2">
-                                <TouchableOpacity
-                                    className="bg-gray-300 px-4 py-2 rounded-lg"
-                                    onPress={() => setDeleteItem(null)}
-                                >
-                                    <Text className="text-gray-800 font-medium">{i18n.t("cancel")}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    className="bg-red-500 px-4 py-2 rounded-lg"
-                                    onPress={confirmDelete}
-                                >
-                                    <Text className="text-white font-medium">{i18n.t("delete")}</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                </TouchableWithoutFeedback>
-            </Modal>
+            <SortSelector
+                visible={sortModalVisible}
+                onClose={() => setSortModalVisible(false)}
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                onSortChange={(key, order) => {
+                    setSortBy(key);
+                    setSortOrder(order);
+                    console.log(key)
+                    if (key === 'jps_status') {
+                        console.log("hddhdhdh")
+                        console.log(data)
+                        applySort(data, key, order); // show all
+                    } else {
+                        const aktifOnly = data.filter(item => item.jps_status === 'Aktif');
+                        applySort(aktifOnly, key, order);
+                    }
+                }}
+            />
+
         </View>
     );
 }

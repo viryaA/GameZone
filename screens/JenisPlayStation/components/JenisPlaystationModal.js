@@ -13,10 +13,10 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { BlurView } from 'expo-blur';
 import { useState, useEffect } from 'react';
-import i18n from '../locale/i18n';
-import "../global.css";
+import i18n from '../../../locale/i18n';
+import "../../../global.css";
 
-export default function JenisPlaystationModal({ visible, onClose, onSave, item }) {
+export default function JenisPlaystationModal({ visible, onClose, onSave, item, deleteItem, onDeleteConfirm,onDeleteCancel }) {
     const [showYearPicker, setShowYearPicker] = useState(false);
     const [form, setForm] = useState({
         jps_nama: '',
@@ -58,6 +58,44 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
+
+    if(!!deleteItem){
+        return (
+            <Modal
+                visible={!!deleteItem}
+                transparent
+                animationType="fade"
+                onRequestClose={onDeleteCancel}
+            >
+                <TouchableWithoutFeedback onPress={onDeleteCancel}>
+                    <View className="flex-1 bg-black/50 justify-center items-center">
+                        <View className="bg-white p-6 rounded-xl w-11/12">
+                            <Text className="text-lg font-semibold text-red-700 mb-2">
+                                {i18n.t("delete_title")}
+                            </Text>
+                            <Text className="text-center text-gray-700 mb-4">
+                                {i18n.t("delete_confirm", { name: deleteItem?.jps_nama })}
+                            </Text>
+                            <View className="flex-row justify-end space-x-4 mt-2">
+                                <TouchableOpacity
+                                    className="bg-gray-300 px-4 py-2 rounded-lg"
+                                    onPress={onDeleteCancel}
+                                >
+                                    <Text className="text-gray-800 font-medium">{i18n.t("cancel")}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    className="bg-red-500 px-4 py-2 rounded-lg"
+                                    onPress={onDeleteConfirm}
+                                >
+                                    <Text className="text-white font-medium">{i18n.t("delete")}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </TouchableWithoutFeedback>
+            </Modal>
+        )
+    }
 
     return (
         <Modal visible={visible} transparent animationType="slide">

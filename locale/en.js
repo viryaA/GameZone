@@ -20,4 +20,6 @@ export default {
     jps_nama: 'Playstation Type',
     jps_max_pemain: 'Max Player',
     jps_status: 'Status',
+    no_data: 'No Data',
+    sort_by: 'Sort',
 };

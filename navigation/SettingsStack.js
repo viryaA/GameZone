@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import SettingsScreen from '../screens/SettingsScreen'
-import JenisPlaystationHome from "../screens/JenisPlaystationHome";
+import JenisPlaystationHome from "../screens/JenisPlayStation/JenisPlaystationHome";
 import "../global.css"
 
 const Stack = createNativeStackNavigator()
