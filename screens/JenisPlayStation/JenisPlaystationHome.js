@@ -18,6 +18,7 @@ import Toast from 'react-native-toast-message';
 import i18n from '../../locale/i18n';
 import "../../global.css";
 import SortSelector from './components/SortSelector';
+import FilterSelector from "./components/FilterSelector";
 
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
@@ -34,6 +35,10 @@ export default function JenisPlaystationHome() {
     const [sortBy, setSortBy] = useState(null); // e.g. 'jps_nama'
     const [sortOrder, setSortOrder] = useState('asc'); // or 'desc'
     const [sortModalVisible, setSortModalVisible] = useState(false);
+    const [filterModalVisible, setFilterModalVisible] = useState(false);
+    const [selectedStatus, setSelectedStatus] = useState('All');
+    const [selectedMaxPlayer, setSelectedMaxPlayer] = useState('All');
+
 
     const fetchData = () => {
         setLoading(true);
@@ -106,6 +111,37 @@ export default function JenisPlaystationHome() {
             });
     };
 
+    const confirmDelete = () => {
+        if (!deleteItem) return;
+        fetch(`${apiUrl}/MsJenisPlaystation/${deleteItem.jps_id}`, { method: 'DELETE' })
+            .then(res => res.json())
+            .then(() => {
+                Toast.show({
+                    type: 'success',
+                    text1: i18n.t("success"),
+                    text2: i18n.t("delete_success"),
+                });
+                fetchData();
+            })
+            .catch(() => {
+                Toast.show({
+                    type: 'error',
+                    text1: i18n.t("failed"),
+                    text2: i18n.t("error_message"),
+                });
+            })
+            .finally(() => setDeleteItem(null));
+    };
+
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        const lowerQuery = query.toLowerCase();
+        const filtered = data.filter(item =>
+            item.jps_nama.toLowerCase().includes(lowerQuery)
+        );
+        applySort(filtered, sortBy, sortOrder);
+    };
+
     const applySort = (items, key, order) => {
         if (!key) {
             setFilteredData(items);
@@ -128,37 +164,30 @@ export default function JenisPlaystationHome() {
         setFilteredData(sorted);
     };
 
-    const handleSearch = (query) => {
-        setSearchQuery(query);
-        const lowerQuery = query.toLowerCase();
-        const filtered = data.filter(item =>
-            item.jps_nama.toLowerCase().includes(lowerQuery)
-        );
+    const applyFilterAndSearch = (items,status,maxPlayer) => {
+        let filtered = [...items];
+
+        if (status !== 'All') {
+            filtered = filtered.filter(item => item.jps_status === status);
+        }
+
+        if (maxPlayer !== 'All') {
+            filtered = filtered.filter(item => item.jps_max_pemain.toString() === maxPlayer);
+        }
+
+        if (searchQuery) {
+            const lowerQuery = searchQuery.toLowerCase();
+            filtered = filtered.filter(item =>
+                item.jps_nama.toLowerCase().includes(lowerQuery)
+            );
+        }
+
         applySort(filtered, sortBy, sortOrder);
+
+        setSelectedMaxPlayer(maxPlayer);
+        setSelectedStatus(status);
     };
 
-
-    const confirmDelete = () => {
-        if (!deleteItem) return;
-        fetch(`${apiUrl}/MsJenisPlaystation/${deleteItem.jps_id}`, { method: 'DELETE' })
-            .then(res => res.json())
-            .then(() => {
-                Toast.show({
-                    type: 'success',
-                    text1: i18n.t("success"),
-                    text2: i18n.t("delete_success"),
-                });
-                fetchData();
-            })
-            .catch(() => {
-                Toast.show({
-                    type: 'error',
-                    text1: i18n.t("failed"),
-                    text2: i18n.t("error_message"),
-                });
-            })
-            .finally(() => setDeleteItem(null));
-    };
 
     const renderItem = ({ item }) => (
         <Pressable
@@ -250,6 +279,14 @@ export default function JenisPlaystationHome() {
                 <Text className="text-white font-medium">{i18n.t('sort_by')}</Text>
             </TouchableOpacity>
 
+            <TouchableOpacity
+                onPress={() => setFilterModalVisible(true)}
+                className="self-end mb-2 px-4 py-1 rounded-full bg-blue-600"
+            >
+                <Text className="text-white font-medium">{i18n.t('filter')}</Text>
+            </TouchableOpacity>
+
+
             {loading ? (
                 <View className="flex-1 justify-center items-center mt-10">
                     <ActivityIndicator size="large" color="green" />
@@ -296,6 +333,17 @@ export default function JenisPlaystationHome() {
                     }
                 }}
             />
+
+            <FilterSelector
+                visible={filterModalVisible}
+                selectedStatus={selectedStatus}
+                selectedMaxPlayer={selectedMaxPlayer}
+                onApply={(status, maxPlayer) => {
+                    applyFilterAndSearch(data,status, maxPlayer);
+                }}
+                onClose={() => setFilterModalVisible(false)}
+            />
+
 
         </View>
     );

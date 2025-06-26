@@ -22,4 +22,7 @@ export default {
     jps_status: 'Status',
     no_data: 'Tidak Ada Data',
     sort_by: 'Urutkan',
+    filter: "Filter",
+    close: 'Tutup',
+    leave_empty_for_all: "Kosongkan Semua",
 };

@@ -22,4 +22,7 @@ export default {
     jps_status: 'Status',
     no_data: 'No Data',
     sort_by: 'Sort',
+    filter: "Filter",
+    close: 'Close',
+    leave_empty_for_all: "leave empty for all",
 };
