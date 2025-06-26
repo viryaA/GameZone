@@ -17,4 +17,7 @@ export default {
     batal: 'Cancel',
     simpan: 'Save',
     form_required: 'All Field Required',
+    jps_nama: 'Playstation Type',
+    jps_max_pemain: 'Max Player',
+    jps_status: 'Status',
 };

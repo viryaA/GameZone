@@ -16,5 +16,8 @@ export default {
     status: 'Status',
     batal: 'Batal',
     simpan: 'Simpan',
-    form_required: 'Semua Data Wajib Diisi'
+    form_required: 'Semua Data Wajib Diisi',
+    jps_nama: 'Jenis Playstation',
+    jps_max_pemain: 'Max Pemain',
+    jps_status: 'Status',
 };
