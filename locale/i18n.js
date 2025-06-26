@@ -1,14 +1,15 @@
-import * as Localization from 'expo-localization';
-import i18n from 'i18n-js';
-import en from './locales/en';
-import id from './locales/id';
+import { getLocales } from 'expo-localization';
+import { I18n } from 'i18n-js';
 
-i18n.translations = {
-    en,
+import en from './en';
+import id from './id';
+
+const i18n = new I18n({
     id,
-};
+    en,
+});
 
-i18n.locale = Localization.locale.startsWith('id') ? 'id' : 'en'; // auto set
+i18n.locale = getLocales()[0].languageCode;
 i18n.fallbacks = true;
 
 export default i18n;

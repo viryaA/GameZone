@@ -1,5 +1,6 @@
 import { Modal, View, Text, TextInput, Button } from 'react-native';
 import { useState, useEffect } from 'react';
+import i18n from '../locale/i18n';
 import "../global.css";
 
 export default function JenisPlaystationModal({ visible, onClose, onSave, item }) {
@@ -34,45 +35,45 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item }
             <View className="flex-1 justify-center items-center bg-black bg-opacity-50">
                 <View className="w-11/12 bg-white p-6 rounded-xl shadow-lg">
                     <Text className="text-xl font-bold mb-4 text-green-800">
-                        {item ? 'Edit Jenis Playstation' : 'Tambah Jenis Playstation'}
+                        {item ? i18n.t('title_edit_jenis_playstation') : i18n.t('title_add_jenis_playstation')}
                     </Text>
 
                     <TextInput
-                        placeholder="Nama"
+                        placeholder={i18n.t('nama')}
                         value={form.jps_nama}
                         onChangeText={(text) => handleChange('jps_nama', text)}
                         className="border border-gray-300 rounded-lg p-2 mb-2"
                     />
                     <TextInput
-                        placeholder="Tahun Rilis"
+                        placeholder={i18n.t('tahun')}
                         value={form.jps_tahun_rilis?.toString()}
                         keyboardType="numeric"
                         onChangeText={(text) => handleChange('jps_tahun_rilis', parseInt(text))}
                         className="border border-gray-300 rounded-lg p-2 mb-2"
                     />
                     <TextInput
-                        placeholder="Max Pemain"
+                        placeholder={i18n.t('pemain')}
                         value={form.jps_max_pemain?.toString()}
                         keyboardType="numeric"
                         onChangeText={(text) => handleChange('jps_max_pemain', parseInt(text))}
                         className="border border-gray-300 rounded-lg p-2 mb-2"
                     />
                     <TextInput
-                        placeholder="Deskripsi"
+                        placeholder={i18n.t('deskripsi')}
                         value={form.jps_deskripsi}
                         onChangeText={(text) => handleChange('jps_deskripsi', text)}
                         className="border border-gray-300 rounded-lg p-2 mb-2"
                     />
                     <TextInput
-                        placeholder="Status"
+                        placeholder={i18n.t('status')}
                         value={form.jps_status}
                         onChangeText={(text) => handleChange('jps_status', text)}
                         className="border border-gray-300 rounded-lg p-2 mb-4"
                     />
 
                     <View className="flex-row justify-between">
-                        <Button title="Batal" color="gray" onPress={onClose} />
-                        <Button title="Simpan" onPress={() => onSave(form)} />
+                        <Button title={i18n.t('batal')} color="gray" onPress={onClose} />
+                        <Button title={i18n.t('simpan')} onPress={() => onSave(form)} />
                     </View>
                 </View>
             </View>

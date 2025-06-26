@@ -7,4 +7,13 @@ export default {
     error_message: "Terjadi kesalahan.",
     tap_for_details: "Ketuk untuk detail",
     max_player: "Max Pemain",
+    title_add_jenis_playstation: 'Tambah Jenis Playstation',
+    title_edit_jenis_playstation: 'Edit Jenis Playstation',
+    nama: 'Nama',
+    tahun: 'Tahun Rilis',
+    pemain: 'Max Pemain',
+    deskripsi: 'Deskripsi',
+    status: 'Status',
+    batal: 'Batal',
+    simpan: 'Simpan',
 };

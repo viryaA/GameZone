@@ -58,7 +58,7 @@ export default function JenisPlaystationHome() {
             .then(res => res.json())
             .then(resJson => {
                 Alert.alert(
-                    resJson.code === 1 ? i18n.t("success") : i18n.t("failed"),
+                    resJson.result === 1 ? i18n.t("success") : i18n.t("failed"),
                     resJson.message
                 );
                 setModalVisible(false);
