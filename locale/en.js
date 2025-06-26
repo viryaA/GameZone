@@ -16,4 +16,5 @@ export default {
     status: 'Status',
     batal: 'Cancel',
     simpan: 'Save',
+    form_required: 'All Field Required',
 };

@@ -1,8 +1,9 @@
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Alert, Pressable, TextInput } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, TextInput, Pressable } from 'react-native';
 import { useEffect, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import JenisPlaystationModal from './JenisPlaystationModal';
+import Toast from 'react-native-toast-message';
 import i18n from '../locale/i18n';
 import "../global.css";
 
@@ -28,6 +29,11 @@ export default function JenisPlaystationHome() {
             })
             .catch(err => {
                 console.error(err);
+                Toast.show({
+                    type: 'error',
+                    text1: i18n.t("failed"),
+                    text2: i18n.t("error_message")
+                });
                 setLoading(false);
             });
     };
@@ -57,16 +63,21 @@ export default function JenisPlaystationHome() {
         })
             .then(res => res.json())
             .then(resJson => {
-                Alert.alert(
-                    resJson.result === 1 ? i18n.t("success") : i18n.t("failed"),
-                    resJson.message
-                );
+                Toast.show({
+                    type: resJson.result === 1 ? 'success' : 'error',
+                    text1: resJson.result === 1 ? i18n.t("success") : i18n.t("failed"),
+                    text2: resJson.message
+                });
                 setModalVisible(false);
                 fetchData();
             })
             .catch(error => {
                 console.error("Save error", error);
-                Alert.alert(i18n.t("failed"), i18n.t("error_message"));
+                Toast.show({
+                    type: 'error',
+                    text1: i18n.t("failed"),
+                    text2: i18n.t("error_message")
+                });
                 setModalVisible(false);
             });
     };
@@ -105,7 +116,7 @@ export default function JenisPlaystationHome() {
                 <Text className="text-white text-3xl font-bold">+</Text>
             </TouchableOpacity>
 
-            {/* Search Input with Icon */}
+            {/* Search Input */}
             <View className="flex-row items-center border border-gray-300 rounded-xl px-4 py-2 mb-4 bg-white">
                 <Ionicons name="search" size={20} color="gray" />
                 <TextInput
@@ -122,15 +133,21 @@ export default function JenisPlaystationHome() {
                     <ActivityIndicator size="large" color="green" />
                     <Text className="mt-4 text-gray-500">{i18n.t("loading")}</Text>
                 </View>
+            ) : filteredData.length === 0 ? (
+                <View className="flex-1 justify-center items-center mt-10">
+                    <Ionicons name="sad-outline" size={40} color="gray" />
+                    <Text className="mt-4 text-gray-500">{i18n.t("no_data")}</Text>
+                </View>
             ) : (
                 <FlatList
                     data={filteredData}
                     keyExtractor={item => item.jps_id.toString()}
                     renderItem={renderItem}
-                    contentContainerStyle={{ paddingBottom: 20 }}
+                    contentContainerStyle={{ paddingBottom: 100 }}
                 />
             )}
 
+            {/* Modal Form */}
             <JenisPlaystationModal
                 visible={modalVisible}
                 item={selectedItem}

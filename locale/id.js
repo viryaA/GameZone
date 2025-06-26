@@ -16,4 +16,5 @@ export default {
     status: 'Status',
     batal: 'Batal',
     simpan: 'Simpan',
+    form_required: 'Semua Data Wajib Diisi'
 };
