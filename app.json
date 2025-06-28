@@ -13,7 +13,7 @@
       "backgroundColor": "#ffffff"
     },
     "extra": {
-      "API_URL": "http://192.168.215.67:8080"
+      "API_URL": "http://192.168.100.35:8080"
     },
     "ios": {
       "supportsTablet": true
