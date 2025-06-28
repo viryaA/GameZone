@@ -1,7 +1,5 @@
 import { Modal, View, Text, TouchableOpacity, TouchableWithoutFeedback, TextInput } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import { Ionicons } from '@expo/vector-icons';
-import i18n from '../../../locale/i18n'; // adjust the path as needed
+import i18n from '../../../Locale/i18n'; // adjust the path as needed
 
 export default function FilterSelector({
                                            visible,
@@ -20,7 +18,7 @@ export default function FilterSelector({
                         <Text className="text-lg font-semibold mb-4">{i18n.t("filter")}</Text>
 
                         {/* Status Filter */}
-                        <Text className="mb-2 text-sm text-gray-700">{i18n.t("jps_status")}</Text>
+                        <Text className="mb-2 text-sm text-gray-700">{i18n.t("jpsStatus")}</Text>
                         <View className="flex-row flex-wrap gap-2 mb-4">
                             {statusOptions.map((status) => (
                                 <TouchableOpacity
@@ -47,7 +45,7 @@ export default function FilterSelector({
 
                         {/* Max Player Filter */}
                         <Text className="mb-2 text-sm text-gray-700">
-                            {i18n.t("jps_max_pemain")} ({i18n.t("leave_empty_for_all")})
+                            {i18n.t("jpsMaxPlayer")} ({i18n.t("leaveEmptyForAll")})
                         </Text>
                         <TextInput
                             keyboardType="numeric"

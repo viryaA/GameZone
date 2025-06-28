@@ -10,10 +10,9 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { BlurView } from 'expo-blur';
 import { useState, useEffect } from 'react';
-import i18n from '../../../locale/i18n';
+import i18n from '../../../Locale/i18n';
 import "../../../global.css";
 import * as Location from 'expo-location';
 import { useNavigation, useRoute } from '@react-navigation/native';

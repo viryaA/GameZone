@@ -4,25 +4,20 @@ import {
     FlatList,
     TouchableOpacity,
     ActivityIndicator,
-    Pressable,
     TextInput,
-    Modal,
-    Keyboard,
-    TouchableWithoutFeedback
 } from 'react-native';
 import { useEffect, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import RentalModal from './components/RentalModal';
 import Toast from 'react-native-toast-message';
-import i18n from '../../locale/i18n';
+import i18n from '../../Locale/i18n';
 import "../../global.css";
 import SortSelector from './components/SortSelector';
 import FilterSelector from "./components/FilterSelector";
-import { useFonts } from 'expo-font';
-import { StatusBar } from 'expo-status-bar';
-import { COLOR_PRIMARY, COLOR_SECONDARY } from '../../locale/constant';
-
+import { COLOR_PRIMARY } from '../../Locale/constant';
+import RentalCard from './components/RentalCard';
+import SearchSortFilterBar from "../../TemplateComponent/SearchSortFilterBar";
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
 
@@ -41,7 +36,6 @@ export default function RentalHome() {
     const [filterModalVisible, setFilterModalVisible] = useState(false);
     const [selectedStatus, setSelectedStatus] = useState('Aktif');
     const [selectedMaxPlayer, setSelectedMaxPlayer] = useState('All');
-    const [isSearchVisible, setSearchVisible] = useState(false);
     const [menuItem, setMenuItem] = useState(null);
 
     Text.defaultProps = Text.defaultProps || {};
@@ -234,185 +228,23 @@ export default function RentalHome() {
         setSelectedStatus(status);
     };
 
-
-    const renderItem = ({ item }) => (
-        <View className="mb-4 rounded-2xl overflow-hidden shadow-lg bg-[#f1f5f9]">
-
-            {/* Header - Nama Rental */}
-            <View className={`bg-[${COLOR_PRIMARY}] px-4 py-3 flex-row items-center justify-between`}>
-            <View className="flex-row items-center">
-                <Ionicons name="game-controller-outline" size={18} color="#f6a12c" />
-                <Text className="ml-2 text-white font-poppins font-semibold">
-                {item.rtl_nama}
-                </Text>
-            </View>
-
-            <TouchableOpacity onPress={() => setMenuItem(item)}>
-                <Ionicons name="ellipsis-vertical" size={20} color="white" />
-            </TouchableOpacity>
-            </View>
-
-            {/* Konten Utama */}
-            <Pressable
-            onPress={() => {
-                if (item.rtl_status === 'Aktif') {
-                handleEdit(item);
-                }
-            }}
-            className="bg-white px-4 py-4"
-            >
-            <View className="flex-row justify-between items-center mb-1">
-                <Text className="text-gray font-poppins text-sm">{item.rtl_alamat}</Text>
-                <Text
-                className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                    item.rtl_status === 'Aktif'
-                    ? 'bg-green-200 text-green-800 font-poppins'
-                    : 'bg-red-200 text-red-800'
-                }`}
-                >
-                {item.rtl_status}
-                </Text>
-            </View>
-
-            {item.jps_status === 'Aktif' && (
-                <Text className="text-xs italic text-[#f6a12c] mt-2 font-poppins">
-                {i18n.t("tap_for_details")}
-                </Text>
-            )}
-            </Pressable>
-
-            {/* Popup Modal */}
-            {menuItem?.rtl_id === item.rtl_id && (
-            <Modal
-                transparent
-                animationType="fade"
-                visible={true}
-                onRequestClose={() => setMenuItem(null)}
-            >
-                <TouchableOpacity
-                className="flex-1 justify-center items-center bg-black/40"
-                activeOpacity={1}
-                onPressOut={() => setMenuItem(null)}
-                >
-                <View className="bg-white rounded-lg w-64 p-4">
-                    <Text className="text-base font-semibold text-gray-800 mb-3 font-poppins">Opsi</Text>
-                    <TouchableOpacity
-                    className="py-2"
-                    onPress={() => {
-                        setMenuItem(null);
-                        handleEdit(item);
-                    }}
-                    >
-                    <Text className="text-blue-600 font-poppins">Edit</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                    className="py-2"
-                    onPress={() => {
-                        setMenuItem(null);
-                        setDeleteItem(item);
-                    }}
-                    >
-                    <Text className="text-red-600 font-poppins">Hapus</Text>
-                    </TouchableOpacity>
-                </View>
-                </TouchableOpacity>
-            </Modal>
-            )}
-        </View>
-    );
-
     return (
         <View className="flex-1 bg-gray">
-            <StatusBar style="light" />
-            {/* HEADER */}
-            <View
-            className="flex-row justify-between items-center px-4 pt-10 pb-2"
-            style={{
-                backgroundColor: COLOR_PRIMARY,
-                borderBottomLeftRadius: 24,
-                borderBottomRightRadius: 24,
-            }}
-            >
-                {/* Kiri: tombol menu */}
-                <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-                    <Ionicons name="menu-outline" size={24} color="white" />
-                </TouchableOpacity>
 
-                {/* Tengah: jika search aktif, tampilkan input */}
-                {isSearchVisible ? (
-                    <View className="flex-1 flex-row items-center bg-white px-3 mx-5 rounded-full">
-                    <Ionicons name="search-outline" size={18} color="gray" />
-                    <TextInput
-                        className="ml-2 flex-1 text-sm text-gray-800"
-                        placeholder="Cari Rental..."
-                        value={searchQuery}
-                        onChangeText={handleSearch}
-                        autoFocus
-                    />
-                    {searchQuery.length > 0 && (
-                        <TouchableOpacity
-                        onPress={() => {
-                            setSearchQuery(""); // Kosongkan input
-                            applyAll(data, "", selectedStatus, selectedMaxPlayer, sortBy, sortOrder); // Reset hasil pencarian
-                        }}
-                        >
-                            <Ionicons name="close-circle" size={18} color="gray" />
-                        </TouchableOpacity>
-                    )}
-                    </View>
-                ) : (
-                    <Text className="text-lg text-white font-poppins">Rental</Text>
-                )}
-                {/* Kanan: search button */}
-                <View className="flex-row gap-4 items-center">
-                    <TouchableOpacity onPress={() => setSearchVisible(prev => !prev)}>
-                    <Ionicons name={isSearchVisible ? "close-outline" : "search-outline"} size={22} color="white" />
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            <View className="flex-row justify-end gap-2 mb-4 pt-4 px-4">
-                {/* Tombol Search */}
-                <View className="flex-1 flex-row items-center bg-white px-3 rounded-lg border border-gray">
-                    <Ionicons name="search-outline" size={18} color="gray" />
-                    <TextInput
-                        className="ml-2 flex-1 text-sm text-gray-800"
-                        placeholder="Cari Rental..."
-                        value={searchQuery}
-                        onChangeText={handleSearch}
-                    />
-                    {searchQuery.length > 0 && (
-                        <TouchableOpacity
-                        onPress={() => {
-                            setSearchQuery(""); // Kosongkan input
-                            applyAll(data, "", selectedStatus, selectedMaxPlayer, sortBy, sortOrder); // Reset hasil pencarian
-                        }}
-                        >
-                            <Ionicons name="close-circle" size={18} color="gray" />
-                        </TouchableOpacity>
-                    )}
-                    </View>
-
-                {/* Tombol Sort */}
-                <TouchableOpacity
-                    onPress={() => setSortModalVisible(true)}
-                    className={`flex-row items-center px-4 py-2 rounded-lg bg-[${COLOR_PRIMARY}]`}
-                >
-                    <Ionicons name="swap-vertical-outline" size={18} color="white" />
-                    {/* <Text className="text-white font-medium ml-2">{i18n.t('sort_by')}</Text> */}
-                </TouchableOpacity>
-
-                {/* Tombol Filter */}
-                <TouchableOpacity
-                    onPress={() => setFilterModalVisible(true)}
-                    className={`flex-row items-center px-4 py-2 rounded-lg bg-[${COLOR_PRIMARY}]`}
-                >
-                    <Ionicons name="funnel-outline" size={18} color="white" />
-                    {/* <Text className="text-white font-medium ml-2">{i18n.t('filter')}</Text> */}
-                </TouchableOpacity>
-            </View>
-            
-            <View className="h-[1px] bg-black mx-4 mb-2" />
+            <SearchSortFilterBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                handleSearch={handleSearch}
+                applyAll={applyAll}
+                data={data}
+                selectedStatus={selectedStatus}
+                selectedMaxPlayer={selectedMaxPlayer}
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                setSortModalVisible={setSortModalVisible}
+                setFilterModalVisible={setFilterModalVisible}
+                searchPlaceHolder={i18n.t("search_placeholder_rtl")}
+            />
 
             <TouchableOpacity
                 onPress={handleAdd}
@@ -438,11 +270,20 @@ export default function RentalHome() {
                     <FlatList
                         data={filteredData}
                         keyExtractor={item => item.rtl_id.toString()}
-                        renderItem={renderItem}
+                        renderItem={({ item }) => (
+                            <RentalCard
+                                item={item}
+                                menuItem={menuItem}
+                                setMenuItem={setMenuItem}
+                                setDeleteItem={setDeleteItem}
+                                handleEdit={handleEdit}
+                                COLOR_PRIMARY={COLOR_PRIMARY}
+                                i18n={i18n}
+                            />
+                        )}
                         style={{fontFamily: 'Poppins-Regular'}}
                         contentContainerStyle={{ paddingBottom: 100 }}
                     />
-
                 )}
             </View>
 

@@ -13,7 +13,7 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { BlurView } from 'expo-blur';
 import { useState, useEffect } from 'react';
-import i18n from '../../../locale/i18n';
+import i18n from '../../../Locale/i18n';
 import "../../../global.css";
 
 export default function JenisPlaystationModal({ visible, onClose, onSave, item, deleteItem, onDeleteConfirm,onDeleteCancel }) {
@@ -50,10 +50,10 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item, 
 
     const validateForm = () => {
         const newErrors = {};
-        if (!form.jps_nama.trim()) newErrors.jps_nama = i18n.t('form_required');
-        if (!form.jps_tahun_rilis) newErrors.jps_tahun_rilis = i18n.t('form_required');
-        if (!form.jps_max_pemain) newErrors.jps_max_pemain = i18n.t('form_required');
-        if (!form.jps_deskripsi.trim()) newErrors.jps_deskripsi = i18n.t('form_required');
+        if (!form.jps_nama.trim()) newErrors.jps_nama = i18n.t('formRequired');
+        if (!form.jps_tahun_rilis) newErrors.jps_tahun_rilis = i18n.t('formRequired');
+        if (!form.jps_max_pemain) newErrors.jps_max_pemain = i18n.t('formRequired');
+        if (!form.jps_deskripsi.trim()) newErrors.jps_deskripsi = i18n.t('formRequired');
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -71,10 +71,10 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item, 
                     <View className="flex-1 bg-black/50 justify-center items-center">
                         <View className="bg-white p-6 rounded-xl w-11/12">
                             <Text className="text-lg font-semibold text-red-700 mb-2">
-                                {i18n.t("delete_title_jps")}
+                                {i18n.t("jpsDeleteTitle")}
                             </Text>
                             <Text className="text-center text-gray-700 mb-4">
-                                {i18n.t("delete_confirm_jps", { name: deleteItem?.jps_nama })}
+                                {i18n.t("jpsDeleteConfirm", { name: deleteItem?.jps_nama })}
                             </Text>
                             <View className="flex-row mt-4">
                                 <TouchableOpacity
@@ -126,13 +126,13 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item, 
                         <TouchableWithoutFeedback onPress={() => { }}>
                             <View className="bg-white p-6 rounded-xl shadow-lg">
                                 <Text className="text-xl font-bold mb-4 text-green-800">
-                                    {item ? i18n.t('title_edit_jenis_playstation') : i18n.t('title_add_jenis_playstation')}
+                                    {item ? i18n.t('jpsEditTitle') : i18n.t('jpsAddTitle')}
                                 </Text>
 
                                 {/* Nama */}
-                                <Text className="font-medium mb-1">{i18n.t('nama')}</Text>
+                                <Text className="font-medium mb-1">{i18n.t('name')}</Text>
                                 <TextInput
-                                    placeholder={i18n.t('nama')}
+                                    placeholder={i18n.t('name')}
                                     value={form.jps_nama}
                                     onChangeText={(text) => handleChange('jps_nama', text)}
                                     className={`border rounded-lg p-2 mb-2 ${errors.jps_nama ? 'border-red-500' : 'border-gray-300'}`}
@@ -140,12 +140,12 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item, 
                                 {errors.jps_nama && <Text className="text-red-500 mb-2">{errors.jps_nama}</Text>}
 
                                 {/* Tahun */}
-                                <Text className="font-medium mb-1">{i18n.t('tahun')}</Text>
+                                <Text className="font-medium mb-1">{i18n.t('releaseYear')}</Text>
                                 <TouchableOpacity
                                     onPress={() => setShowYearPicker(true)}
                                     className={`border rounded-lg p-2 mb-2 ${errors.jps_tahun_rilis ? 'border-red-500' : 'border-gray-300'}`}
                                 >
-                                    <Text>{form.jps_tahun_rilis || i18n.t('tahun')}</Text>
+                                    <Text>{form.jps_tahun_rilis || i18n.t('releaseYear')}</Text>
                                 </TouchableOpacity>
                                 {errors.jps_tahun_rilis && <Text className="text-red-500 mb-2">{errors.jps_tahun_rilis}</Text>}
 
@@ -165,9 +165,9 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item, 
                                 )}
 
                                 {/* Pemain */}
-                                <Text className="font-medium mb-1">{i18n.t('pemain')}</Text>
+                                <Text className="font-medium mb-1">{i18n.t('playerCount')}</Text>
                                 <TextInput
-                                    placeholder={i18n.t('pemain')}
+                                    placeholder={i18n.t('playerCount')}
                                     keyboardType="numeric"
                                     value={form.jps_max_pemain?.toString()}
                                     onChangeText={(text) => handleChange('jps_max_pemain', parseInt(text) || '')}
@@ -176,11 +176,11 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item, 
                                 {errors.jps_max_pemain && <Text className="text-red-500 mb-2">{errors.jps_max_pemain}</Text>}
 
                                 {/* Deskripsi */}
-                                <Text className="font-medium mb-1">{i18n.t('deskripsi')}</Text>
+                                <Text className="font-medium mb-1">{i18n.t('description')}</Text>
                                 <TextInput
-                                    placeholder={i18n.t('deskripsi')}
+                                    placeholder={i18n.t('description')}
                                     value={form.jps_deskripsi}
-                                    onChangeText={(text) => handleChange('jps_deskripsi', text)}
+                                    onChangeText={(text) => handleChange('description', text)}
                                     className={`border rounded-lg p-2 mb-2 ${errors.jps_deskripsi ? 'border-red-500' : 'border-gray-300'}`}
                                 />
                                 {errors.jps_deskripsi && <Text className="text-red-500 mb-2">{errors.jps_deskripsi}</Text>}
@@ -209,7 +209,7 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item, 
                                             elevation: 3,
                                         }}
                                     >
-                                        <Text className="text-gray-800 font-semibold text-base">{i18n.t('batal')}</Text>
+                                        <Text className="text-gray-800 font-semibold text-base">{i18n.t('cancel')}</Text>
                                     </TouchableOpacity>
 
                                     <TouchableOpacity
@@ -232,7 +232,7 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item, 
                                             elevation: 3,
                                         }}
                                     >
-                                        <Text className="text-white font-semibold text-base">{i18n.t('simpan')}</Text>
+                                        <Text className="text-white font-semibold text-base">{i18n.t('save')}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>

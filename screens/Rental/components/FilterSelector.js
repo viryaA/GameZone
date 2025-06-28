@@ -1,8 +1,8 @@
 import { Modal, View, Text, TouchableOpacity, TouchableWithoutFeedback, TextInput } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
-import i18n from '../../../locale/i18n'; // adjust the path as needed
-import { COLOR_PRIMARY } from '../../../locale/constant';
+import i18n from '../../../Locale/i18n'; // adjust the path as needed
+import { COLOR_PRIMARY } from '../../../Locale/constant';
 
 export default function FilterSelector({
         visible,

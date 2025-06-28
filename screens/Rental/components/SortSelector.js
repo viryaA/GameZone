@@ -1,7 +1,7 @@
 // components/BottomSortModal.js
 import { Modal, View, Text, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import i18n from '../../../locale/i18n';
+import i18n from '../../../Locale/i18n';
 
 const sortOptions = [
     { key: 'rtl_nama', label: i18n.t('rtl_nama') },

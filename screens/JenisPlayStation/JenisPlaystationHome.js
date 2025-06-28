@@ -4,21 +4,20 @@ import {
     FlatList,
     TouchableOpacity,
     ActivityIndicator,
-    Pressable,
     TextInput,
-    Modal,
-    Keyboard,
-    TouchableWithoutFeedback
 } from 'react-native';
 import { useEffect, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import JenisPlaystationModal from './components/JenisPlaystationModal';
 import Toast from 'react-native-toast-message';
-import i18n from '../../locale/i18n';
+import i18n from '../../Locale/i18n';
 import "../../global.css";
 import SortSelector from './components/SortSelector';
 import FilterSelector from "./components/FilterSelector";
+import {COLOR_PRIMARY} from "../../Locale/constant";
+import JenisPlayStationCard from "./components/JenisPlayStationCard";
+import SearchSortFilterBar from "../../TemplateComponent/SearchSortFilterBar";
 
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
@@ -38,7 +37,7 @@ export default function JenisPlaystationHome() {
     const [filterModalVisible, setFilterModalVisible] = useState(false);
     const [selectedStatus, setSelectedStatus] = useState('Aktif');
     const [selectedMaxPlayer, setSelectedMaxPlayer] = useState('All');
-
+    const [menuItem, setMenuItem] = useState(null);
 
     const fetchData = () => {
         setLoading(true);
@@ -66,7 +65,7 @@ export default function JenisPlaystationHome() {
                 Toast.show({
                     type: 'error',
                     text1: i18n.t("failed"),
-                    text2: i18n.t("error_message")
+                    text2: i18n.t("errorMessage")
                 });
                 setLoading(false);
             });
@@ -110,7 +109,7 @@ export default function JenisPlaystationHome() {
                 Toast.show({
                     type: 'error',
                     text1: i18n.t("failed"),
-                    text2: i18n.t("error_message")
+                    text2: i18n.t("errorMessage")
                 });
                 setModalVisible(false);
             });
@@ -124,7 +123,7 @@ export default function JenisPlaystationHome() {
                 Toast.show({
                     type: 'success',
                     text1: i18n.t("success"),
-                    text2: i18n.t("delete_success"),
+                    text2: i18n.t("deleteSuccess"),
                 });
                 fetchData();
             })
@@ -132,7 +131,7 @@ export default function JenisPlaystationHome() {
                 Toast.show({
                     type: 'error',
                     text1: i18n.t("failed"),
-                    text2: i18n.t("error_message"),
+                    text2: i18n.t("errorMessage"),
                 });
             })
             .finally(() => setDeleteItem(null));
@@ -227,129 +226,60 @@ export default function JenisPlaystationHome() {
         setSelectedStatus(status);
     };
 
-
-    const renderItem = ({ item }) => (
-        <Pressable
-            onPress={() => {
-                if (item.jps_status === 'Aktif') {
-                    handleEdit(item);
-                }
-            }}
-            className="mb-6 p-6 rounded-2xl bg-green-100 shadow-xl relative"
-            style={{
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-                elevation: 5,
-            }}
-        >
-            {/* Delete Button */}
-            {item.jps_status === 'Aktif' && (
-                <TouchableOpacity
-                    onPress={() => setDeleteItem(item)}
-                    className="absolute bottom-4 right-4 z-10 p-2 rounded-full bg-white shadow"
-                    style={{
-                        shadowColor: '#000',
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.2,
-                        shadowRadius: 3,
-                        elevation: 3,
-                    }}
-                >
-                    <Ionicons name="trash-outline" size={22} color="red" />
-                </TouchableOpacity>
-            )}
-
-            {/* Title + Status */}
-            <View className="flex-row justify-between items-center">
-                <Text className="text-lg font-semibold text-green-900">{item.jps_nama}</Text>
-                <View
-                    className={`px-3 py-1 rounded-full ${
-                        item.jps_status === 'Aktif' ? 'bg-green-200' : 'bg-red-200'
-                    }`}
-                >
-                    <Text
-                        className={`text-xs font-semibold ${
-                            item.jps_status === 'Aktif' ? 'text-green-800' : 'text-red-800'
-                        }`}
-                    >
-                        {item.jps_status}
-                    </Text>
-                </View>
-            </View>
-
-            {/* Max Player */}
-            <Text className="text-base mt-2">
-                {i18n.t("max_player")}: <Text className="font-medium">{item.jps_max_pemain}</Text>
-            </Text>
-
-            {/* Hint */}
-            {item.jps_status === 'Aktif' && (
-                <Text className="text-sm text-green-700 mt-3 italic">{i18n.t("tap_for_details")}</Text>
-            )}
-        </Pressable>
-    );
-
-
     return (
-        <View className="flex-1 bg-white px-4 pt-4">
+        <View className="flex-1 bg-gray">
+            <SearchSortFilterBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                handleSearch={handleSearch}
+                applyAll={applyAll}
+                data={data}
+                selectedStatus={selectedStatus}
+                selectedMaxPlayer={selectedMaxPlayer}
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                setSortModalVisible={setSortModalVisible}
+                setFilterModalVisible={setFilterModalVisible}
+                searchPlaceHolder={i18n.t("jpsSearchPlaceholder")}
+            />
+
             <TouchableOpacity
                 onPress={handleAdd}
-                className="absolute bottom-6 right-6 w-16 h-16 bg-green-500 rounded-full justify-center items-center"
+                className={`absolute bottom-6 right-6 w-16 h-16 bg-[${COLOR_PRIMARY}] rounded-full justify-center items-center`}
                 style={{ zIndex: 999, elevation: 10 }}
-                accessibilityLabel={i18n.t("add_button")}
             >
                 <Text className="text-white text-3xl font-bold">+</Text>
             </TouchableOpacity>
 
-            <View className="flex-row items-center border border-gray-300 rounded-xl px-2 py-1 mb-4 bg-white">
-                <Ionicons name="search" size={18} color="gray" />
-                <TextInput
-                    placeholder={i18n.t("search_placeholder")}
-                    value={searchQuery}
-                    onChangeText={handleSearch}
-                    className="ml-2 flex-1 text-base text-gray-800 p-0"
-                />
+            <View className="px-4">
+                {loading ? (
+                    <View className="flex-1 justify-center items-center mt-10">
+                        <ActivityIndicator size="large" color="green" />
+                        <Text className="mt-4 text-gray-500">{i18n.t("loading")}</Text>
+                    </View>
+                ) : filteredData.length === 0 ? (
+                    <View className="flex-1 justify-center items-center mt-10">
+                        <Ionicons name="sad-outline" size={40} color="gray" />
+                        <Text className="mt-4 text-gray-500">{i18n.t("noData")}</Text>
+                    </View>
+                ) : (
+                    <FlatList
+                        data={filteredData}
+                        keyExtractor={item => item.jps_id.toString()}
+                        renderItem={({ item }) => (
+                            <JenisPlayStationCard
+                                item={item}
+                                menuItem={menuItem}
+                                setMenuItem={setMenuItem}
+                                setDeleteItem={setDeleteItem}
+                                handleEdit={handleEdit}
+                            />
+                        )}
+                        contentContainerStyle={{ paddingBottom: 100 }}
+                    />
+
+                )}
             </View>
-
-            <View className="flex-row justify-end gap-2 mb-4">
-                <TouchableOpacity
-                    onPress={() => setSortModalVisible(true)}
-                    className="flex-row items-center px-4 py-2 rounded-full bg-green-600"
-                >
-                    <Ionicons name="swap-vertical-outline" size={18} color="white" />
-                    <Text className="text-white font-medium ml-2">{i18n.t('sort_by')}</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    onPress={() => setFilterModalVisible(true)}
-                    className="flex-row items-center px-4 py-2 rounded-full bg-blue-600"
-                >
-                    <Ionicons name="filter-outline" size={18} color="white" />
-                    <Text className="text-white font-medium ml-2">{i18n.t('filter')}</Text>
-                </TouchableOpacity>
-            </View>
-
-            {loading ? (
-                <View className="flex-1 justify-center items-center mt-10">
-                    <ActivityIndicator size="large" color="green" />
-                    <Text className="mt-4 text-gray-500">{i18n.t("loading")}</Text>
-                </View>
-            ) : filteredData.length === 0 ? (
-                <View className="flex-1 justify-center items-center mt-10">
-                    <Ionicons name="sad-outline" size={40} color="gray" />
-                    <Text className="mt-4 text-gray-500">{i18n.t("no_data")}</Text>
-                </View>
-            ) : (
-                <FlatList
-                    data={filteredData}
-                    keyExtractor={item => item.jps_id.toString()}
-                    renderItem={renderItem}
-                    contentContainerStyle={{ paddingBottom: 100 }}
-                />
-
-            )}
 
             <JenisPlaystationModal
                 visible={modalVisible}
@@ -387,7 +317,6 @@ export default function JenisPlaystationHome() {
                 }}
                 onClose={() => setFilterModalVisible(false)}
             />
-
 
         </View>
     );

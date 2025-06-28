@@ -1,12 +1,12 @@
 // components/BottomSortModal.js
 import { Modal, View, Text, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import i18n from '../../../locale/i18n';
+import i18n from '../../../Locale/i18n';
 
 const sortOptions = [
-    { key: 'jps_nama', label: i18n.t('jps_nama') },
-    { key: 'jps_max_pemain', label: i18n.t('jps_max_pemain') },
-    { key: 'jps_status', label: i18n.t('jps_status') },
+    { key: 'jps_nama', label: i18n.t('jpsName') },
+    { key: 'jps_max_pemain', label: i18n.t('jpsMaxPlayer') },
+    { key: 'jps_status', label: i18n.t('jpsStatus') },
 ];
 
 export default function BottomSortModal({ visible, onClose, sortBy, sortOrder, onSortChange }) {
@@ -27,7 +27,7 @@ export default function BottomSortModal({ visible, onClose, sortBy, sortOrder, o
                 <View className="flex-1 bg-black/30 justify-end">
                     <View className="bg-white rounded-t-2xl p-6">
                         <Text className="text-lg font-semibold text-gray-800 mb-4">
-                            {i18n.t('sort_by')}
+                            {i18n.t('sortBy')}
                         </Text>
                         {sortOptions.map(({ key, label }) => {
                             const isSelected = sortBy === key;
