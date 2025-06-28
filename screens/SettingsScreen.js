@@ -7,6 +7,7 @@ export default function SettingsScreen({ navigation }) {
             <Text className="text-xl font-bold text-green-900">⚙️ Settings Screen</Text>
             <Button title="Go Back Home" onPress={() => navigation.navigate('Home')} />
             <Button title="Master Jenis Play Station" onPress={() => navigation.navigate('JenisPlayMain')} />
+            <Button title="Master Rental" onPress={() => navigation.navigate('RentalMain')} />
         </View>
     )
 }

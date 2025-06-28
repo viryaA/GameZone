@@ -45,7 +45,12 @@ export default function JenisPlaystationHome() {
         fetch(`${apiUrl}/MsJenisPlaystation`)
             .then(res => res.json())
             .then(json => {
-                let initialData = json;
+                let initialData = Array.isArray(json)
+                ? json
+                : Array.isArray(json.data)
+                ? json.data
+                : [];
+                console.log("API RESPONSE", initialData);
 
                 // If not sorting by status, filter to only 'Aktif'
                 if (sortBy !== 'jps_status') {
