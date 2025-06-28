@@ -30,4 +30,8 @@ export default {
     delete: 'Hapus',
     delete_confirm_jps: "Data Jenis Playstation akan dihapus.",
     cancel: "Batal",
+    title_add_rental: 'Tambah Rental',
+    rtl_status: 'Status',
+    alamat: 'Alamat',
 };
+

@@ -7,8 +7,13 @@ module.exports = {
     "./screens/**/*.{js,jsx,ts,tsx}",
     "./navigation/**/*.{js,jsx,ts,tsx}",
   ],
+  assets: ['./assets/fonts/'],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        poppins: ["Poppins-Regular"],
+      },
+    },
   },
   plugins: [],
 };

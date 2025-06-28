@@ -3,6 +3,7 @@ import HomeScreen from '../screens/HomeScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 import SettingsStack from './SettingsStack'
 import "../global.css"
+import SelectLocationScreen from '../screens/Rental/components/SelectLocationScreen'
 
 const Stack = createNativeStackNavigator()
 

@@ -29,4 +29,5 @@ export default {
     delete: 'Delete',
     delete_confirm_jps: "This Playstation Type will be deleted.",
     cancel: "Cancel",
+    title_add_rental: 'Add Rental',
 };
