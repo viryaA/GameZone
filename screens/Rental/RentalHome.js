@@ -18,6 +18,7 @@ import FilterSelector from "./components/FilterSelector";
 import { COLOR_PRIMARY } from '../../Locale/constant';
 import RentalCard from './components/RentalCard';
 import SearchSortFilterBar from "../../TemplateComponent/SearchSortFilterBar";
+import { useNavigation } from '@react-navigation/native';
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
 
@@ -37,6 +38,7 @@ export default function RentalHome() {
     const [selectedStatus, setSelectedStatus] = useState('Aktif');
     const [selectedMaxPlayer, setSelectedMaxPlayer] = useState('All');
     const [menuItem, setMenuItem] = useState(null);
+    const navigation = useNavigation();
 
     Text.defaultProps = Text.defaultProps || {};
     Text.defaultProps.style = { fontFamily: 'Poppins-Regular' };
@@ -78,9 +80,7 @@ export default function RentalHome() {
     }, []);
 
     const handleEdit = (item) => {
-        setSelectedItem(item);
-        setIsEdit(true);
-        setModalVisible(true);
+        navigation.navigate('DetailPage', { rentalItem: item });
     };
 
     const handleAdd = () => {
@@ -243,7 +243,7 @@ export default function RentalHome() {
                 sortOrder={sortOrder}
                 setSortModalVisible={setSortModalVisible}
                 setFilterModalVisible={setFilterModalVisible}
-                searchPlaceHolder={i18n.t("search_placeholder_rtl")}
+                searchPlaceHolder={i18n.t("rtlSearchPlaceholder")}
             />
 
             <TouchableOpacity

@@ -14,7 +14,8 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
     const [fontsLoaded] = useFonts({
         'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf'),
-        'Poppins-Bold': require('./assets/fonts/Poppins-Bold.ttf'), // 👈 required!
+        'Poppins-Bold': require('./assets/fonts/Poppins-Bold.ttf'),
+        'Poppins-SemiBold': require('./assets/fonts/Poppins-SemiBold.ttf'),
     });
 
     const onLayoutRootView = useCallback(async () => {

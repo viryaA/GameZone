@@ -12,21 +12,28 @@ const RentalCard = ({
     return (
         <View className="mb-4 rounded-2xl overflow-hidden shadow-lg bg-[#f1f5f9]">
             {/* Header - Nama Rental */}
-            <View
-                className="px-4 py-3 flex-row items-center justify-between"
-                style={{ backgroundColor: COLOR_PRIMARY }}
-            >
-                <View className="flex-row items-center">
-                    <Ionicons name="game-controller-outline" size={18} color="#f6a12c" />
-                    <Text className="ml-2 text-white font-poppins font-semibold">
-                        {item.rtl_nama}
-                    </Text>
-                </View>
+            <Pressable
+                onPress={() => {
+                        if (item.rtl_status === 'Aktif') {
+                            handleEdit(item);
+                        }
+                    }}>
+                <View
+                    className="px-4 py-3 flex-row items-center justify-between"
+                    style={{ backgroundColor: COLOR_PRIMARY }}
+                >
+                    <View className="flex-row items-center">
+                        <Ionicons name="game-controller-outline" size={18} color="#f6a12c" />
+                        <Text className="ml-2 text-white font-poppins font-semibold">
+                            {item.rtl_nama}
+                        </Text>
+                    </View>
 
-                <TouchableOpacity onPress={() => setMenuItem(item)}>
-                    <Ionicons name="ellipsis-vertical" size={20} color="white" />
-                </TouchableOpacity>
-            </View>
+                    <TouchableOpacity onPress={() => setMenuItem(item)}>
+                        <Ionicons name="ellipsis-vertical" size={20} color="white" />
+                    </TouchableOpacity>
+                </View>
+            </Pressable>
 
             {/* Konten Utama */}
             <Pressable
