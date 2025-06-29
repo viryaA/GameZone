@@ -1,6 +1,7 @@
 export default {
     jpsSearchPlaceholder: "Search Playstation type...",
     rtlSearchPlaceholder: "Search Rental...",
+    usrSearchPlaceholder: "Search User...",
     loading: "Loading data...",
     success: "Success",
     failed: "Failed",

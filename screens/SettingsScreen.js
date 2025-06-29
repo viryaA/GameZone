@@ -8,6 +8,7 @@ export default function SettingsScreen({ navigation }) {
             <Button title="Go Back Home" onPress={() => navigation.navigate('Home')} />
             <Button title="Master Jenis Play Station" onPress={() => navigation.navigate('JenisPlayMain')} />
             <Button title="Master Rental" onPress={() => navigation.navigate('RentalMain')} />
+            <Button title="Master User" onPress={() => navigation.navigate('UserMain')} />
         </View>
     )
 }

@@ -1,6 +1,7 @@
 export default {
     jpsSearchPlaceholder: "Cari jenis Playstation...",
     rtlSearchPlaceholder: "Cari Rental...",
+    usrSearchPlaceholder: "Cari User...",
     loading: "Memuat data...",
     success: "Sukses",
     failed: "Gagal",
