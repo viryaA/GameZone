@@ -1,4 +1,4 @@
-import { Modal, Pressable, Text, TouchableOpacity, View } from "react-native";
+import { Modal, Pressable, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLOR_PRIMARY } from "../../../Locale/constant";
 import i18n from "../../../Locale/i18n";
@@ -61,37 +61,48 @@ const JenisPlayStationCard = ({
             {menuItem?.jps_id === item.jps_id && (
                 <Modal
                     transparent
-                    animationType="fade"
+                    animationType="slide"
                     visible={true}
                     onRequestClose={() => setMenuItem(null)}
                 >
-                    <TouchableOpacity
-                        className="flex-1 justify-center items-center bg-black/40"
-                        activeOpacity={1}
-                        onPressOut={() => setMenuItem(null)}
-                    >
-                        <View className="bg-white rounded-lg w-64 p-4">
-                            <Text className="text-base font-semibold text-gray-800 mb-3 font-poppins">Opsi</Text>
-                            <TouchableOpacity
-                                className="py-2"
-                                onPress={() => {
-                                    setMenuItem(null);
-                                    handleEdit(item);
-                                }}
-                            >
-                                <Text className="text-blue-600 font-poppins">Edit</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                className="py-2"
-                                onPress={() => {
-                                    setMenuItem(null);
-                                    setDeleteItem(item);
-                                }}
-                            >
-                                <Text className="text-red-600 font-poppins">Hapus</Text>
-                            </TouchableOpacity>
+                    <TouchableWithoutFeedback onPress={() => setMenuItem(null)}>
+                        <View className="flex-1 bg-black/40 justify-end">
+                            <TouchableWithoutFeedback>
+                                <View className="bg-white w-full rounded-t-2xl p-5">
+                                    {/* Drag Handle */}
+                                    <View className="w-12 h-1 rounded-full bg-gray-300 self-center mb-4" />
+
+                                    <Text className="text-base text-center text-gray-800 mb-4 font-poppins-bold">
+                                        {i18n.t("action")}
+                                    </Text>
+
+                                    {/* Edit Button */}
+                                    <TouchableOpacity
+                                        className="flex-row items-center py-3 border-b border-gray-200"
+                                        onPress={() => {
+                                            setMenuItem(null);
+                                            handleEdit(item);
+                                        }}
+                                    >
+                                        <Ionicons name="pencil-outline" size={20} color="#2563eb" />
+                                        <Text className="ml-2 text-blue-600 text-base font-poppins">{i18n.t("edit")}</Text>
+                                    </TouchableOpacity>
+
+                                    {/* Delete Button */}
+                                    <TouchableOpacity
+                                        className="flex-row items-center py-3"
+                                        onPress={() => {
+                                            setMenuItem(null);
+                                            setDeleteItem(item);
+                                        }}
+                                    >
+                                        <Ionicons name="trash-outline" size={20} color="#dc2626" />
+                                        <Text className="ml-2 text-red-600 text-base font-poppins">{i18n.t("delete")}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </TouchableWithoutFeedback>
                         </View>
-                    </TouchableOpacity>
+                    </TouchableWithoutFeedback>
                 </Modal>
             )}
         </View>

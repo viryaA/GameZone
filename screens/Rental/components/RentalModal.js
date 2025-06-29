@@ -234,7 +234,7 @@ export default function RentalModal({ visible, onClose, onSave, item, deleteItem
                                             elevation: 3,
                                         }}
                                     >
-                                        <Text className="text-white font-semibold text-base">{i18n.t('simpan')}</Text>
+                                        <Text className="text-white font-semibold text-base">{i18n.t('save')}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>

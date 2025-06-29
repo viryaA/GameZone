@@ -32,5 +32,10 @@ export default {
     rentalAddTitle: 'Tambah Rental',
     rtlAddress: 'Alamat',
     rtlName: 'Nama',
+    all: "Semua",
+    active: "Aktif",
+    inactive: "Tidak Aktif",
+    action: "Action",
+    edit: "Ubah",
 };
 

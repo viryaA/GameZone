@@ -51,9 +51,7 @@ export default function RentalHome() {
                 : Array.isArray(json.data)
                 ? json.data
                 : [];
-                console.log("API RESPONSE", initialData);
 
-                // If not sorting by status, filter to only 'Aktif'
                 if (sortBy !== 'rtl_status') {
                     initialData = initialData.filter(item => item.rtl_status === 'Aktif');
                 }

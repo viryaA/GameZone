@@ -70,7 +70,7 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item, 
                 <TouchableWithoutFeedback onPress={onDeleteCancel}>
                     <View className="flex-1 bg-black/50 justify-center items-center">
                         <View className="bg-white p-6 rounded-xl w-11/12">
-                            <Text className="text-lg font-semibold text-red-700 mb-2">
+                            <Text className="text-xl font-bold mb-4 text-[#004080]">
                                 {i18n.t("jpsDeleteTitle")}
                             </Text>
                             <Text className="text-center text-gray-700 mb-4">
@@ -125,7 +125,7 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item, 
                     >
                         <TouchableWithoutFeedback onPress={() => { }}>
                             <View className="bg-white p-6 rounded-xl shadow-lg">
-                                <Text className="text-xl font-bold mb-4 text-green-800">
+                                <Text className="text-xl font-bold mb-4 text-[#004080]">
                                     {item ? i18n.t('jpsEditTitle') : i18n.t('jpsAddTitle')}
                                 </Text>
 
@@ -221,8 +221,8 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item, 
                                         disabled={!form.jps_nama || !form.jps_tahun_rilis || !form.jps_max_pemain || !form.jps_deskripsi}
                                         className={`flex-1 ml-2 py-3 rounded-xl items-center shadow ${
                                             form.jps_nama && form.jps_tahun_rilis && form.jps_max_pemain && form.jps_deskripsi
-                                                ? 'bg-green-600'
-                                                : 'bg-green-300'
+                                                ? 'bg-[#004080]'
+                                                : 'bg-[#004080]'
                                         }`}
                                         style={{
                                             shadowColor: '#000',

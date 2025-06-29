@@ -49,25 +49,10 @@ export default function FilterSelector({
                                             <Ionicons name="checkmark-done" size={18} color="green" />
                                         )}
                                     </View>
-                                    
+
                                 </TouchableOpacity>
                             ))}
                         </View>
-
-                        {/* Max Player Filter */}
-                        {/* <Text className="mb-2 text-sm text-gray-700">
-                            {i18n.t("jps_max_pemain")} ({i18n.t("leave_empty_for_all")})
-                        </Text>
-                        <TextInput
-                            keyboardType="numeric"
-                            value={selectedMaxPlayer === 'All' ? '' : selectedMaxPlayer}
-                            onChangeText={(val) => {
-                                const valid = val.replace(/[^0-9]/g, '');
-                                onApply(selectedStatus, valid === '' ? 'All' : valid);
-                            }}
-                            placeholder="e.g. 2"
-                            className="border border-gray-300 rounded-xl px-4 py-2 text-base text-gray-800"
-                        /> */}
 
                         <TouchableOpacity
                             className={`mt-6 bg-[${COLOR_PRIMARY}] py-2 rounded-lg items-center`}

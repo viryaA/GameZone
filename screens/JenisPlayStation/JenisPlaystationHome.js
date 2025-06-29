@@ -49,8 +49,7 @@ export default function JenisPlaystationHome() {
                 : Array.isArray(json.data)
                 ? json.data
                 : [];
-                console.log("API RESPONSE", initialData);
-
+                
                 // If not sorting by status, filter to only 'Aktif'
                 if (sortBy !== 'jps_status') {
                     initialData = initialData.filter(item => item.jps_status === 'Aktif');

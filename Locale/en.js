@@ -33,4 +33,6 @@ export default {
     rtlAddress: "Address",
     rtlName: "Name",
     deleteSuccess: "Delete Success",
+    action: "Aksi",
+    edit: "Edit",
 };
