@@ -1,13 +1,24 @@
-import { View, Text, ImageBackground, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { View, Text, ImageBackground, Image, TouchableOpacity, StyleSheet } from 'react-native'
+import React, { useEffect } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
-import { styled } from 'nativewind'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import "../global.css"
 
-const StyledLinearGradient = styled(LinearGradient)
-
 export default function WellcomeScreen({ navigation }) {
+    useEffect(() => {
+        const checkFirstLaunch = async () => {
+            const hasLaunched = await AsyncStorage.getItem('hasLaunched')
+            if (hasLaunched) {
+                // Skip welcome and go to Settings
+                navigation.replace('SettingsStack')
+            } else {
+                await AsyncStorage.setItem('hasLaunched', 'true')
+            }
+        }
+        checkFirstLaunch()
+    }, [])
+
     return (
         <ImageBackground
             source={require('../assets/wellcome-background.png')}
@@ -15,27 +26,24 @@ export default function WellcomeScreen({ navigation }) {
             resizeMode="cover"
         >
             <View className="flex-1 bg-black/50 pt-10 px-4 relative">
-
-                {/* Gradient Button */}
                 <TouchableOpacity
-                    onPress={() => console.log('Start Gaming')}
-                    className="absolute bottom-24 right-5"
+                    onPress={() => navigation.replace('SettingsStack')}
+                    style={styles.buttonWrapper}
                     activeOpacity={0.8}
                 >
-                    <StyledLinearGradient
+                    <LinearGradient
                         colors={['#661BEA', '#411786']}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
-                        className="px-6 py-3 rounded-full flex-row items-center space-x-3"
+                        style={styles.gradientButton}
                     >
-                        <Text className="text-white font-semibold">Start Gaming</Text>
-                        <View className="bg-black rounded-full p-2">
-                            <Ionicons name="arrow-forward" size={16} color="white" />
+                        <Text style={styles.buttonText}>Start Gaming</Text>
+                        <View style={styles.arrowCircle}>
+                            <Ionicons name="arrow-forward" size={14} color="white" />
                         </View>
-                    </StyledLinearGradient>
+                    </LinearGradient>
                 </TouchableOpacity>
 
-                {/* Arrow Image in Bottom-Left */}
                 <Image
                     source={require('../assets/arrow.png')}
                     className="w-[144px] h-[111px] absolute bottom-5 left-5"
@@ -44,3 +52,29 @@ export default function WellcomeScreen({ navigation }) {
         </ImageBackground>
     )
 }
+
+const styles = StyleSheet.create({
+    buttonWrapper: {
+        position: 'absolute',
+        bottom: 96,
+        right: 20,
+    },
+    gradientButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 9999,
+        gap: 8,
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: '600',
+        fontSize: 14,
+    },
+    arrowCircle: {
+        backgroundColor: '#FB3D81', // your requested color
+        padding: 6,
+        borderRadius: 9999,
+    },
+})
