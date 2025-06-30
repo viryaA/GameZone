@@ -86,32 +86,49 @@ export default function UserHome() {
         setModalVisible(true);
     };
 
-    const handleSave = (item) => {
+    const handleSave = async (item, file) => {
         const method = isEdit ? 'PUT' : 'POST';
-        fetch(`${apiUrl}/MsUser`, {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(item)
-        })
-            .then(res => res.json())
-            .then(resJson => {
-                Toast.show({
-                    type: resJson.result === 1 ? 'success' : 'error',
-                    text1: resJson.result === 1 ? i18n.t("success") : i18n.t("failed"),
-                    text2: resJson.message
-                });
-                setModalVisible(false);
-                fetchData();
-            })
-            .catch(error => {
-                console.error("Save error", error);
-                Toast.show({
-                    type: 'error',
-                    text1: i18n.t("failed"),
-                    text2: i18n.t("errorMessage")
-                });
-                setModalVisible(false);
+        const formData = new FormData();
+
+        formData.append('user', JSON.stringify(item)); // This matches @RequestPart("user")
+
+        if (file) {
+            formData.append('fotoProfile', {
+                uri: file.uri,
+                name: file.name || 'photo.jpg',
+                type: file.type || 'image/jpeg'
             });
+        }
+
+        try {
+            const res = await fetch(`${apiUrl}/MsUser`, {
+                method,
+                headers: {
+                    // Do NOT set Content-Type; let fetch/React Native handle it automatically
+                    // 'Content-Type': 'multipart/form-data' ← DON'T add this manually
+                },
+                body: formData
+            });
+
+            const resJson = await res.json();
+
+            Toast.show({
+                type: resJson.result === 1 ? 'success' : 'error',
+                text1: resJson.result === 1 ? i18n.t("success") : i18n.t("failed"),
+                text2: resJson.message
+            });
+
+            setModalVisible(false);
+            fetchData();
+        } catch (error) {
+            console.error("Save error", error);
+            Toast.show({
+                type: 'error',
+                text1: i18n.t("failed"),
+                text2: i18n.t("errorMessage")
+            });
+            setModalVisible(false);
+        }
     };
 
     const confirmDelete = () => {

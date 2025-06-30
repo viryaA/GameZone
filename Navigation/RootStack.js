@@ -4,13 +4,16 @@ import ProfileScreen from '../screens/ProfileScreen'
 import SettingsStack from './SettingsStack'
 import "../global.css"
 import SelectLocationScreen from '../screens/Rental/components/SelectLocationScreen'
+import WellcomeScreen from "../screens/WellcomeScreen";
 
 const Stack = createNativeStackNavigator()
 
 export default function RootStack() {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Home" component={WellcomeScreen} options={{
+                headerShown: false
+            }} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
             <Stack.Screen name="SettingsStack" component={SettingsStack} options={{ headerShown: false }} />
         </Stack.Navigator>

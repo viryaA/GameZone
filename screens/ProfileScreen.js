@@ -37,7 +37,7 @@ export default function ProfileScreen() {
         <View className="flex-1 bg-blue-100">
             {/* Fullscreen Camera */}
             <CameraView
-                className="absolute inset-0"
+                style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
                 facing={facing}
                 barcodeScannerSettings={{
                     barcodeTypes: ['qr'], // Only scan QR

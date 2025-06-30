@@ -17,9 +17,7 @@ import "../../../global.css";
 
 const roleOptions = ['penyewa', 'super_admin', 'admin'];
 
-export default function UserModal({ visible, onClose, onSave, item, deleteItem, onDeleteConfirm, onDeleteCancel, currentUser }) {
-    const isAdmin = currentUser?.usr_role === 'admin';
-
+export default function UserModal({ visible, onClose, onSave, item, deleteItem, onDeleteConfirm, onDeleteCancel }) {
     const [form, setForm] = useState({
         usr_nama: '',
         usr_email: '',
@@ -142,21 +140,21 @@ export default function UserModal({ visible, onClose, onSave, item, deleteItem, 
                                 />
 
                                 {/* Role (Only for Admin) */}
-                                {isAdmin && (
-                                    <>
-                                        <Text className="font-medium mb-1">Role</Text>
-                                        <View className="border border-gray-300 rounded-lg mb-4">
-                                            <Picker
-                                                selectedValue={form.usr_role}
-                                                onValueChange={val => handleChange('usr_role', val)}
-                                            >
-                                                {roleOptions.map(role => (
-                                                    <Picker.Item key={role} label={role} value={role} />
-                                                ))}
-                                            </Picker>
-                                        </View>
-                                    </>
-                                )}
+                                <Text className="font-medium mb-1">Role</Text>
+                                <View className="border border-gray-300 rounded-lg mb-4">
+                                    <Picker
+                                        selectedValue={form.usr_role}
+                                        onValueChange={val => handleChange('usr_role', val)}
+                                    >
+                                        {roleOptions.map(role => (
+                                            <Picker.Item key={role} label={role
+                                                .split('_')
+                                                .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                                                .join(' ')
+                                            } value={role} />
+                                        ))}
+                                    </Picker>
+                                </View>
 
                                 {/* Phone */}
                                 <Text className="font-medium mb-1">No Telp</Text>
