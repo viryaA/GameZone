@@ -21,9 +21,6 @@ export default function RootStack() {
             const value = await AsyncStorage.getItem('hasLaunched')
             if (value === 'true') {
                 setHasLaunched(true)
-            } else {
-                await AsyncStorage.setItem('hasLaunched', 'true')
-                setHasLaunched(false)
             }
             setIsLoading(false)
         }
