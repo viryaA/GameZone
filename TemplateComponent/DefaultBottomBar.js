@@ -9,12 +9,13 @@ export default function DefaultBottomBar() {
 
     const tabs = [
         { name: 'Home', icon: 'home' },
-        { name: 'Bag', icon: 'shopping-bag' },
+        { name: 'Scan', icon: 'qrcode' },
+        { name: 'History', icon: 'history' },
         { name: 'Profile', icon: 'user' },
     ];
 
     return (
-        <View className="bg-purple-900 pt-2 pb-6 px-6 border-t border-purple-800">
+        <View className="bg-[#3B057A] pt-2 pb-6 px-6 border-t border-[#3B057A]">
             <View className="flex-row justify-between items-center">
                 {tabs.map(({ name, icon }) => {
                     const isFocused = route.name === name;
@@ -26,7 +27,7 @@ export default function DefaultBottomBar() {
                             className="flex-1 items-center"
                         >
                             {isFocused ? (
-                                <View className="flex-row items-center bg-purple-700 px-4 py-2 rounded-full">
+                                <View className="flex-row items-center bg-[#5829AB] px-4 py-2 rounded-full">
                                     <Icon name={icon} size={18} color="#fff" />
                                     <Text className="ml-2 text-white text-base">{name}</Text>
                                 </View>

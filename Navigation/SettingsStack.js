@@ -9,15 +9,17 @@ import MasterlHeader from "../Header/MasterlHeader";
 import UserHome from "../screens/User/UserHome";
 import RoomHome from "../screens/Room/RoomHome";
 import LoginHome from "../screens/Login/LoginHome";
+import ScanQRHome from "../screens/ScanQR/ScanQRHome";
 
 const Stack = createNativeStackNavigator()
 
 export default function SettingsStack() {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="LoginMain" component={LoginHome} options={{ title: 'Login', headerShown: false }} />
             <Stack.Screen name="SettingsMain" component={SettingsScreen} options={{ title: 'Settings' }} />
+            <Stack.Screen name="LoginMain" component={LoginHome} options={{ title: 'Login', headerShown: false }} />
             <Stack.Screen name="RuanganMain" component={RoomHome} options={{ title: 'Ruangan' }} />
+            <Stack.Screen name="Scan QR" component={ScanQRHome} options={{ title: 'Scan QR' }} />
             <Stack.Screen name="JenisPlayMain" component={JenisPlaystationHome} options={{
                 header: (props) => <MasterlHeader {...props}  />,
                 title: 'Jenis Playstation' }} />

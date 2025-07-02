@@ -9,6 +9,7 @@ import SelectLocationScreen from '../screens/Rental/components/SelectLocationScr
 import WellcomeScreen from "../screens/WellcomeScreen"
 
 import { ActivityIndicator, View } from 'react-native'
+import ScanQRHome from "../screens/ScanQR/ScanQRHome";
 
 const Stack = createNativeStackNavigator()
 
@@ -44,6 +45,7 @@ export default function RootStack() {
                 <>
                     <Stack.Screen name="SettingsStack" component={SettingsStack} options={{ headerShown: false }} />
                     <Stack.Screen name="Home" component={HomeScreen} />
+                    <Stack.Screen name="Scan" component={ScanQRHome} options={{ title: 'Scan QR' }} />
                     <Stack.Screen name="Profile" component={ProfileScreen} />
                     <Stack.Screen name="SelectLocation" component={SelectLocationScreen} />
                 </>

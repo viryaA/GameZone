@@ -84,17 +84,16 @@ export default function LoginHome() {
                 />
 
                 {/* Bottom section */}
-                <View className="bg-[#1f0037cc] p-6 rounded-t-3xl mt-2">
-                    {/* Gradient GAMEZONE Title */}
-                    <Text className="text-center text-3xl font-bold mb-1">
-                        <Text className="text-red-500">G</Text>
-                        <Text className="text-green-500">A</Text>
-                        <Text className="text-yellow-500">M</Text>
-                        <Text className="text-purple-600">E</Text>
-                        <Text className="text-white">ZONE</Text>
-                    </Text>
+                <View className="bg-[#3B057A] px-6 pt-4 pb-2 rounded-t-3xl mt-2">
+                    {/* Centered Image */}
+                    <Image
+                        source={require('../../assets/icon-brand.png')}
+                        className="w-[200px] h-[120px] self-center"
+                        resizeMode="contain"
+                    />
 
-                    <Text className="text-center text-white mb-4 mt-1">
+                    {/* Title */}
+                    <Text className="text-center text-white mt-2">
                         Your Second Home{'\n'}With a Better Setup.
                     </Text>
 
@@ -105,14 +104,14 @@ export default function LoginHome() {
                     <TextInput
                         placeholder="exsapel@gmail.com"
                         placeholderTextColor="#ccc"
-                        className="bg-purple-900 rounded-md px-4 py-3 text-white mb-4"
+                        className="bg-[#5829AB] rounded-md px-4 py-3 text-white mb-4"
                         value={email}
                         onChangeText={setEmail}
                     />
 
                     {/* Password */}
                     <Text className="text-white text-sm mb-1">Password</Text>
-                    <View className="flex-row items-center bg-purple-900 rounded-md px-4 py-3 mb-4">
+                    <View className="flex-row items-center bg-[#5829AB] rounded-md px-4 py-3 mb-4">
                         <TextInput
                             placeholder="••••••••"
                             placeholderTextColor="#ccc"
