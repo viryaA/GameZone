@@ -6,16 +6,23 @@ import {
     ImageBackground,
     Image,
     ScrollView,
+    StyleSheet,
+    KeyboardAvoidingView,
+    Platform,
+    TouchableWithoutFeedback,
+    Keyboard,
 } from 'react-native';
 import React, { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import MaskedView from '@react-native-masked-view/masked-view';
 import Constants from 'expo-constants';
+import { useNavigation } from '@react-navigation/native';
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
+
 const apiUrl = Constants.expoConfig.extra.API_URL;
-import Toast from 'react-native-toast-message';
 
 export default function LoginHome() {
+    const navigation = useNavigation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -50,13 +57,13 @@ export default function LoginHome() {
                     text1: 'Login berhasil!',
                     text2: `Selamat datang, ${result.data.usr_nama || 'user'}!`,
                 });
-
-                // navigation.navigate("HomeMain")
+                // Arahkan ke halaman utama kalau login sukses
+                // navigation.navigate('Home'); // contoh
             } else {
                 Toast.show({
                     type: 'error',
                     text1: 'Login gagal',
-                    text2: result.message || 'Email/password salah.',
+                    text2: 'Email/password salah.',
                 });
             }
         } catch (error) {
@@ -72,81 +79,206 @@ export default function LoginHome() {
     return (
         <ImageBackground
             source={require('../../assets/default-background.png')}
-            className="flex-1"
+            style={styles.background}
             resizeMode="cover"
         >
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                {/* Top image */}
-                <Image
-                    source={require('../../assets/login-top-image.png')}
-                    className="w-full h-64"
-                    resizeMode="cover"
-                />
-
-                {/* Bottom section */}
-                <View className="bg-[#1f0037cc] p-6 rounded-t-3xl mt-2">
-                    {/* Gradient GAMEZONE Title */}
-                    <Text className="text-center text-3xl font-bold mb-1">
-                        <Text className="text-red-500">G</Text>
-                        <Text className="text-green-500">A</Text>
-                        <Text className="text-yellow-500">M</Text>
-                        <Text className="text-purple-600">E</Text>
-                        <Text className="text-white">ZONE</Text>
-                    </Text>
-
-                    <Text className="text-center text-white mb-4 mt-1">
-                        Your Second Home{'\n'}With a Better Setup.
-                    </Text>
-
-                    <Text className="text-white underline text-sm mb-2">Log in to your account</Text>
-
-                    {/* Email */}
-                    <Text className="text-white text-sm mb-1">Email</Text>
-                    <TextInput
-                        placeholder="exsapel@gmail.com"
-                        placeholderTextColor="#ccc"
-                        className="bg-purple-900 rounded-md px-4 py-3 text-white mb-4"
-                        value={email}
-                        onChangeText={setEmail}
-                    />
-
-                    {/* Password */}
-                    <Text className="text-white text-sm mb-1">Password</Text>
-                    <View className="flex-row items-center bg-purple-900 rounded-md px-4 py-3 mb-4">
-                        <TextInput
-                            placeholder="••••••••"
-                            placeholderTextColor="#ccc"
-                            className="flex-1 text-white"
-                            secureTextEntry={!showPassword}
-                            value={password}
-                            onChangeText={setPassword}
-                        />
-                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                            <Ionicons
-                                name={showPassword ? 'eye-off' : 'eye'}
-                                size={20}
-                                color="white"
-                            />
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* Button */}
-                    <LinearGradient
-                        colors={['#253B80', '#6D3ECB']}
-                        start={{ x: 0.5, y: 0 }}
-                        end={{ x: 0.5, y: 1 }}
-                        className="rounded-full mb-4"
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+            >
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <ScrollView
+                        contentContainerStyle={styles.scrollContainer}
+                        keyboardShouldPersistTaps="handled"
                     >
-                        <TouchableOpacity className="py-3" activeOpacity={0.8} onPress={handleLogin}>
-                            <Text className="text-center text-white font-bold text-lg">Log In</Text>
-                        </TouchableOpacity>
-                    </LinearGradient>
+                        <Image
+                            source={require('../../assets/login-top-image.png')}
+                            style={styles.topImage}
+                            resizeMode="cover"
+                        />
 
-                    <Text className="text-center text-white text-sm">
-                        Don’t have account? <Text className="underline">Create now</Text>
-                    </Text>
-                </View>
-            </ScrollView>
+                        <LinearGradient
+                            colors={['rgba(58,5,121,255)', 'rgba(66, 4, 137, 0)']}
+                            start={{ x: 0.5, y: 0 }}
+                            end={{ x: 0.5, y: 1.5 }}
+                            style={styles.card}
+                        >
+                            <Image
+                                source={require('../../assets/gamezone.png')}
+                                style={styles.logo}
+                            />
+
+                            <Text style={styles.slogan}>
+                                Your Second Home{'\n'}With a Better Setup.
+                            </Text>
+
+                            <Text style={styles.loginTitle}>
+                                Log in to your account
+                            </Text>
+
+                            <Text style={styles.label}>Email</Text>
+                            <TextInput
+                                placeholder="example@gmail.com"
+                                placeholderTextColor="white"
+                                style={styles.input}
+                                value={email}
+                                onChangeText={setEmail}
+                                fontSize={12}
+                            />
+
+                            <Text style={[styles.label, { marginTop: 16 }]}>Password</Text>
+                            <View style={styles.passwordContainer}>
+                                <TextInput
+                                    placeholder="Enter your password"
+                                    placeholderTextColor="white"
+                                    secureTextEntry={!showPassword}
+                                    style={styles.passwordInput}
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    fontSize={12}
+                                />
+                                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                                    <Ionicons
+                                        name={showPassword ? 'eye' : 'eye-off'}
+                                        size={22}
+                                        color="#fff"
+                                    />
+                                </TouchableOpacity>
+                            </View>
+
+                            <LinearGradient
+                                colors={['rgba(38,59,129,1)', 'rgb(141, 100, 229)']}
+                                start={{ x: 0.5, y: 0 }}
+                                end={{ x: 0.5, y: 1 }}
+                                style={styles.buttonGradient}
+                            >
+                                <TouchableOpacity
+                                    onPress={handleLogin}
+                                    activeOpacity={0.8}
+                                    style={styles.buttonTouchable}
+                                >
+                                    <Text style={styles.buttonText}>Log In</Text>
+                                </TouchableOpacity>
+                            </LinearGradient>
+
+                            <Text style={styles.footerText}>
+                                Don’t have account?{' '}
+                                <Text
+                                    style={styles.footerLink}
+                                    onPress={() => navigation.navigate('CreateAccount')}
+                                >
+                                    Create now
+                                </Text>
+                            </Text>
+                        </LinearGradient>
+                    </ScrollView>
+                </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
         </ImageBackground>
     );
 }
+
+const styles = StyleSheet.create({
+    background: {
+        flex: 1,
+    },
+    scrollContainer: {
+        flexGrow: 1,
+    },
+    topImage: {
+        width: '100%',
+        height: 256,
+    },
+    card: {
+        marginTop: -55,
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        padding: 24,
+        paddingBottom: 40,
+        flex: 1,
+    },
+    logo: {
+        resizeMode: 'contain',
+        marginBottom: 12,
+        marginTop: 15,
+        alignSelf: 'center',
+    },
+    slogan: {
+        letterSpacing: 3,
+        textAlign: 'center',
+        color: 'white',
+        marginBottom: 16,
+        marginTop: 4,
+        fontFamily: 'Poppins',
+        lineHeight: 28,
+        fontSize: 14,
+    },
+    loginTitle: {
+        color: 'white',
+        textDecorationLine: 'underline',
+        fontSize: 14,
+        marginBottom: 8,
+        marginTop: 20,
+        fontFamily: 'Poppins',
+    },
+    label: {
+        color: 'white',
+        fontSize: 16,
+        fontFamily: 'Poppins',
+        fontWeight: 'bold',
+        marginTop: 12,
+    },
+    input: {
+        backgroundColor: 'rgba(88,41,171,1)',
+        borderRadius: 6,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        color: 'white',
+        marginTop: 8,
+        fontFamily: 'Poppins',
+    },
+    passwordContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(88,41,171,1)',
+        borderRadius: 6,
+        paddingHorizontal: 16,
+        marginTop: 8,
+    },
+    passwordInput: {
+        flex: 1,
+        paddingVertical: 12,
+        color: 'white',
+        fontFamily: 'Poppins',
+    },
+    buttonGradient: {
+        borderRadius: 999,
+        width: 350,
+        height: 45,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 16,
+        marginTop: 40,
+        alignSelf: 'center',
+    },
+    buttonTouchable: {
+        width: '100%',
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 20,
+        fontWeight: 'bold',
+        fontFamily: 'Poppins',
+    },
+    footerText: {
+        textAlign: 'center',
+        color: 'white',
+        fontSize: 14,
+        fontFamily: 'Poppins',
+    },
+    footerLink: {
+        textDecorationLine: 'underline',
+    },
+});
