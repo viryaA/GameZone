@@ -27,7 +27,7 @@ export default function App() {
 
     return (
         <SafeAreaProvider onLayout={onLayoutRootView}>
-            <StatusBar style="light" />
+            <StatusBar style="light" backgroundColor="#000000" />
             <NavigationContainer>
                 <RootStack />
             </NavigationContainer>
