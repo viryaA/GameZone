@@ -1,12 +1,13 @@
 import { NavigationContainer } from '@react-navigation/native';
 import RootStack from './Navigation/RootStack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import Toast from 'react-native-toast-message';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useCallback } from 'react';
 import './global.css';
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
+import CustomToast from './CustomToast';
 
 // Optional: prevent splash screen from hiding before font is loaded
 SplashScreen.preventAutoHideAsync();
@@ -31,7 +32,13 @@ export default function App() {
             <NavigationContainer>
                 <RootStack />
             </NavigationContainer>
-            <Toast />
+            <Toast
+  config={{
+    success: (props) => <CustomToast {...props} type="success" />,
+    error: (props) => <CustomToast {...props} type="error" />,
+  }}
+/>
+
         </SafeAreaProvider>
     );
 }
