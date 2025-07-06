@@ -28,16 +28,16 @@ export default function App() {
 
     return (
         <SafeAreaProvider onLayout={onLayoutRootView}>
-            <StatusBar style="light" backgroundColor="#000000" />
+            <StatusBar style="light" />
             <NavigationContainer>
                 <RootStack />
             </NavigationContainer>
             <Toast
-  config={{
-    success: (props) => <CustomToast {...props} type="success" />,
-    error: (props) => <CustomToast {...props} type="error" />,
-  }}
-/>
+              config={{
+                success: (props) => <CustomToast {...props} type="success" />,
+                error: (props) => <CustomToast {...props} type="error" />,
+              }}
+            />
 
         </SafeAreaProvider>
     );

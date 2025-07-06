@@ -26,12 +26,9 @@ export default function SettingsStack() {
         >
             <Stack.Screen name="LoginMain" component={LoginHome} options={{ title: 'Login', headerShown: false }} />
             <Stack.Screen name="SettingsMain" component={SettingsScreen} options={{ title: 'Settings' }} />
-            <Stack.Screen name="LoginMain" component={LoginHome} options={{ title: 'Login', headerShown: false }} />
             <Stack.Screen name="RuanganMain" component={RoomHome} options={{ title: 'Ruangan' }} />
             <Stack.Screen name="CreateAccount" component={CreateAccount} options={{ title: 'Create Account', headerShown: false }} />
             <Stack.Screen name="FillAccount" component={FillAccount} options={{ headerShown: false }} />
-
-            <Stack.Screen name="Scan QR" component={ScanQRHome} options={{ title: 'Scan QR' }} />
             <Stack.Screen name="JenisPlayMain" component={JenisPlaystationHome} options={{
                 header: (props) => <MasterlHeader {...props}  />,
                 title: 'Jenis Playstation' }} />

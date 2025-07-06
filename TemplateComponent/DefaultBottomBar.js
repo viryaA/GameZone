@@ -45,7 +45,6 @@ export default function DefaultBottomBar() {
 const styles = StyleSheet.create({
   container: {
     paddingTop: 15,
-    paddingBottom: 24,
     paddingHorizontal: 24,
     borderTopWidth: 1,
     backgroundColor: 'rgba(59, 5, 122, 1)',

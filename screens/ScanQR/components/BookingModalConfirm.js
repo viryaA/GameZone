@@ -1,5 +1,15 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Dimensions, ActivityIndicator, Pressable, ScrollView } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    Dimensions,
+    ActivityIndicator,
+    Pressable,
+    ScrollView,
+    Animated,
+    PanResponder,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Constants from 'expo-constants';
 import Toast from 'react-native-toast-message';
@@ -11,6 +21,39 @@ const apiUrl = Constants.expoConfig.extra.API_URL;
 export default function BookingModalConfirm({ visible, onClose, data, onConfirm }) {
     const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
+
+    const translateY = useRef(new Animated.Value(0)).current;
+
+    const panResponder = useRef(
+        PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
+            onMoveShouldSetPanResponder: (_, gestureState) => gestureState.dy > 0,
+            onPanResponderMove: (_, gestureState) => {
+                if (gestureState.dy >= 0) {
+                    translateY.setValue(gestureState.dy);
+                }
+            },
+            onPanResponderRelease: (_, gestureState) => {
+                if (gestureState.dy > 100) {
+                    // Slide down and close
+                    Animated.timing(translateY, {
+                        toValue: height,
+                        duration: 200,
+                        useNativeDriver: true,
+                    }).start(() => {
+                        translateY.setValue(0); // reset for next time
+                        onClose();
+                    });
+                } else {
+                    // Slide back to position
+                    Animated.spring(translateY, {
+                        toValue: 0,
+                        useNativeDriver: true,
+                    }).start();
+                }
+            },
+        })
+    ).current;
 
     const handleConfirmCheckIn = async () => {
         setLoading(true);
@@ -60,15 +103,23 @@ export default function BookingModalConfirm({ visible, onClose, data, onConfirm 
             {/* Backdrop */}
             <Pressable className="absolute inset-0 bg-black/50" onPress={onClose} />
 
-            {/* Modal content */}
-            <View className="max-h-[85%] rounded-t-2xl overflow-hidden">
+            {/* Modal content with animation */}
+            <Animated.View
+                className="max-h-[85%] rounded-t-2xl overflow-hidden"
+                style={{
+                    transform: [{ translateY }],
+                }}
+                {...panResponder.panHandlers}
+            >
                 <LinearGradient
                     colors={['#742FEA', '#40128B']}
                     className="p-5 pb-10"
                 >
                     <ScrollView showsVerticalScrollIndicator={false}>
-                        {/* Handle */}
-                        <View className="w-20 h-1.5 bg-white rounded-full self-center mb-4" />
+                        {/* Drag Handle */}
+                        <View className="w-full items-center mb-4">
+                            <View className="w-20 h-1.5 bg-white rounded-full" />
+                        </View>
 
                         {/* Room Title */}
                         <Text className="text-white text-center text-xl font-bold mb-5">Room VIP 1</Text>
@@ -76,7 +127,7 @@ export default function BookingModalConfirm({ visible, onClose, data, onConfirm 
                         {/* Customer Info */}
                         <View className="bg-purple-700/60 rounded-xl p-4 mb-3">
                             <Text className="text-white font-semibold text-sm mb-1">Customer Info</Text>
-                            <Text className="text-white text-base">{data.user?.usr_username} - {data.user?.usr_email}</Text>
+                            <Text className="text-white text-base">{data.user?.usr_nama} - {data.user?.usr_email}</Text>
                         </View>
 
                         {/* Play Date & Time */}
@@ -133,7 +184,7 @@ export default function BookingModalConfirm({ visible, onClose, data, onConfirm 
                         </TouchableOpacity>
                     </ScrollView>
                 </LinearGradient>
-            </View>
+            </Animated.View>
         </View>
     );
 }
