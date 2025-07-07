@@ -74,6 +74,7 @@ export default function JenisPlaystationHome() {
         fetchData();
     }, []);
 
+
     const handleEdit = (item) => {
         setSelectedItem(item);
         setIsEdit(true);

@@ -3,10 +3,11 @@ import SettingsScreen from '../screens/SettingsScreen'
 import JenisPlaystationHome from "../screens/JenisPlayStation/JenisPlaystationHome";
 import RentalHome from '../screens/Rental/RentalHome';
 import "../global.css"
-import SelectLocationScreen from '../screens/Rental/components/SelectLocationScreen';
-import RentalModal from '../screens/Rental/components/RentalModal';
+// import SelectLocationScreen from '../screens/Rental/components/SelectLocationScreen';
+// import RentalModal from '../screens/Rental/components/RentalModal';
 import MasterlHeader from "../Header/MasterlHeader";
 import UserHome from "../screens/User/UserHome";
+import DetailRentalHome from '../screens/DetailRentail/DetailRentalHome';
 
 const Stack = createNativeStackNavigator()
 
@@ -22,7 +23,8 @@ export default function SettingsStack() {
                 component={RentalHome}
                 options={{
                     header: (props) => <MasterlHeader {...props}  />,
-                    title: 'Rental'
+                    title: 'Rental',
+                    headerShown: false,
                 }}
             />
             <Stack.Screen
@@ -33,8 +35,16 @@ export default function SettingsStack() {
                     title: 'User'
                 }}
             />
-            <Stack.Screen name="SelectLocationScreen" component={SelectLocationScreen} />
-            <Stack.Screen name="RentalModal" component={RentalModal} />
+            <Stack.Screen
+                name="DetailRental"
+                component={DetailRentalHome}
+                options={{
+                    title: 'DetailRental Home',
+                    headerShown: false,
+                }}
+            />
+            {/* <Stack.Screen name="SelectLocationScreen" component={SelectLocationScreen} /> */}
+            {/* <Stack.Screen name="RentalModal" component={RentalModal} /> */}
         </Stack.Navigator>
     )
 }

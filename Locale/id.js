@@ -38,5 +38,10 @@ export default {
     inactive: "Tidak Aktif",
     action: "Action",
     edit: "Ubah",
+    pricePst: "Harga / Jam",
+    searchKota: "Cari Kota...",
+    rtlNama: "Nama Rental",
+    selectCity: "Pilih Kota",
+    pstMerk: "Playstation Merk"
 };
 
