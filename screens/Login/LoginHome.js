@@ -18,14 +18,41 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Constants from 'expo-constants';
 import { useNavigation } from '@react-navigation/native';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect } from 'react';
+
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
+
 
 export default function LoginHome() {
     const navigation = useNavigation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+
+    useEffect(() => {
+        const checkLoginStatus = async () => {
+            const userData = await AsyncStorage.getItem('userData');
+            const loginTime = await AsyncStorage.getItem('loginTime');
+
+            if (userData && loginTime) {
+                const now = new Date();
+                const savedTime = new Date(loginTime);
+                const daysDiff = (now - savedTime) / (1000 * 60 * 60 * 24);
+
+                if (daysDiff < 3) {
+                    navigation.replace('Home');
+                } else {
+                    // Sudah lebih dari 3 hari, hapus data login
+                    await AsyncStorage.removeItem('userData');
+                    await AsyncStorage.removeItem('loginTime');
+                }
+            }
+        };
+
+        checkLoginStatus();
+    }, []);
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -52,13 +79,16 @@ export default function LoginHome() {
             const result = await response.json();
 
             if (result.result === 1) {
+                await AsyncStorage.setItem('userData', JSON.stringify(result.data));
+                await AsyncStorage.setItem('loginTime', new Date().toISOString());
+
                 Toast.show({
                     type: 'success',
                     text1: 'Login berhasil!',
                     text2: `Selamat datang, ${result.data.usr_nama || 'user'}!`,
                 });
-                // Arahkan ke halaman utama kalau login sukses
-                // navigation.navigate('Home'); // contoh
+
+                navigation.navigate('Home'); 
             } else {
                 Toast.show({
                     type: 'error',
@@ -124,7 +154,7 @@ export default function LoginHome() {
                                 style={styles.input}
                                 value={email}
                                 onChangeText={setEmail}
-                                fontSize={12}
+                                fontSize={14}
                             />
 
                             <Text style={[styles.label, { marginTop: 16 }]}>Password</Text>
@@ -136,7 +166,7 @@ export default function LoginHome() {
                                     style={styles.passwordInput}
                                     value={password}
                                     onChangeText={setPassword}
-                                    fontSize={12}
+                                    fontSize={14}
                                 />
                                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                                     <Ionicons
@@ -146,6 +176,15 @@ export default function LoginHome() {
                                     />
                                 </TouchableOpacity>
                             </View>
+
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate('ForgotPasswordEmail')}
+                                style={{ alignSelf: 'flex-end', marginTop: 5 }}
+                            >
+                                <Text style={{ color: '#ccc', fontSize: 12, fontFamily: 'Poppins', textDecorationLine: 'underline' }}>
+                                    Forgot Password?
+                                </Text>
+                            </TouchableOpacity>
 
                             <LinearGradient
                                 colors={['rgba(38,59,129,1)', 'rgb(141, 100, 229)']}
@@ -219,7 +258,7 @@ const styles = StyleSheet.create({
         textDecorationLine: 'underline',
         fontSize: 14,
         marginBottom: 8,
-        marginTop: 20,
+        marginTop: 7,
         fontFamily: 'Poppins',
     },
     label: {
@@ -259,7 +298,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 16,
-        marginTop: 40,
+        marginTop: 30,
         alignSelf: 'center',
     },
     buttonTouchable: {

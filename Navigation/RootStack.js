@@ -43,8 +43,8 @@ export default function RootStack() {
             ) : (
                 <>
                     <Stack.Screen name="SettingsStack" component={SettingsStack} options={{ headerShown: false }} />
-                    <Stack.Screen name="Home" component={HomeScreen} />
-                    <Stack.Screen name="Profile" component={ProfileScreen} />
+                    <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/>
+                    <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="SelectLocation" component={SelectLocationScreen} />
                 </>
             )}

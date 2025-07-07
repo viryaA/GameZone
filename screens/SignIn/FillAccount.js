@@ -5,9 +5,10 @@ import {
   TouchableOpacity,
   Image,
   ImageBackground,
-  ScrollView,
   StyleSheet,
+  Keyboard,
   Platform,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, { useState } from 'react';
 import { Ionicons, Feather } from '@expo/vector-icons';
@@ -19,16 +20,14 @@ import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Constants from 'expo-constants';
 import { Asset } from 'expo-asset';
-
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
 
 export default function FillAccount() {
   const navigation = useNavigation();
   const route = useRoute();
-  // const { usr_id } = route.params;
   const usr_id = 24;
-  console.log('User ID:', usr_id);
 
   const [profileImage, setProfileImage] = useState(null);
   const [fullName, setFullName] = useState('');
@@ -36,7 +35,6 @@ export default function FillAccount() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [gender, setGender] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-
 
   const handleImagePick = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -51,109 +49,101 @@ export default function FillAccount() {
   };
 
   const handleDone = async () => {
-  if (!fullName || !birth || !gender || !phoneNumber) {
-    return Toast.show({
-      type: 'error',
-      text1: 'Input required',
-      text2: 'Semua field wajib diisi.',
-    });
-  }
+    if (!fullName || !birth || !gender || !phoneNumber) {
+      return Toast.show({
+        type: 'error',
+        text1: 'Input required',
+        text2: 'Semua field wajib diisi.',
+      });
+    }
 
-  const phoneRegex = /^(\+62|62|0)8[1-9][0-9]{7,10}$/;
-  const digitsOnly = phoneNumber.replace(/\D/g, '');
+    const phoneRegex = /^(\+62|62|0)8[1-9][0-9]{7,10}$/;
+    const digitsOnly = phoneNumber.replace(/\D/g, '');
 
-  if (digitsOnly.length < 10 || digitsOnly.length > 14) {
-    return Toast.show({
-      type: 'error',
-      text1: 'Invalid phone number',
-      text2: 'Phone number must be between 10 and 14 digits.',
-    });
-  }
+    if (digitsOnly.length < 10 || digitsOnly.length > 14) {
+      return Toast.show({
+        type: 'error',
+        text1: 'Invalid phone number',
+        text2: 'Phone number must be between 10 and 14 digits.',
+      });
+    }
 
-  try {
-    await uploadAccountData(); // Panggil API
-    Toast.show({
-      type: 'success',
-      text1: 'Data berhasil disimpan!',
-    });
-
-    navigation.navigate('Home');
-  } catch (error) {
-    console.error(error);
-    Toast.show({
-      type: 'error',
-      text1: 'Gagal menyimpan data!',
-      text2: 'Silakan coba lagi.',
-    });
-  }
-};
-
-const uploadAccountData = async () => {
-  const formData = new FormData();
-
-  const userData = {
-    usr_id: usr_id,
-    usr_nama: fullName,
-    usr_tgl_lahir: birth.toISOString().split('T')[0],
-    usr_gender: gender,
-    usr_no_telp: phoneNumber,
+    try {
+      await uploadAccountData();
+      Toast.show({
+        type: 'success',
+        text1: 'Data berhasil disimpan!',
+      });
+      navigation.navigate('Home');
+    } catch (error) {
+      console.error(error);
+      Toast.show({
+        type: 'error',
+        text1: 'Gagal menyimpan data!',
+        text2: 'Silakan coba lagi.',
+      });
+    }
   };
 
-  formData.append('user', JSON.stringify(userData));
+  const uploadAccountData = async () => {
+    const formData = new FormData();
 
-  // Handle foto profil dari aset (require) maupun dari file picker
-  if (profileImage) {
-    let imageUri = profileImage;
-    let imageName = 'profile.jpg';
-    let imageType = 'image/jpeg';
+    const userData = {
+      usr_id: usr_id,
+      usr_nama: fullName,
+      usr_tgl_lahir: birth.toISOString().split('T')[0],
+      usr_gender: gender,
+      usr_no_telp: phoneNumber,
+    };
 
-    // Cek apakah itu dari asset lokal (require)
-    if (!profileImage.startsWith('file://')) {
-      const matchingAsset = defaultProfileImages.find(
-        img => Image.resolveAssetSource(img).uri === profileImage
-      );
-      if (matchingAsset) {
-        const assetObj = Asset.fromModule(matchingAsset);
-        await assetObj.downloadAsync();
-        imageUri = assetObj.localUri || assetObj.uri;
+    formData.append('user', JSON.stringify(userData));
+
+    if (profileImage) {
+      let imageUri = profileImage;
+      let imageName = 'profile.jpg';
+      let imageType = 'image/jpeg';
+
+      if (!profileImage.startsWith('file://')) {
+        const matchingAsset = defaultProfileImages.find(
+          img => Image.resolveAssetSource(img).uri === profileImage
+        );
+        if (matchingAsset) {
+          const assetObj = Asset.fromModule(matchingAsset);
+          await assetObj.downloadAsync();
+          imageUri = assetObj.localUri || assetObj.uri;
+        }
       }
+
+      if (imageUri.startsWith('file://')) {
+        const fileName = imageUri.split('/').pop();
+        const fileType = fileName.split('.').pop();
+        imageName = fileName;
+        imageType = `image/${fileType}`;
+      }
+
+      formData.append('fotoProfile', {
+        uri: imageUri,
+        type: imageType,
+        name: imageName,
+      });
     }
 
-    // Ambil nama & tipe file jika dari picker
-    if (imageUri.startsWith('file://')) {
-      const fileName = imageUri.split('/').pop();
-      const fileType = fileName.split('.').pop();
-      imageName = fileName;
-      imageType = `image/${fileType}`;
-    }
-
-    formData.append('fotoProfile', {
-      uri: imageUri,
-      type: imageType,
-      name: imageName,
+    const response = await fetch(`${apiUrl}/MsUser`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      body: formData,
     });
-  }
 
-  console.log('PUT to:', `${apiUrl}/MsUser`);
-  console.log('Payload:', userData);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log('Error response:', errorData);
+      throw new Error(errorData.message || 'Gagal update user.');
+    }
 
-  const response = await fetch(`${apiUrl}/MsUser`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-    body: formData,
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    console.log('Error response:', errorData);
-    throw new Error(errorData.message || 'Gagal update user.');
-  }
-
-  return await response.json(); 
-};
-
+    return await response.json();
+  };
 
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || birth;
@@ -170,136 +160,145 @@ const uploadAccountData = async () => {
   ];
 
   return (
-    <ImageBackground
-      source={require('../../assets/default-background.png')}
-      style={styles.background}
-      resizeMode="cover"
-    >
-      <View style={styles.stepIndicator}>
-        <View style={styles.activeStep} />
-        <View style={styles.activeStep} />
-      </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ImageBackground
+        source={require('../../assets/default-background.png')}
+        style={styles.background}
+        resizeMode="cover"
+      >
+        <View style={styles.stepIndicator}>
+          <View style={styles.activeStep} />
+          <View style={styles.activeStep} />
+        </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <LinearGradient
-          colors={['rgba(58,5,121,255)', 'rgba(66, 4, 137, 0)']}
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 1.5 }}
-          style={styles.card}
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.scrollContainer}
+          enableOnAndroid
+          extraScrollHeight={Platform.OS === 'android' ? 100 : 60}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.navigate('LoginMain')}>
-              <Ionicons name="arrow-back" size={24} color="white" style={styles.backIcon} />
-            </TouchableOpacity>
-            <Text style={styles.headerText}>Fill Account</Text>
-          </View>
-
-          {/* Profile Image */}
-          <View style={styles.imageContainer}>
-            <Image
-              source={
-                profileImage
-                  ? { uri: profileImage }
-                  : require('../../assets/user-icon.png')
-              }
-              style={styles.profileImage}
-            />
-            <TouchableOpacity style={styles.cameraIcon} onPress={handleImagePick}>
-              <Feather name="camera" size={16} color="grey" />
-            </TouchableOpacity>
-          </View>
-
-          {/* Default Profile Options */}
-          <View style={styles.imageOptionsContainer}>
-            {defaultProfileImages.map((imgSrc, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => setProfileImage(Image.resolveAssetSource(imgSrc).uri)}
-              >
-                <Image source={imgSrc} style={styles.optionImage} />
+          <LinearGradient
+            colors={['rgba(58,5,121,255)', 'rgba(66, 4, 137, 0)']}
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 1.5 }}
+            style={styles.card}
+          >
+            <View style={styles.header}>
+              <TouchableOpacity onPress={() => navigation.navigate('LoginMain')}>
+                <Ionicons name="arrow-back" size={24} color="white" style={styles.backIcon} />
               </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* Full Name */}
-          <Text style={styles.label}>Full Name</Text>
-          <TextInput
-            placeholder="Enter your full name"
-            placeholderTextColor="white"
-            style={styles.input}
-            value={fullName}
-            onChangeText={setFullName}
-          />
-
-          {/* Birth & Gender */}
-          <View style={styles.row}>
-            <View style={styles.halfInput}>
-              <Text style={styles.label}>Birth</Text>
-              <TouchableOpacity
-                onPress={() => setShowDatePicker(true)}
-                style={[styles.input, styles.dateInput]}
-              >
-                <Ionicons name="calendar" size={18} color="white" style={styles.calendarIcon} />
-                <Text style={styles.dateText}>{birth.toISOString().split('T')[0]}</Text>
-              </TouchableOpacity>
-              {showDatePicker && (
-                <DateTimePicker
-                  value={birth}
-                  mode="date"
-                  display="default"
-                  onChange={onChangeDate}
-                  maximumDate={new Date()}
-                />
-              )}
+              <Text style={styles.headerText}>Fill Account</Text>
             </View>
 
-            <View style={styles.halfInput}>
-              <Text style={styles.label}>Gender</Text>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={gender}
-                  onValueChange={(value) => setGender(value)}
-                  dropdownIconColor="white"
-                  style={styles.picker}
+            {/* Profile Image */}
+            <View style={styles.imageContainer}>
+              <Image
+                source={
+                  profileImage
+                    ? { uri: profileImage }
+                    : require('../../assets/user-icon.png')
+                }
+                style={styles.profileImage}
+              />
+              <TouchableOpacity style={styles.cameraIcon} onPress={handleImagePick}>
+                <Feather name="camera" size={16} color="grey" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Default Profile Options */}
+            <View style={styles.imageOptionsContainer}>
+              {defaultProfileImages.map((imgSrc, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => setProfileImage(Image.resolveAssetSource(imgSrc).uri)}
                 >
-                  <Picker.Item label="Female" value="Female" />
-                  <Picker.Item label="Male" value="Male" />
-                </Picker>
+                  <Image source={imgSrc} style={styles.optionImage} />
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            {/* Full Name */}
+            <Text style={styles.label}>Full Name</Text>
+            <TextInput
+              placeholder="Enter your full name"
+              placeholderTextColor="white"
+              style={styles.input}
+              value={fullName}
+              onChangeText={setFullName}
+            />
+
+            {/* Birth & Gender */}
+            <View style={styles.row}>
+              <View style={styles.halfInput}>
+                <Text style={styles.label}>Birth</Text>
+                <TouchableOpacity
+                  onPress={() => setShowDatePicker(true)}
+                  style={[styles.input, styles.dateInput]}
+                >
+                  <Ionicons name="calendar" size={18} color="white" style={styles.calendarIcon} />
+                  <Text style={styles.dateText}>{birth.toISOString().split('T')[0]}</Text>
+                </TouchableOpacity>
+                {showDatePicker && (
+                  <DateTimePicker
+                    value={birth}
+                    mode="date"
+                    display="default"
+                    onChange={onChangeDate}
+                    maximumDate={new Date()}
+                  />
+                )}
+              </View>
+
+              <View style={styles.halfInput}>
+                <Text style={styles.label}>Gender</Text>
+                <View style={styles.pickerContainer}>
+                  <Picker
+                    selectedValue={gender}
+                    onValueChange={(value) => setGender(value)}
+                    dropdownIconColor="white"
+                    style={styles.picker}
+                    mode="dropdown"
+                  >
+                    <Picker.Item label="Female" value="Female" />
+                    <Picker.Item label="Male" value="Male" />
+                  </Picker>
+                </View>
               </View>
             </View>
-          </View>
 
-          {/* Phone Number */}
-          <Text style={styles.label}>Phone Number</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="0882 1041 4425"
-            placeholderTextColor="white"
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-            keyboardType="phone-pad"
-          />
+            {/* Phone Number */}
+            <Text style={styles.label}>Phone Number</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="0882 1041 4425"
+              placeholderTextColor="white"
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+              keyboardType="phone-pad"
+            />
 
-          {/* Done Button */}
-          <LinearGradient
-            colors={['rgba(38,59,129,1)', 'rgb(141, 100, 229)']}
-            start={{ x: 0.5, y: 0 }}
-            end={{ x: 0.5, y: 1 }}
-            style={styles.button}
-          >
-            <TouchableOpacity onPress={handleDone} activeOpacity={0.8} style={styles.buttonTouchable}>
-              <Text style={styles.buttonText}>Done</Text>
-            </TouchableOpacity>
-          </LinearGradient>
+            {/* Done Button */}
+            <LinearGradient
+              colors={['rgba(38,59,129,1)', 'rgb(141, 100, 229)']}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1 }}
+              style={styles.button}
+            >
+              <TouchableOpacity onPress={handleDone} activeOpacity={0.8} style={styles.buttonTouchable}>
+                <Text style={styles.buttonText}>Done</Text>
+              </TouchableOpacity>
+            </LinearGradient>
 
-          <Text style={styles.footerText}>
-            <Text style={styles.footerLink} onPress={() => navigation.navigate('Home')}>
-              Skip for now
+            <Text style={styles.footerText}>
+              <Text style={styles.footerLink} onPress={() => navigation.navigate('Home')}>
+                Skip for now
+              </Text>
             </Text>
-          </Text>
-        </LinearGradient>
-      </ScrollView>
-    </ImageBackground>
+          </LinearGradient>
+        </KeyboardAwareScrollView>
+      </ImageBackground>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -322,7 +321,9 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     marginRight: 6,
   },
-  scrollContainer: { flexGrow: 1 },
+  scrollContainer: {
+    paddingBottom: 100,
+  },
   card: {
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
@@ -358,6 +359,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: 'Poppins',
     height: 55,
+    fontSize: 14,
   },
   row: {
     flexDirection: 'row',
@@ -418,6 +420,7 @@ const styles = StyleSheet.create({
   picker: {
     color: 'white',
     height: 55,
+    fontSize: 14,
     fontFamily: 'Poppins',
   },
   dateInput: {
@@ -430,6 +433,7 @@ const styles = StyleSheet.create({
   },
   dateText: {
     color: 'white',
+    fontSize: 14,
     fontFamily: 'Poppins',
   },
   imageOptionsContainer: {

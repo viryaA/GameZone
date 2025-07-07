@@ -213,15 +213,13 @@ export default function CreateAccount() {
                 ))}
               </View>
 
-<Text style={styles.passwordHint}>
-  {password.length > 0 && passwordStrength < 3 || password.length == 0
-    ? 'Use at least 6 characters, including uppercase letters and numbers or symbols, to make your password strong.'
-    : password.length > 0 && passwordStrength === 3
-    ? 'Your password is strong.'
-    : ''}
-</Text>
-
-
+              <Text style={styles.passwordHint}>
+                {password.length > 0 && passwordStrength < 3 || password.length == 0
+                  ? 'Use at least 6 characters, including uppercase letters and numbers or symbols, to make your password strong.'
+                  : password.length > 0 && passwordStrength === 3
+                  ? 'Your password is strong.'
+                  : ''}
+              </Text>
 
               {/* Confirm Password */}
               <Text style={styles.label}>Confirm Password</Text>
@@ -327,6 +325,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     marginTop: 8,
     color: 'white',
+    fontSize: 14,
     fontFamily: 'Poppins',
   },
   passwordInput: {
@@ -342,6 +341,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     color: 'white',
     fontFamily: 'Poppins',
+    fontSize: 14,
   },
   strengthContainer: {
     flexDirection: 'row',
