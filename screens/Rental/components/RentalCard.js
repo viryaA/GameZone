@@ -1,34 +1,49 @@
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from 'expo-linear-gradient'; 
+
 
 const RentalCard = ({ item, handleDetailLoc }) => {
   return (
-    <TouchableOpacity
-      onPress={() => {
-        handleDetailLoc(item);
-      }}
-      activeOpacity={0.8}
-      className="mx-4 mb-4 px-4 py-3 flex-row items-center justify-between"
+    <LinearGradient
+      colors={['rgb(96, 57, 200)', 'rgb(7, 22, 79)']} 
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
       style={{
-        backgroundColor: "#3d1d80",
-        borderRadius: 16, // lebih membulat dari rounded-xl
+        borderRadius: 16,
+        marginHorizontal: 16,
       }}
     >
-      {/* Kiri: Icon + Teks */}
-      <View className="flex-row items-center space-x-3">
-        <Image
-          source={require("../../../assets/icon-gamepad.png")}
-          style={{ width: 30, height: 30 }}
-          resizeMode="contain"
-        />
-        <Text className="text-white font-semibold text-sm ml-3">
-          {item.rtl_nama}
-        </Text>
-      </View>
+      <TouchableOpacity
+        onPress={() => {
+          handleDetailLoc(item);
+        }}
+        activeOpacity={0.8}
+        style={{
+          borderRadius: 16,
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        {/* Kiri: Icon + Teks */}
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Image
+            source={require("../../../assets/icon-gamepad.png")}
+            style={{ width: 35, height: 35 }}
+            resizeMode="contain"
+          />
+          <Text style={{ color: 'white', fontWeight: '600', fontSize: 16, marginLeft: 16 }}>
+            {item.rtl_nama}
+          </Text>
+        </View>
 
-      {/* Kanan: Panah */}
-      <Ionicons name="chevron-forward" size={20} color="white" />
-    </TouchableOpacity>
+        {/* Kanan: Panah */}
+        <Ionicons name="chevron-forward" size={25} color="white" />
+      </TouchableOpacity>
+    </LinearGradient>
   );
 };
 

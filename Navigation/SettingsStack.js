@@ -28,6 +28,16 @@ export default function SettingsStack() {
                 headerShown: false,
             }}
         >
+
+            <Stack.Screen
+                name="RentalMain"
+                component={RentalHome}
+                options={{
+                    header: (props) => <MasterlHeader {...props}  />,
+                    title: 'Rental',
+                    headerShown: false,
+                }}
+            />
             <Stack.Screen name="LoginMain" component={LoginHome} options={{ title: 'Login', headerShown: false }} />
             <Stack.Screen name="SettingsMain" component={SettingsScreen} options={{ title: 'Settings' }} />
             <Stack.Screen name="RuanganMain" component={RoomHome} options={{ title: 'Ruangan' }} />
@@ -40,15 +50,6 @@ export default function SettingsStack() {
             <Stack.Screen name="JenisPlayMain" component={JenisPlaystationHome} options={{
                 header: (props) => <MasterlHeader {...props}  />,
                 title: 'Jenis Playstation' }} />
-            <Stack.Screen
-                name="RentalMain"
-                component={RentalHome}
-                options={{
-                    header: (props) => <MasterlHeader {...props}  />,
-                    title: 'Rental',
-                    headerShown: false,
-                }}
-            />
             <Stack.Screen
                 name="UserMain"
                 component={UserHome}
