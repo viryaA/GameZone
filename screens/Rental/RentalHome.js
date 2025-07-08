@@ -25,7 +25,7 @@ import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
 
 // Component Template
-import ScreenWithBottomBar from "../../TemplateComponent/ScreenWithBottomBar";
+import ScreenUserWithBottomBar from "../../TemplateComponent/ScreenUserWithBottomBar";
 
 // Locale & Constants
 import i18n from "../../Locale/i18n";
@@ -201,7 +201,7 @@ export default function RentalHome() {
 
   /** ----------- Render UI ------------ */
   return (
-    <ScreenWithBottomBar>
+    <ScreenUserWithBottomBar>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -364,7 +364,7 @@ export default function RentalHome() {
           </ImageBackground>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
-    </ScreenWithBottomBar>
+    </ScreenUserWithBottomBar>
   );
 }
 

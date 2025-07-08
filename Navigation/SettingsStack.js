@@ -1,12 +1,9 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import SettingsScreen from '../screens/SettingsScreen'
-import JenisPlaystationHome from "../screens/JenisPlayStation/JenisPlaystationHome";
 import RentalHome from '../screens/Rental/RentalHome';
 import "../global.css"
 // import SelectLocationScreen from '../screens/Rental/components/SelectLocationScreen';
 // import RentalModal from '../screens/Rental/components/RentalModal';
 import MasterlHeader from "../Header/MasterlHeader";
-import UserHome from "../screens/User/UserHome";
 import RoomHome from "../screens/Room/RoomHome";
 import LoginHome from "../screens/Login/LoginHome";
 import CreateAccount from '../screens/SignIn/CreateAccount';
@@ -39,25 +36,14 @@ export default function SettingsStack() {
                 }}
             />
             <Stack.Screen name="LoginMain" component={LoginHome} options={{ title: 'Login', headerShown: false }} />
-            <Stack.Screen name="SettingsMain" component={SettingsScreen} options={{ title: 'Settings' }} />
             <Stack.Screen name="RuanganMain" component={RoomHome} options={{ title: 'Ruangan' }} />
+            
             <Stack.Screen name="CreateAccount" component={CreateAccount} options={{ title: 'Create Account', headerShown: false }} />
             <Stack.Screen name="ForgotPasswordEmail" component={ForgotPasswordEmail} options={{ title: 'Forgot Password', headerShown: false }}/>
             <Stack.Screen name="ForgotPasswordNewPass" component={ForgotPasswordNewPass} options={{ title: 'Forgot Password', headerShown: false }}/>
             <Stack.Screen name="ForgotPasswordToken" component={ForgotPasswordToken} options={{ title: 'Forgot Password', headerShown: false }}/>
-
             <Stack.Screen name="FillAccount" component={FillAccount} options={{ headerShown: false }} />
-            <Stack.Screen name="JenisPlayMain" component={JenisPlaystationHome} options={{
-                header: (props) => <MasterlHeader {...props}  />,
-                title: 'Jenis Playstation' }} />
-            <Stack.Screen
-                name="UserMain"
-                component={UserHome}
-                options={{
-                    header: (props) => <MasterlHeader {...props}  />,
-                    title: 'User'
-                }}
-            />
+
             <Stack.Screen
                 name="DetailRental"
                 component={DetailRentalHome}

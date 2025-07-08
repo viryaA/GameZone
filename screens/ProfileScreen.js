@@ -15,6 +15,7 @@ import { Ionicons, Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
+import ScreenUserWithBottomBar from '../TemplateComponent/ScreenUserWithBottomBar';
 import ScreenAdminWithBottomBar from '../TemplateComponent/ScreenAdminWithBottomBar';
 import { Asset } from 'expo-asset';
 import { Image as ImgResolve } from 'react-native';
@@ -216,7 +217,7 @@ export default function ProfileScreen() {
       style={styles.background}
       resizeMode="cover"
     >
-      <ScreenAdminWithBottomBar>
+      <ScreenUserWithBottomBar>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{ flex: 1 }}
@@ -351,7 +352,7 @@ export default function ProfileScreen() {
         </ScrollView>
         </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
-      </ScreenAdminWithBottomBar>
+      </ScreenUserWithBottomBar>
     </ImageBackground>
   );
 }
