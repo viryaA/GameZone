@@ -4,8 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import i18n from '../../../Locale/i18n';
 
 const sortOptions = [
-    { key: 'rtl_nama', label: i18n.t('rtlNama') },
-    { key: 'rtl_status', label: i18n.t('status') },
+    { key: 'pst_harga_per_jam', label: i18n.t('pricePst') },
+    { key: 'pst_status', label: i18n.t('status') },
 ];
 
 export default function BottomSortModal({ visible, onClose, sortBy, sortOrder, onSortChange }) {

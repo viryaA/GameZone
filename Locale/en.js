@@ -36,4 +36,9 @@ export default {
     deleteSuccess: "Delete Success",
     action: "Aksi",
     edit: "Edit",
+    searchKota: "Search City...",
+    rtlNama: "Rental Name",
+    pricePst: "Price / Hour",
+    selectCity: "Select City",
+    pstMerk: "Playstation Merk"
 };

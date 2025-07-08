@@ -10,44 +10,36 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
 } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { BlurView } from 'expo-blur';
 import { useState, useEffect } from 'react';
 import i18n from '../../../Locale/i18n';
 import "../../../global.css";
-import * as Location from 'expo-location';
-import { useNavigation, useRoute } from '@react-navigation/native';
 
-export default function RentalModal({ visible, onClose, onSave, item, deleteItem, onDeleteConfirm,onDeleteCancel }) {
+export default function PlaystationModal({ visible, onClose, onSave, item, deleteItem, onDeleteConfirm,onDeleteCancel }) {
     const [showYearPicker, setShowYearPicker] = useState(false);
     const [form, setForm] = useState({
-        rtl_nama: '',
-        rtl_alamat: '',
-        rtl_latitude: '',
-        rtl_longitude: '',
-        rtl_status: 'Aktif',
+        jps_id: '',
+        jps_tahun_rilis: '',
+        pst_serial_number: '',
+        pst_merk: '',
+        pst_harga_per_jam: 0,
+        rtl_id: 'Aktif',
     });
 
     const [errors, setErrors] = useState({});
-    const route = useRoute();
-    const navigation = useNavigation();
-
-    useEffect(() => {
-    if (route.params?.latitude && route.params?.longitude) {
-      handleChange('rtl_latitude', route.params.latitude);
-      handleChange('rtl_longitude', route.params.longitude);
-    }
-  }, [route.params]);
 
     useEffect(() => {
         if (item) {
             setForm(item);
         } else {
             setForm({
-                rtl_nama: '',
-                rtl_alamat: '',
-                rtl_latitude: '',
-                rtl_longitude: '',
-                rtl_status: 'Aktif',
+                jps_id: '',
+                jps_tahun_rilis: '',
+                pst_serial_number: '',
+                pst_merk: '',
+                pst_harga_per_jam: 0,
+                rtl_id: 'Aktif',
             });
         }
         setErrors({});
@@ -60,27 +52,14 @@ export default function RentalModal({ visible, onClose, onSave, item, deleteItem
 
     const validateForm = () => {
         const newErrors = {};
-        if (!form.rtl_nama.trim()) newErrors.rtl_nama = i18n.t('form_required');
-        if (!form.rtl_alamat) newErrors.rtl_alamat = i18n.t('form_required');
-        if (!form.rtl_latitude) newErrors.rtl_latitude = i18n.t('form_required');
-        if (!form.rtl_longitude.trim()) newErrors.rtl_longitude = i18n.t('form_required');
+        if (!form.jps_id.trim()) newErrors.jps_id = i18n.t('formRequired');
+        if (!form.jps_tahun_rilis) newErrors.jps_tahun_rilis = i18n.t('formRequired');
+        if (!form.pst_serial_number) newErrors.pst_serial_number = i18n.t('formRequired');
+        if (!form.pst_merk.trim()) newErrors.pst_merk = i18n.t('formRequired');
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
-
-    const getLocation = async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-            alert('Permission to access location was denied');
-            return;
-        }
-
-        let location = await Location.getCurrentPositionAsync({});
-        handleChange('rtl_latitude', location.coords.latitude);
-        handleChange('rtl_longitude', location.coords.longitude);
-    };
-
 
     if(!!deleteItem){
         return (
@@ -93,11 +72,11 @@ export default function RentalModal({ visible, onClose, onSave, item, deleteItem
                 <TouchableWithoutFeedback onPress={onDeleteCancel}>
                     <View className="flex-1 bg-black/50 justify-center items-center">
                         <View className="bg-white p-6 rounded-xl w-11/12">
-                            <Text className="text-lg font-semibold text-red-700 mb-2">
-                                {i18n.t("delete_title_jps")}
+                            <Text className="text-xl font-bold mb-4 text-[#004080]">
+                                {i18n.t("jpsDeleteTitle")}
                             </Text>
                             <Text className="text-center text-gray-700 mb-4">
-                                {i18n.t("delete_confirm_jps", { name: deleteItem?.rtl_nama })}
+                                {i18n.t("jpsDeleteConfirm", { name: deleteItem?.jps_id })}
                             </Text>
                             <View className="flex-row mt-4">
                                 <TouchableOpacity
@@ -149,55 +128,76 @@ export default function RentalModal({ visible, onClose, onSave, item, deleteItem
                         <TouchableWithoutFeedback onPress={() => { }}>
                             <View className="bg-white p-6 rounded-xl shadow-lg">
                                 <Text className="text-xl font-bold mb-4 text-[#004080]">
-                                    {item ? i18n.t('title_add_rental') : i18n.t('title_add_rental')}
+                                    {item ? i18n.t('jpsEditTitle') : i18n.t('jpsAddTitle')}
                                 </Text>
 
                                 {/* Nama */}
-                                <Text className="font-medium mb-1">{i18n.t('nama')}</Text>
+                                <Text className="font-medium mb-1">{i18n.t('name')}</Text>
                                 <TextInput
-                                    placeholder={i18n.t('nama')}
-                                    value={form.rtl_nama}
-                                    onChangeText={(text) => handleChange('rtl_nama', text)}
-                                    className={`border rounded-lg p-2 mb-2 ${errors.rtl_nama ? 'border-red-500' : 'border-gray-300'}`}
+                                    placeholder={i18n.t('name')}
+                                    value={form.jps_id}
+                                    onChangeText={(text) => handleChange('jps_id', text)}
+                                    className={`border rounded-lg p-2 mb-2 ${errors.jps_id ? 'border-red-500' : 'border-gray-300'}`}
                                 />
-                                {errors.rtl_nama && <Text className="text-red-500 mb-2">{errors.rtl_nama}</Text>}
+                                {errors.jps_id && <Text className="text-red-500 mb-2">{errors.jps_id}</Text>}
 
-                                {/* Alamat */}
-                                <Text className="font-medium mb-1">{i18n.t('alamat')}</Text>
-                                <TextInput
-                                    placeholder={i18n.t('alamat')}
-                                    value={form.rtl_alamat}
-                                    onChangeText={(text) => handleChange('rtl_alamat', parseInt(text) || '')}
-                                    className={`border rounded-lg p-2 mb-2 ${errors.rtl_alamat ? 'border-red-500' : 'border-gray-300'}`}
-                                />
-                                {errors.rtl_alamat && <Text className="text-red-500 mb-2">{errors.rtl_alamat}</Text>}
-
-                                {/* latitude */}
-                                <Text className="font-medium mb-1">{i18n.t('deskripsi')}</Text>
-                                <TextInput
-                                    placeholder={i18n.t('deskripsi')}
-                                    value={form.rtl_latitude?.toString()}
-                                    onChangeText={(text) => handleChange('rtl_latitude', parseInt(text) || '')}
-                                    className={`border rounded-lg p-2 mb-2 ${errors.rtl_latitude ? 'border-red-500' : 'border-gray-300'}`}
-                                />
-                                {errors.rtl_latitude && <Text className="text-red-500 mb-2">{errors.rtl_latitude}</Text>}
-
-                                {/* longitude */}
-                                <Text className="font-medium mb-1">{i18n.t('deskripsi')}</Text>
-                                <TextInput
-                                    placeholder={i18n.t('deskripsi')}
-                                    value={form.rtl_longitude?.toString()}
-                                    onChangeText={(text) => handleChange('rtl_longitude', parseInt(text) || '')}
-                                    className={`border rounded-lg p-2 mb-2 ${errors.rtl_longitude ? 'border-red-500' : 'border-gray-300'}`}
-                                />
-                                {errors.rtl_longitude && <Text className="text-red-500 mb-2">{errors.rtl_longitude}</Text>}
-
+                                {/* Tahun */}
+                                <Text className="font-medium mb-1">{i18n.t('releaseYear')}</Text>
                                 <TouchableOpacity
-                                onPress={() => navigation.navigate('SelectLocationScreen')}
-                                className="mt-2 bg-[#004080] py-2 px-4 rounded-xl items-center"
+                                    onPress={() => setShowYearPicker(true)}
+                                    className={`border rounded-lg p-2 mb-2 ${errors.jps_tahun_rilis ? 'border-red-500' : 'border-gray-300'}`}
                                 >
-                                    <Text className="text-white font-poppins">Pilih Lokasi dari Peta</Text>
+                                    <Text>{form.jps_tahun_rilis || i18n.t('releaseYear')}</Text>
                                 </TouchableOpacity>
+                                {errors.jps_tahun_rilis && <Text className="text-red-500 mb-2">{errors.jps_tahun_rilis}</Text>}
+
+                                {showYearPicker && (
+                                    <DateTimePicker
+                                        value={form.jps_tahun_rilis ? new Date(form.jps_tahun_rilis, 0) : new Date()}
+                                        mode="date"
+                                        display="spinner"
+                                        onChange={(event, selectedDate) => {
+                                            setShowYearPicker(false);
+                                            if (selectedDate) {
+                                                const selectedYear = selectedDate.getFullYear().toString();
+                                                handleChange('jps_tahun_rilis', selectedYear);
+                                            }
+                                        }}
+                                    />
+                                )}
+
+                                {/* Pemain */}
+                                <Text className="font-medium mb-1">{i18n.t('playerCount')}</Text>
+                                <TextInput
+                                    placeholder={i18n.t('playerCount')}
+                                    keyboardType="numeric"
+                                    value={form.pst_serial_number?.toString()}
+                                    onChangeText={(text) => handleChange('pst_serial_number', parseInt(text) || '')}
+                                    className={`border rounded-lg p-2 mb-2 ${errors.pst_serial_number ? 'border-red-500' : 'border-gray-300'}`}
+                                />
+                                {errors.pst_serial_number && <Text className="text-red-500 mb-2">{errors.pst_serial_number}</Text>}
+
+                                {/* Deskripsi */}
+                                <Text className="font-medium mb-1">{i18n.t('description')}</Text>
+                                <TextInput
+                                    placeholder={i18n.t('description')}
+                                    value={form.pst_merk}
+                                    onChangeText={(text) => handleChange('pst_merk', text)}
+                                    className={`border rounded-lg p-2 mb-2 ${errors.pst_merk ? 'border-red-500' : 'border-gray-300'}`}
+                                />
+                                {errors.pst_merk && <Text className="text-red-500 mb-2">{errors.pst_merk}</Text>}
+
+                                {/* Status */}
+                                <Text className="font-medium mb-1">Status</Text>
+                                <View className="border border-gray-300 rounded-lg mb-4">
+                                    <Picker
+                                        selectedValue={form.rtl_id}
+                                        onValueChange={(val) => handleChange('rtl_id', val)}
+                                    >
+                                        <Picker.Item label="Aktif" value="Aktif" />
+                                        <Picker.Item label="Tidak Aktif" value="Tidak Aktif" />
+                                    </Picker>
+                                </View>
 
                                 <View className="flex-row mt-6">
                                     <TouchableOpacity
@@ -211,7 +211,7 @@ export default function RentalModal({ visible, onClose, onSave, item, deleteItem
                                             elevation: 3,
                                         }}
                                     >
-                                        <Text className="text-gray-800 font-semibold text-base">{i18n.t('batal')}</Text>
+                                        <Text className="text-gray-800 font-semibold text-base">{i18n.t('cancel')}</Text>
                                     </TouchableOpacity>
 
                                     <TouchableOpacity
@@ -220,9 +220,9 @@ export default function RentalModal({ visible, onClose, onSave, item, deleteItem
                                                 onSave(form);
                                             }
                                         }}
-                                        disabled={!form.rtl_nama || !form.rtl_alamat || !form.rtl_latitude || !form.rtl_longitude}
+                                        disabled={!form.jps_id || !form.jps_tahun_rilis || !form.pst_serial_number || !form.pst_merk}
                                         className={`flex-1 ml-2 py-3 rounded-xl items-center shadow ${
-                                            form.rtl_nama && form.rtl_alamat && form.rtl_latitude && form.rtl_longitude
+                                            form.jps_id && form.jps_tahun_rilis && form.pst_serial_number && form.pst_merk
                                                 ? 'bg-[#004080]'
                                                 : 'bg-[#004080]'
                                         }`}

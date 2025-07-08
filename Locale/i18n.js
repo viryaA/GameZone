@@ -11,7 +11,7 @@ const i18n = new I18n({
 });
 
 i18n.locale = getLocales()[0].languageCode;
-console.log(i18n.locale);
+// console.log(i18n.locale);
 i18n.fallbacks = true;
 
 export default i18n;

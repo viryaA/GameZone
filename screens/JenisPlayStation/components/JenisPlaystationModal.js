@@ -180,7 +180,7 @@ export default function JenisPlaystationModal({ visible, onClose, onSave, item, 
                                 <TextInput
                                     placeholder={i18n.t('description')}
                                     value={form.jps_deskripsi}
-                                    onChangeText={(text) => handleChange('description', text)}
+                                    onChangeText={(text) => handleChange('jps_deskripsi', text)}
                                     className={`border rounded-lg p-2 mb-2 ${errors.jps_deskripsi ? 'border-red-500' : 'border-gray-300'}`}
                                 />
                                 {errors.jps_deskripsi && <Text className="text-red-500 mb-2">{errors.jps_deskripsi}</Text>}

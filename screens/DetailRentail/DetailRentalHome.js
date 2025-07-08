@@ -5,12 +5,12 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   TextInput,
-  Animated,
   Dimensions,
 } from "react-native";
 import { useEffect, useState, useRef } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
+import PlaystationModal from "./components/PlaystationModal";
 import Toast from "react-native-toast-message";
 import i18n from "../../Locale/i18n";
 import "../../global.css";
@@ -20,21 +20,18 @@ import { COLOR_PRIMARY } from "../../Locale/constant";
 import SearchSortFilterBar from "../../TemplateComponent/SearchSortFilterBar";
 import { Image } from "react-native";
 import { ImageBackground } from "react-native";
-import RentalCard from "./components/RentalCard";
-import jenisPlaystationModal from "../JenisPlayStation/components/JenisPlaystationModal";
+import LocationCard from "./components/PlayStationCard";
 import { useNavigation } from "@react-navigation/native";
-import JenisPlaystationModal from "../JenisPlayStation/components/JenisPlaystationModal";
-import FilterKota from "./components/FilterKota";
-import * as Location from "expo-location";
-import { DAFTAR_KOTA } from "../../Locale/constant";
+import { useRoute } from "@react-navigation/native";
+import MapView, { Marker } from "react-native-maps";
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
 
 const { width } = Dimensions.get("window");
-const screenWidth = Dimensions.get("window").width;
 
-export default function RentalHome() {
-  const scrollX = useRef(new Animated.Value(0)).current;
+export default function DetailRentalHome() {
+  // Navigation
+  const navigation = useNavigation();
 
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -42,7 +39,7 @@ export default function RentalHome() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [deleteItem, setDeleteItem] = useState(null);
   const [sortBy, setSortBy] = useState(null); // e.g. 'jps_nama'
   const [sortOrder, setSortOrder] = useState("asc"); // or 'desc'
@@ -52,65 +49,18 @@ export default function RentalHome() {
   const [selectedPrice, setSelectedPrice] = useState("All");
   const [selectedJenisPlay, setselectedJenisPlay] = useState("All");
   const [menuItem, setMenuItem] = useState(null);
-  const [selectedKota, setSelectedKota] = useState(null);
 
   // TAB Promotion
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  //Navigation
-  const navigation = useNavigation();
-
-  useEffect(() => {
-    const getUserLocation = async () => {
-      setLoading(true);
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          console.warn("Izin lokasi ditolak.");
-          return;
-        }
-
-        const location = await Location.getCurrentPositionAsync({});
-        console.log("Koordinat lokasi:", location.coords);
-
-        const reverseGeocode = await Location.reverseGeocodeAsync(
-          location.coords
-        );
-        console.log("Hasil reverse geocode:", reverseGeocode);
-
-        if (reverseGeocode.length > 0) {
-          const data = reverseGeocode[0];
-
-          // Ambil kota dari city, subregion, atau region
-          const userCity = data.subregion;
-
-          console.log("Kota hasil deteksi:", userCity);
-
-          const kotaDitemukan = DAFTAR_KOTA.find((kota) =>
-            userCity.toLowerCase().includes(kota.nama.toLowerCase())
-          );
-
-          if (kotaDitemukan) {
-            setSelectedKota(kotaDitemukan);
-            setLoading(false);
-          } else {
-            console.warn("Kota tidak ditemukan di daftar.");
-            setLoading(false);
-          }
-        }
-      } catch (error) {
-        console.error("Gagal mendapatkan lokasi:", error);
-        setLoading(false);
-      }
-    };
-
-    getUserLocation();
-    fetchData();
-  }, []);
+  // PARAMS
+  const route = useRoute();
+  const { item } = route.params;
 
   const fetchData = () => {
-    fetch(`${apiUrl}/MsRental`)
+    setLoading(true);
+    fetch(`${apiUrl}/MsRuangan`)
       .then((res) => res.json())
       .then((json) => {
         let initialData = Array.isArray(json)
@@ -119,24 +69,21 @@ export default function RentalHome() {
             ? json.data
             : [];
 
-        // If not sorting by status, filter to only 'Aktif'
-        if (sortBy !== "rtl_status") {
-          initialData = initialData.filter(
-            (item) => item.rtl_status === "Aktif"
-          );
-        }
+        // Filter hanya data ruangan yang memiliki rental dan cocok dengan ID rental yang sedang aktif (misal item.rtl_id)
+        const filteredData = json.filter((x) => x.rental.rtl_id === item.rtl_id);
 
-        // Filter kota berdasarkan selectedKota.nama
-        if (selectedKota && selectedKota.nama) {
-          initialData = json.filter((item) =>
-            item.rtl_kota
-              ?.toLowerCase()
-              .includes(selectedKota.nama.toLowerCase())
-          );
-        }
+        // Jika bukan sorting berdasarkan status, hanya ambil yang Aktif
+        const visibleData =
+          sortBy !== "rng_status"
+            ? filteredData.filter((item) => item.rng_status === "Aktif")
+            : filteredData;
 
-        setData(initialData);
+        console.log("visiblde", json.filter((x) => x.rental.rtl_id === 3));
+        console.log("rtl_id", item.rtl_id);
+
+        setData(visibleData);
         applySort(initialData, sortBy, sortOrder);
+        setLoading(false);
       })
       .catch((err) => {
         console.error(err);
@@ -145,16 +92,16 @@ export default function RentalHome() {
           text1: i18n.t("failed"),
           text2: i18n.t("errorMessage"),
         });
+        setLoading(false);
       });
   };
+
   useEffect(() => {
-    if (selectedKota) {
-      fetchData();
-    }
-  }, [selectedKota]);
+    fetchData();
+  }, []);
 
   const handleDetailLoc = (item) => {
-    navigation.navigate("DetailRental", { item });
+    setSelectedItem(item);
   };
 
   const handleAdd = () => {
@@ -163,7 +110,64 @@ export default function RentalHome() {
     setModalVisible(true);
   };
 
-  const applyAll = (baseData, searchQuery, status, sortKey, sortOrder) => {
+  const handleSave = (item) => {
+    const method = isEdit ? "PUT" : "POST";
+    fetch(`${apiUrl}/MsPlaystation`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(item),
+    })
+      .then((res) => res.json())
+      .then((resJson) => {
+        Toast.show({
+          type: resJson.result === 1 ? "success" : "error",
+          text1: resJson.result === 1 ? i18n.t("success") : i18n.t("failed"),
+          text2: resJson.message,
+        });
+        setModalVisible(false);
+        fetchData();
+      })
+      .catch((error) => {
+        console.error("Save error", error);
+        Toast.show({
+          type: "error",
+          text1: i18n.t("failed"),
+          text2: i18n.t("errorMessage"),
+        });
+        setModalVisible(false);
+      });
+  };
+
+  const confirmDelete = () => {
+    if (!deleteItem) return;
+    fetch(`${apiUrl}/MsPlaystation/${deleteItem.pst_id}`, { method: "DELETE" })
+      .then((res) => res.json())
+      .then(() => {
+        Toast.show({
+          type: "success",
+          text1: i18n.t("success"),
+          text2: i18n.t("deleteSuccess"),
+        });
+        fetchData();
+      })
+      .catch(() => {
+        Toast.show({
+          type: "error",
+          text1: i18n.t("failed"),
+          text2: i18n.t("errorMessage"),
+        });
+      })
+      .finally(() => setDeleteItem(null));
+  };
+
+  const applyAll = (
+    baseData,
+    searchQuery,
+    status,
+    Price,
+    sortKey,
+    sortOrder
+  ) => {
     let filtered = [...baseData];
 
     // Apply filter
@@ -257,29 +261,6 @@ export default function RentalHome() {
     setSelectedStatus(status);
   };
 
-  const banners = [
-    require("../../assets/Banner1.png"),
-    require("../../assets/Banner2.png"),
-    require("../../assets/Banner1.png"),
-  ];
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const nextIndex = (currentIndex + 1) % banners.length;
-      flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
-      setCurrentIndex(nextIndex);
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [currentIndex]);
-
-  // Untuk update current index saat user swipe manual
-  const onScroll = (e) => {
-    const scrollX = e.nativeEvent.contentOffset.x;
-    const index = Math.round(scrollX / (width - 64)); // 64 = mx-4 left & right
-    setCurrentIndex(index);
-  };
-
   return (
     <ImageBackground
       source={require("../../assets/background-hal.png")} // ← Ganti dengan path ke gambar lokal kamu
@@ -289,30 +270,23 @@ export default function RentalHome() {
       <View className="flex-1 bg-black/40">
         {/* Optional: overlay agar isi tetap kontras */}
         {/* App Bar */}
-        <View className="flex-row mb-2 justify-between items-center px-4 pt-12 pb-4">
-          <TouchableOpacity
-            onPress={handleAdd}
-            className="flex-row items-center bg-[#3A217C] px-3 py-2 rounded-full"
-          >
-            <Ionicons name="location-outline" size={18} color="#fff" />
-            <Text className="text-white ml-2">
-              {selectedKota !== null ? selectedKota?.nama : "Location"}
-            </Text>
-            <Ionicons
-              name="chevron-down"
-              size={16}
-              color="#fff"
-              className="ml-1"
-            />
-          </TouchableOpacity>
+        <View className="pt-12 pb-4 mb-2 px-4">
+          <View className="relative items-center justify-center">
+            {/* Tombol Back */}
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              className="absolute left-0 w-9 h-9 rounded-full bg-white/20 justify-center items-center"
+            >
+              <Ionicons name="chevron-back" size={20} color="white" />
+            </TouchableOpacity>
 
-          <TouchableOpacity>
-            <Image
-              source={{ uri: "https://i.pravatar.cc/300" }}
-              className="w-10 h-10 rounded-full"
-            />
-          </TouchableOpacity>
+            {/* Title di Tengah */}
+            <Text className="text-white font-semibold text-base">
+              {item.rtl_nama}
+            </Text>
+          </View>
         </View>
+
         {/* Search Bar */}
         <View className="flex-row items-center px-4 mb-4">
           <View className="flex-1 h-12">
@@ -346,85 +320,60 @@ export default function RentalHome() {
             </ImageBackground>
           </TouchableOpacity>
         </View>
-        {/* Banner Promo */}
-        <View className="mx-4 mb-4 mt-4">
-          <Animated.FlatList
-            ref={flatListRef}
-            data={banners}
-            horizontal
-            pagingEnabled
-            keyExtractor={(_, index) => index.toString()}
-            showsHorizontalScrollIndicator={false}
-            onScroll={Animated.event(
-              [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-              { useNativeDriver: false }
-            )}
-            renderItem={({ item }) => (
-              <Image
-                source={item}
-                style={{
-                  width: screenWidth,
-                  // height: 200,
-                  borderRadius: 12,
-                }}
-                resizeMode="contain"
-              />
-            )}
-          />
 
-          <View className="flex-row justify-center space-x-2 mt-2">
-            {banners.map((_, index) => {
-              const inputRange = [
-                (index - 1) * screenWidth,
-                index * screenWidth,
-                (index + 1) * screenWidth,
-              ];
+        <View className="mx-4 mb-4 mt-4 rounded-2xl overflow-hidden">
+          {/* Peta */}
+          <MapView
+            style={{ width: "100%", height: 200 }}
+            initialRegion={{
+              latitude: item.rtl_latitude,
+              longitude: item.rtl_longitude,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
+            }}
+            scrollEnabled={true}
+            zoomEnabled={true}
+          >
+            <Marker
+              coordinate={{
+                latitude: item.rtl_latitude,
+                longitude: item.rtl_longitude,
+              }}
+              title={item.rtl_nama}
+              description={item.rtl_alamat}
+            />
+          </MapView>
 
-              const dotWidth = scrollX.interpolate({
-                inputRange,
-                outputRange: [30, 50, 30],
-                extrapolate: "clamp",
-              });
-
-              const opacity = scrollX.interpolate({
-                inputRange,
-                outputRange: [0.5, 1, 0.5],
-                extrapolate: "clamp",
-              });
-
-              return (
-                <Animated.View
-                  key={index}
-                  style={{
-                    width: dotWidth,
-                    height: 8,
-                    borderRadius: 999,
-                    backgroundColor: "#3A217C",
-                    marginHorizontal: 4,
-                    opacity,
-                  }}
-                />
-              );
-            })}
+          {/* Alamat */}
+          <View className="bg-[#3A217C] px-4 py-3 flex-row items-start space-x-2">
+            <Ionicons
+              name="location-outline"
+              size={18}
+              color="#fff"
+              className="mt-1"
+            />
+            <Text className="text-white ml-4 text-xs leading-5 flex-1">
+              {item.rtl_alamat}
+            </Text>
           </View>
         </View>
+
         {/* List Lokasi Rental */}
-        {loading ? (
-          <View className="flex-1 justify-center items-center mt-10">
-            <ActivityIndicator size="large" color="green" />
-            <Text className="mt-4 text-gray-500">{i18n.t("loading")}</Text>
-          </View>
-        ) : (
-          <FlatList
-            data={filteredData.length > 0 ? filteredData : data}
-            keyExtractor={(item) => item.rtl_id.toString()}
-            renderItem={({ item }) => (
-              <RentalCard item={item} handleDetailLoc={handleDetailLoc} />
-            )}
-            contentContainerStyle={{ paddingBottom: 120 }}
-            className="px-4"
-          />
-        )}
+        <FlatList
+          data={data}
+          keyExtractor={(item) => item.rng_id.toString()}
+          renderItem={({ item }) => (
+            <LocationCard
+              item={item}
+              menuItem={menuItem}
+              setMenuItem={setMenuItem}
+              setDeleteItem={setDeleteItem}
+              handleDetailLoc={handleDetailLoc}
+            />
+          )}
+          contentContainerStyle={{ paddingBottom: 120 }}
+          className="px-4"
+        />
 
         {/* Bottom Navigation */}
         {/* <View className="absolute bottom-0 left-0 right-0 flex-row justify-around items-center bg-[#3A217C] py-3 rounded-t-xl">
@@ -442,17 +391,6 @@ export default function RentalHome() {
           </TouchableOpacity>
         </View> */}
 
-        <FilterKota
-          visible={modalVisible}
-          item={selectedItem}
-          onClose={() => setModalVisible(false)}
-          onSelectKota={(kota) => {
-            setSelectedKota(kota); // set kota manual
-            fetchData(); // panggil ulang fetch
-            setModalVisible(false);
-          }}
-        />
-
         <SortSelector
           visible={sortModalVisible}
           onClose={() => setSortModalVisible(false)}
@@ -461,11 +399,11 @@ export default function RentalHome() {
           onSortChange={(key, order) => {
             setSortBy(key);
             setSortOrder(order);
-            if (key === "rtl_status") {
+            if (key === "pst_status") {
               applySort(data, key, order);
             } else {
               const aktifOnly = data.filter(
-                (item) => item.rtl_status === "Aktif"
+                (item) => item.pst_status === "Aktif"
               );
               applySort(aktifOnly, key, order);
             }
