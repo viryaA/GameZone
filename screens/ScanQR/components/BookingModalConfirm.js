@@ -122,7 +122,7 @@ export default function BookingModalConfirm({ visible, onClose, data, onConfirm 
                         </View>
 
                         {/* Room Title */}
-                        <Text className="text-white text-center text-xl font-bold mb-5">Room VIP 1</Text>
+                        <Text className="text-white text-center text-xl font-bold mb-5">{data.ruangan?.rng_nama_ruangan}</Text>
 
                         {/* Customer Info */}
                         <View className="bg-purple-700/60 rounded-xl p-4 mb-3">
