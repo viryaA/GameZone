@@ -6,9 +6,9 @@ import {
   TouchableWithoutFeedback,
   TextInput,
 } from "react-native";
-import i18n from "../../../Locale/i18n";
+import i18n from "../../../../Locale/i18n";
 import { useState, useEffect } from "react";
-import { COLOR_PRIMARY } from "../../../Locale/constant";
+import { COLOR_PRIMARY } from "../../../../Locale/constant";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function FilterSelector({

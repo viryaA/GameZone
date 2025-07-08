@@ -25,11 +25,11 @@ import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
 
 // Component Template
-import ScreenUserWithBottomBar from "../../TemplateComponent/ScreenUserWithBottomBar";
+import ScreenPelangganWithBottomBar from "../../../TemplateComponent/ScreenPelangganWithBottomBar";
 
 // Locale & Constants
-import i18n from "../../Locale/i18n";
-import { DAFTAR_KOTA } from "../../Locale/constant";
+import i18n from "../../../Locale/i18n";
+import { DAFTAR_KOTA } from "../../../Locale/constant";
 
 // Components
 import SortSelector from "./components/SortSelector";
@@ -38,16 +38,16 @@ import FilterKota from "./components/FilterKota";
 import RentalCard from "./components/RentalCard";
 
 // Assets
-import "../../global.css";
+import "../../../global.css";
 
 const { width } = Dimensions.get("window");
 const screenWidth = width;
 const apiUrl = Constants.expoConfig.extra.API_URL;
 
 const bannerImages = [
-  require("../../assets/VIPRoom.png"),
-  require("../../assets/PrivateRoom.png"),
-  require("../../assets/RegularRoom.png"),
+  require("../../../assets/VIPRoom.png"),
+  require("../../../assets/PrivateRoom.png"),
+  require("../../../assets/RegularRoom.png"),
 ];
 
 export default function RentalHome() {
@@ -201,7 +201,7 @@ export default function RentalHome() {
 
   /** ----------- Render UI ------------ */
   return (
-    <ScreenUserWithBottomBar>
+    <ScreenPelangganWithBottomBar>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -209,7 +209,7 @@ export default function RentalHome() {
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ImageBackground
-            source={require("../../assets/default-background.png")}
+            source={require("../../../assets/default-background.png")}
             style={styles.background}
             resizeMode="cover"
           >
@@ -231,7 +231,7 @@ export default function RentalHome() {
               <View style={styles.searchRow}>
                 <View style={styles.searchBox}>
                   <ImageBackground
-                    source={require("../../assets/Search-Box.png")}
+                    source={require("../../../assets/Search-Box.png")}
                     style={styles.searchBackground}
                     imageStyle={styles.searchImage}
                     resizeMode="cover"
@@ -249,7 +249,7 @@ export default function RentalHome() {
 
                 <TouchableOpacity onPress={() => setSortModalVisible(true)}>
                   <ImageBackground
-                    source={require("../../assets/Bg.png")}
+                    source={require("../../../assets/Bg.png")}
                     style={styles.optionButton}
                     imageStyle={{ borderRadius: 12 }}
                   >
@@ -364,7 +364,7 @@ export default function RentalHome() {
           </ImageBackground>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
-    </ScreenUserWithBottomBar>
+    </ScreenPelangganWithBottomBar>
   );
 }
 

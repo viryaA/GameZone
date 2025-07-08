@@ -5,9 +5,9 @@ import * as ImagePicker from 'expo-image-picker'
 import Toast from 'react-native-toast-message';
 import { LinearGradient } from 'expo-linear-gradient'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import "../../global.css"
-import ScreenAdminWithBottomBar from "../../TemplateComponent/ScreenAdminWithBottomBar"
-import i18n from "../../Locale/i18n";
+import "../../../global.css"
+import ScreenAdminWithBottomBar from "../../../TemplateComponent/ScreenAdminWithBottomBar"
+import i18n from "../../../Locale/i18n";
 import BookingModalConfirm from "./components/BookingModalConfirm";
 
 import Constants from 'expo-constants';

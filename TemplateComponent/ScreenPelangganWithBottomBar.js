@@ -1,8 +1,8 @@
 import React from 'react';
 import { View } from 'react-native';
-import UserBottomBar from './UserBottomBar';
+import UserBottomBar from './PelangganBottomBar';
 
-export default function ScreenUserWithBottomBar({ children }) {
+export default function ScreenPelangganWithBottomBar({ children }) {
     return (
         <View className="flex-1">
             <View className="flex-1">{children}</View>

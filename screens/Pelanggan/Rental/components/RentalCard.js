@@ -31,7 +31,7 @@ const RentalCard = ({ item, handleDetailLoc }) => {
         {/* Kiri: Icon + Teks */}
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image
-            source={require("../../../assets/icon-gamepad.png")}
+            source={require("../../../../assets/icon-gamepad.png")}
             style={{ width: 35, height: 35 }}
             resizeMode="contain"
           />

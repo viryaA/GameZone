@@ -12,9 +12,9 @@ import {
 } from "react-native";
 import { BlurView } from "expo-blur";
 import { useState, useEffect } from "react";
-import { DAFTAR_KOTA } from "../../../Locale/constant";
-import i18n from "../../../Locale/i18n";
-import "../../../global.css";
+import { DAFTAR_KOTA } from "../../../../Locale/constant";
+import i18n from "../../../../Locale/i18n";
+import "../../../../global.css";
 
 export default function FilterKota({ visible, onClose, onSelectKota }) {
   const [search, setSearch] = useState("");

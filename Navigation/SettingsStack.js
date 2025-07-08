@@ -1,19 +1,16 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import RentalHome from '../screens/Rental/RentalHome';
+import RentalHome from '../screens/Pelanggan/Rental/RentalHome';
 import "../global.css"
 // import SelectLocationScreen from '../screens/Rental/components/SelectLocationScreen';
 // import RentalModal from '../screens/Rental/components/RentalModal';
 import MasterlHeader from "../Header/MasterlHeader";
-import RoomHome from "../screens/Room/RoomHome";
 import LoginHome from "../screens/Login/LoginHome";
 import CreateAccount from '../screens/SignIn/CreateAccount';
 import FillAccount from '../screens/SignIn/FillAccount';
 import ForgotPasswordToken from '../screens/Login/ForgotPasswordToken';
 import ForgotPasswordEmail from '../screens/Login/ForgotPasswordEmail';
 import ForgotPasswordNewPass from '../screens/Login/ForgotPasswordNewPass';
-import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
-import ScanQRHome from "../screens/ScanQR/ScanQRHome";
-import DetailRentalHome from "../screens/DetailRentail/DetailRentalHome";
+import DetailRentalHome from "../screens/Transaction/DetailRentail/DetailRentalHome";
 
 const Stack = createNativeStackNavigator()
 
@@ -36,8 +33,6 @@ export default function SettingsStack() {
                 }}
             />
             <Stack.Screen name="LoginMain" component={LoginHome} options={{ title: 'Login', headerShown: false }} />
-            <Stack.Screen name="RuanganMain" component={RoomHome} options={{ title: 'Ruangan' }} />
-            
             <Stack.Screen name="CreateAccount" component={CreateAccount} options={{ title: 'Create Account', headerShown: false }} />
             <Stack.Screen name="ForgotPasswordEmail" component={ForgotPasswordEmail} options={{ title: 'Forgot Password', headerShown: false }}/>
             <Stack.Screen name="ForgotPasswordNewPass" component={ForgotPasswordNewPass} options={{ title: 'Forgot Password', headerShown: false }}/>

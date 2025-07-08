@@ -7,7 +7,7 @@ const apiUrl = Constants.expoConfig.extra.API_URL;
 const RoomCard = ({ item, onPress }) => {
   const profileImageUri = item.rng_image
     ? { uri: `${apiUrl}/Images/Ruangan/${item.rng_image}` }
-    : require("../../../assets/icon-gamepad.png");
+    : require("../../../../assets/icon-gamepad.png");
 
   return (
     <TouchableOpacity

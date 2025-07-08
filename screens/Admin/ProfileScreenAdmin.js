@@ -15,8 +15,7 @@ import { Ionicons, Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
-import ScreenUserWithBottomBar from '../TemplateComponent/ScreenUserWithBottomBar';
-import ScreenAdminWithBottomBar from '../TemplateComponent/ScreenAdminWithBottomBar';
+import ScreenAdminWithBottomBar from '../../TemplateComponent/ScreenAdminWithBottomBar';
 import { Asset } from 'expo-asset';
 import { Image as ImgResolve } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -41,11 +40,11 @@ export default function ProfileScreen() {
   const usr_id = 20;
 
   const defaultProfileImages = [
-    require('../assets/profil/p1.jpg'),
-    require('../assets/profil/p2.jpg'),
-    require('../assets/profil/p3.jpg'),
-    require('../assets/profil/p4.jpg'),
-    require('../assets/profil/p5.jpg'),
+    require('../../assets/profil/p1.jpg'),
+    require('../../assets/profil/p2.jpg'),
+    require('../../assets/profil/p3.jpg'),
+    require('../../assets/profil/p4.jpg'),
+    require('../../assets/profil/p5.jpg'),
   ];
 
   const formatDate = (date) => {
@@ -213,11 +212,11 @@ export default function ProfileScreen() {
   return (
     
     <ImageBackground
-      source={require('../assets/default-background.png')}
+      source={require('../../assets/default-background.png')}
       style={styles.background}
       resizeMode="cover"
     >
-      <ScreenUserWithBottomBar>
+      <ScreenAdminWithBottomBar>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{ flex: 1 }}
@@ -228,7 +227,7 @@ export default function ProfileScreen() {
           <View style={styles.imageContainer}>
             <View style={styles.profileWrapper}>
               <Image
-                source={profileImage ? { uri: profileImage } : require('../assets/user-icon.png')}
+                source={profileImage ? { uri: profileImage } : require('../../assets/user-icon.png')}
                 style={styles.profileImage}
               />
               <TouchableOpacity style={styles.cameraIcon} onPress={handleImagePick}>
@@ -352,7 +351,7 @@ export default function ProfileScreen() {
         </ScrollView>
         </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
-      </ScreenUserWithBottomBar>
+      </ScreenAdminWithBottomBar>
     </ImageBackground>
   );
 }

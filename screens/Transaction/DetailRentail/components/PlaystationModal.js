@@ -13,8 +13,8 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { BlurView } from 'expo-blur';
 import { useState, useEffect } from 'react';
-import i18n from '../../../Locale/i18n';
-import "../../../global.css";
+import i18n from '../../../../Locale/i18n';
+import "../../../../global.css";
 
 export default function PlaystationModal({ visible, onClose, onSave, item, deleteItem, onDeleteConfirm,onDeleteCancel }) {
     const [showYearPicker, setShowYearPicker] = useState(false);

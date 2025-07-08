@@ -9,12 +9,18 @@ export default function WellcomeScreen({ navigation }) {
     const checkFirstLaunch = async () => {
         const hasLaunched = await AsyncStorage.getItem('hasLaunched')
         if (hasLaunched) {
-            // Skip welcome and go to Settings
-            navigation.replace('SettingsStack')
+            navigation.navigate('LoginMain')
         } else {
             await AsyncStorage.setItem('hasLaunched', 'true')
         }
     }
+
+    useEffect(async () => {
+        const hasLaunched = await AsyncStorage.getItem('hasLaunched')
+        if (hasLaunched) {
+            navigation.navigate('LoginMain')
+        }
+    },[])
 
     return (
         <ImageBackground

@@ -32,8 +32,16 @@ export default function LoginHome() {
     const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
+        const state = navigation.getState();
+        console.log('Current Navigation State:', JSON.stringify(state, null, 2));
+    }, []);
+
+    useEffect(() => {
         const checkLoginStatus = async () => {
-            const userData = await AsyncStorage.getItem('userData');
+            // await AsyncStorage.removeItem('userData');
+            // await AsyncStorage.removeItem('loginTime');
+            const rawUserData = await AsyncStorage.getItem('userData');
+            const userData = rawUserData ? JSON.parse(rawUserData) : null;
             const loginTime = await AsyncStorage.getItem('loginTime');
 
             if (userData && loginTime) {
@@ -42,7 +50,9 @@ export default function LoginHome() {
                 const daysDiff = (now - savedTime) / (1000 * 60 * 60 * 24);
 
                 if (daysDiff < 3) {
-                    navigation.replace('Home');
+                    const navigatedd = userData?.usr_role;
+                    console.log(navigatedd);
+                    navigation.navigate(navigatedd);
                 } else {
                     // Sudah lebih dari 3 hari, hapus data login
                     await AsyncStorage.removeItem('userData');
@@ -81,14 +91,14 @@ export default function LoginHome() {
             if (result.result === 1) {
                 await AsyncStorage.setItem('userData', JSON.stringify(result.data));
                 await AsyncStorage.setItem('loginTime', new Date().toISOString());
-
                 Toast.show({
                     type: 'success',
                     text1: 'Login berhasil!',
                     text2: `Selamat datang, ${result.data.usr_nama || 'user'}!`,
                 });
 
-                navigation.navigate('Home'); 
+                navigation.navigate(result.data.usr_role);
+
             } else {
                 Toast.show({
                     type: 'error',

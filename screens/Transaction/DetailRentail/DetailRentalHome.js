@@ -12,12 +12,12 @@ import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import PlaystationModal from "./components/PlaystationModal";
 import Toast from "react-native-toast-message";
-import i18n from "../../Locale/i18n";
-import "../../global.css";
+import i18n from "../../../Locale/i18n";
+import "../../../global.css";
 import SortSelector from "./components/SortSelector";
 import FilterSelector from "./components/FilterSelector";
-import { COLOR_PRIMARY } from "../../Locale/constant";
-import SearchSortFilterBar from "../../TemplateComponent/SearchSortFilterBar";
+import { COLOR_PRIMARY } from "../../../Locale/constant";
+import SearchSortFilterBar from "../../../TemplateComponent/SearchSortFilterBar";
 import { Image } from "react-native";
 import { ImageBackground } from "react-native";
 import LocationCard from "./components/PlayStationCard";
@@ -263,7 +263,7 @@ export default function DetailRentalHome() {
 
   return (
     <ImageBackground
-      source={require("../../assets/background-hal.png")} // ← Ganti dengan path ke gambar lokal kamu
+      source={require("../../../assets/background-hal.png")} // ← Ganti dengan path ke gambar lokal kamu
       style={{ flex: 1 }}
       resizeMode="cover"
     >
@@ -291,7 +291,7 @@ export default function DetailRentalHome() {
         <View className="flex-row items-center px-4 mb-4">
           <View className="flex-1 h-12">
             <ImageBackground
-              source={require("../../assets/Search-Box.png")}
+              source={require("../../../assets/Search-Box.png")}
               resizeMode="cover"
               className="w-full h-full flex-row items-center pl-4 pr-4"
               imageStyle={{ borderRadius: 16 }}
@@ -310,7 +310,7 @@ export default function DetailRentalHome() {
 
           <TouchableOpacity onPress={() => setSortModalVisible(true)}>
             <ImageBackground
-              source={require("../../assets/Bg.png")}
+              source={require("../../../assets/Bg.png")}
               resizeMode="cover"
               className="w-16 h-12 justify-center items-center"
               imageStyle={{ borderRadius: 12 }}
