@@ -11,6 +11,9 @@ import RoomHome from "../screens/Room/RoomHome";
 import LoginHome from "../screens/Login/LoginHome";
 import CreateAccount from '../screens/SignIn/CreateAccount';
 import FillAccount from '../screens/SignIn/FillAccount';
+import ForgotPasswordToken from '../screens/Login/ForgotPasswordToken';
+import ForgotPasswordEmail from '../screens/Login/ForgotPasswordEmail';
+import ForgotPasswordNewPass from '../screens/Login/ForgotPasswordNewPass';
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 import ScanQRHome from "../screens/ScanQR/ScanQRHome";
 
@@ -28,6 +31,10 @@ export default function SettingsStack() {
             <Stack.Screen name="SettingsMain" component={SettingsScreen} options={{ title: 'Settings' }} />
             <Stack.Screen name="RuanganMain" component={RoomHome} options={{ title: 'Ruangan' }} />
             <Stack.Screen name="CreateAccount" component={CreateAccount} options={{ title: 'Create Account', headerShown: false }} />
+            <Stack.Screen name="ForgotPasswordEmail" component={ForgotPasswordEmail} options={{ title: 'Forgot Password', headerShown: false }}/>
+            <Stack.Screen name="ForgotPasswordNewPass" component={ForgotPasswordNewPass} options={{ title: 'Forgot Password', headerShown: false }}/>
+            <Stack.Screen name="ForgotPasswordToken" component={ForgotPasswordToken} options={{ title: 'Forgot Password', headerShown: false }}/>
+
             <Stack.Screen name="FillAccount" component={FillAccount} options={{ headerShown: false }} />
             <Stack.Screen name="JenisPlayMain" component={JenisPlaystationHome} options={{
                 header: (props) => <MasterlHeader {...props}  />,

@@ -2,10 +2,12 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function DefaultBottomBar() {
   const navigation = useNavigation();
   const route = useRoute();
+  const insets = useSafeAreaInsets(); 
 
     const tabs = [
         { name: 'Home', icon: 'home' },
@@ -15,7 +17,7 @@ export default function DefaultBottomBar() {
     ];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: insets.bottom}]}>
       <View style={styles.innerContainer}>
         {tabs.map(({ name, icon }) => {
           const isFocused = route.name === name;
@@ -64,7 +66,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 8,
-    marginBottom: 36,
     backgroundColor: 'rgba(88, 41, 171, 1)',
     borderRadius: 12,
   },
@@ -74,6 +75,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   icon: {
-    marginBottom: 36,
   },
 });
