@@ -71,7 +71,8 @@ export default function CreateAccount() {
     const userData = {
       usr_email: email,
       usr_password: password,
-      usr_nama: nama,
+      usr_username: nama,
+      usr_role: "Pelanggan"
     };
 
     formData.append('user', JSON.stringify(userData));

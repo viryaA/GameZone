@@ -27,7 +27,7 @@ const apiUrl = Constants.expoConfig.extra.API_URL;
 export default function FillAccount() {
   const navigation = useNavigation();
   const route = useRoute();
-  const usr_id = 24;
+  const { usr_id } = route.params;
 
   const [profileImage, setProfileImage] = useState(null);
   const [fullName, setFullName] = useState('');
@@ -95,6 +95,8 @@ export default function FillAccount() {
       usr_gender: gender,
       usr_no_telp: phoneNumber,
     };
+
+    console.log(userData);
 
     formData.append('user', JSON.stringify(userData));
 
