@@ -4,17 +4,16 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-export default function DefaultBottomBar() {
+export default function AdmintBottomBar() {
   const navigation = useNavigation();
   const route = useRoute();
-  const insets = useSafeAreaInsets(); 
+  const insets = useSafeAreaInsets();
 
-    const tabs = [
-        { name: 'Home', icon: 'home' },
-        { name: 'Scan', icon: 'qrcode' },
-        { name: 'History', icon: 'history' },
-        { name: 'Profile', icon: 'user' },
-    ];
+  const tabs = [
+    { name: 'Home', icon: 'home' },
+    { name: 'Bag', icon: 'shopping-bag' },
+    { name: 'Profile', icon: 'user' },
+  ];
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom}]}>

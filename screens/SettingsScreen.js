@@ -1,10 +1,10 @@
 import { View, Text, Button } from 'react-native';
 import "../global.css";
-import ScreenWithBottomBar from '../TemplateComponent/ScreenWithBottomBar';
+import ScreenAdminWithBottomBar from '../TemplateComponent/ScreenAdminWithBottomBar';
 
 export default function SettingsScreen({ navigation }) {
     return (
-        <ScreenWithBottomBar>
+        <ScreenAdminWithBottomBar>
             <View className="flex-1 items-center justify-center bg-white">
                 <Text className="text-xl font-bold text-green-900">⚙️ Settings Screen</Text>
                 <Button title="Go Back Home" onPress={() => navigation.navigate('Home')} />
@@ -13,6 +13,6 @@ export default function SettingsScreen({ navigation }) {
                 <Button title="Master User" onPress={() => navigation.navigate('UserMain')} />
                 <Button title="Ruangan" onPress={() => navigation.navigate('RuanganMain')} />
             </View>
-        </ScreenWithBottomBar>
+        </ScreenAdminWithBottomBar>
     );
 }

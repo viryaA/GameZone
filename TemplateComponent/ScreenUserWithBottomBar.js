@@ -1,12 +1,12 @@
 import React from 'react';
 import { View } from 'react-native';
-import DefaultBottomBar from './DefaultBottomBar';
+import UserBottomBar from './UserBottomBar';
 
-export default function ScreenWithBottomBar({ children }) {
+export default function ScreenAdminWithBottomBar({ children }) {
     return (
         <View className="flex-1">
             <View className="flex-1">{children}</View>
-            <DefaultBottomBar />
+            <UserBottomBar />
         </View>
     );
 }
