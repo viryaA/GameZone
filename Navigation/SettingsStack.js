@@ -16,6 +16,7 @@ import ForgotPasswordEmail from '../screens/Login/ForgotPasswordEmail';
 import ForgotPasswordNewPass from '../screens/Login/ForgotPasswordNewPass';
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 import ScanQRHome from "../screens/ScanQR/ScanQRHome";
+import DetailRentalHome from "../screens/DetailRentail/DetailRentalHome";
 
 const Stack = createNativeStackNavigator()
 

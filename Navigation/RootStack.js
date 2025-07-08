@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import HomeScreen from '../screens/HomeScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 import SettingsStack from './SettingsStack'
-import SelectLocationScreen from '../screens/Rental/components/SelectLocationScreen'
+// import SelectLocationScreen from '../screens/Rental/components/SelectLocationScreen'
 import WellcomeScreen from "../screens/WellcomeScreen"
 
 import { ActivityIndicator, View } from 'react-native'
@@ -47,7 +47,7 @@ export default function RootStack() {
                     <Stack.Screen name="Home" component={HomeScreen} />
                     <Stack.Screen name="Scan" component={ScanQRHome} options={{ headerShown: false }} />
                     <Stack.Screen name="Profile" component={ProfileScreen} />
-                    <Stack.Screen name="SelectLocation" component={SelectLocationScreen} />
+                    {/*<Stack.Screen name="SelectLocation" component={SelectLocationScreen} />*/}
                 </>
             )}
         </Stack.Navigator>
