@@ -280,21 +280,41 @@ export default function RentalHome() {
               {/* ---------- Banners ---------- */}
               <View style={styles.bannerContainer}>
                 <Animated.FlatList
-                  ref={flatListRef}
-                  data={bannerImages}
-                  horizontal
-                  pagingEnabled
-                  keyExtractor={(_, index) => index.toString()}
-                  showsHorizontalScrollIndicator={false}
-                  onScroll={Animated.event(
-                    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-                    { useNativeDriver: false }
-                  )}
-                  renderItem={({ item }) => (
-                    <View style={styles.bannerSlide}>
-                      <Image source={item} style={styles.bannerImage} resizeMode="contain" />
-                    </View>
-                  )}
+                    ref={flatListRef}
+                    data={banners}
+                    horizontal
+                    pagingEnabled
+                    keyExtractor={(_, index) => index.toString()}
+                    showsHorizontalScrollIndicator={false}
+                    onScroll={Animated.event(
+                        [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+                        { useNativeDriver: false }
+                    )}
+                    snapToInterval={screenWidth * 0.8 + 16}
+                    decelerationRate="fast"
+                    contentContainerStyle={{ paddingHorizontal: 0 }}
+                    renderItem={({ item }) => (
+                        <View
+                            style={{
+                              width: screenWidth * 0.8,
+                              height: 200,
+                              marginRight: 0,
+                              marginBottom: 12,
+                              borderRadius: 16,
+                              overflow: "hidden",
+                              // backgroundColor: "#f2f2f2", // fallback warna kalau image error
+                            }}
+                        >
+                          <Image
+                              source={item}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                              }}
+                              resizeMode="contain"
+                          />
+                        </View>
+                    )}
                 />
                 <View style={styles.dotsContainer}>
                   {bannerImages.map((_, index) => {
@@ -333,17 +353,28 @@ export default function RentalHome() {
                   <Text style={styles.loadingText}>{i18n.t("loading")}</Text>
                 </View>
               ) : (
-                <FlatList
-                  data={filteredData.length > 0 ? filteredData : data}
-                  keyExtractor={(item) => item.rtl_id.toString()}
-                  renderItem={({ item }) => (
-                    <RentalCard
-                      item={item}
-                      handleDetailLoc={() => navigation.navigate("DetailRental", { item })}
-                    />
-                  )}
-                  contentContainerStyle={{ paddingBottom: 120 }}
-                />
+                  <FlatList
+                      data={filteredData}
+                      keyExtractor={(item) => item.rtl_id.toString()}
+                      renderItem={({ item }) => (
+                          <RentalCard item={item} handleDetailLoc={handleDetailLoc} />
+                      )}
+                      ListEmptyComponent={() => (
+                          <View className="items-center justify-center mt-24 px-6">
+                            <Ionicons
+                                name="business-outline"
+                                size={72}
+                                color="#9CA3AF"
+                            />
+                            {/* abu-abu medium */}
+                            <Text className="text-gray-600 text-2xl font-bold mt-6 text-center">
+                              {i18n.t("rentalNull")}
+                            </Text>
+                          </View>
+                      )}
+                      contentContainerStyle={{ paddingBottom: 120 }}
+                      className="px-4"
+                  />
               )}
 
               {/* ---------- Modals ---------- */}
