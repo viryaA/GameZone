@@ -20,10 +20,10 @@ import { COLOR_PRIMARY } from "../../Locale/constant";
 import SearchSortFilterBar from "../../TemplateComponent/SearchSortFilterBar";
 import { Image } from "react-native";
 import { ImageBackground } from "react-native";
-import LocationCard from "./components/PlayStationCard";
 import { useNavigation } from "@react-navigation/native";
 import { useRoute } from "@react-navigation/native";
 import MapView, { Marker } from "react-native-maps";
+import RoomCard from "./components/RoomCard";
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
 
@@ -70,7 +70,9 @@ export default function DetailRentalHome() {
             : [];
 
         // Filter hanya data ruangan yang memiliki rental dan cocok dengan ID rental yang sedang aktif (misal item.rtl_id)
-        const filteredData = json.filter((x) => x.rental.rtl_id === item.rtl_id);
+        const filteredData = json.filter(
+          (x) => x.rental.rtl_id === item.rtl_id
+        );
 
         // Jika bukan sorting berdasarkan status, hanya ambil yang Aktif
         const visibleData =
@@ -78,7 +80,10 @@ export default function DetailRentalHome() {
             ? filteredData.filter((item) => item.rng_status === "Aktif")
             : filteredData;
 
-        console.log("visiblde", json.filter((x) => x.rental.rtl_id === 3));
+        console.log(
+          "visiblde",
+          json.filter((x) => x.rental.rtl_id === 3)
+        );
         console.log("rtl_id", item.rtl_id);
 
         setData(visibleData);
@@ -359,11 +364,12 @@ export default function DetailRentalHome() {
         </View>
 
         {/* List Lokasi Rental */}
+        {/* List Lokasi Rental */}
         <FlatList
           data={data}
           keyExtractor={(item) => item.rng_id.toString()}
           renderItem={({ item }) => (
-            <LocationCard
+            <RoomCard
               item={item}
               menuItem={menuItem}
               setMenuItem={setMenuItem}
@@ -371,7 +377,16 @@ export default function DetailRentalHome() {
               handleDetailLoc={handleDetailLoc}
             />
           )}
-          contentContainerStyle={{ paddingBottom: 120 }}
+          ListEmptyComponent={() => (
+            <View className="items-center justify-center mt-24 px-6">
+              <Ionicons name="game-controller-outline" size={72} color="#9CA3AF" />
+              {/* abu-abu medium */}
+              <Text className="text-gray-600 text-2xl font-bold mt-6 text-center">
+                {i18n.t("ruanganNull")}
+              </Text>
+            </View>
+          )}
+          contentContainerStyle={{ paddingBottom: 120, flexGrow: 1 }}
           className="px-4"
         />
 

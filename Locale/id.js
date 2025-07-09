@@ -42,6 +42,8 @@ export default {
     searchKota: "Cari Kota...",
     rtlNama: "Nama Rental",
     selectCity: "Pilih Kota",
-    pstMerk: "Playstation Merk"
+    pstMerk: "Playstation Merk",
+    rentalNull: "Maaf untuk sementara rental di daerah anda belum tersedia.",
+    ruanganNull: "Maaf untuk sementara ruangan di rental ini belum tersedia."
 };
 

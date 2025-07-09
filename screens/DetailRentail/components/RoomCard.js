@@ -5,9 +5,23 @@ import Constants from "expo-constants";
 const apiUrl = Constants.expoConfig.extra.API_URL;
 
 const RoomCard = ({ item, onPress }) => {
+  const localImageMap = {
+    VIP: require("../../../assets/VIPRoom.png"),
+    Private: require("../../../assets/PrivateRoom.png"),
+    Reguler: require("../../../assets/RegularRoom.png"),
+  };
+
+  // Tentukan tipe ruangan berdasarkan nama
+  let roomType = "Reguler"; // default
+  if (item.rng_nama_ruangan.includes("VIP")) {
+    roomType = "VIP";
+  } else if (item.rng_nama_ruangan.includes("Private")) {
+    roomType = "Private";
+  }
+
   const profileImageUri = item.rng_image
     ? { uri: `${apiUrl}/Images/Ruangan/${item.rng_image}` }
-    : require("../../../assets/icon-gamepad.png");
+    : localImageMap[roomType];
 
   return (
     <TouchableOpacity
@@ -27,7 +41,7 @@ const RoomCard = ({ item, onPress }) => {
       <View className="flex-1 px-3 justify-between">
         <View>
           <Text className="text-white font-semibold text-sm">
-            {item.rng_nama_ruangan || "VIP ROOM 1"}
+            {item.rng_nama_ruangan}
           </Text>
           <View className="flex-row items-center mt-1">
             <Ionicons name="star" size={14} color="#FFB400" />

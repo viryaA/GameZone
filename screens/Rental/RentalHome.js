@@ -258,9 +258,9 @@ export default function RentalHome() {
   };
 
   const banners = [
-    require("../../assets/Banner1.png"),
-    require("../../assets/Banner2.png"),
-    require("../../assets/Banner1.png"),
+    require("../../assets/VIPRoom.png"),
+    require("../../assets/PrivateRoom.png"),
+    require("../../assets/RegularRoom.png"),
   ];
 
   useEffect(() => {
@@ -359,16 +359,30 @@ export default function RentalHome() {
               [{ nativeEvent: { contentOffset: { x: scrollX } } }],
               { useNativeDriver: false }
             )}
+            snapToInterval={screenWidth * 0.8 + 16}
+            decelerationRate="fast"
+            contentContainerStyle={{ paddingHorizontal: 0 }}
             renderItem={({ item }) => (
-              <Image
-                source={item}
+              <View
                 style={{
-                  width: screenWidth,
-                  // height: 200,
-                  borderRadius: 12,
+                  width: screenWidth * 0.8,
+                  height: 200,
+                  marginRight: 0,
+                  marginBottom: 12,
+                  borderRadius: 16,
+                  overflow: "hidden",
+                  // backgroundColor: "#f2f2f2", // fallback warna kalau image error
                 }}
-                resizeMode="contain"
-              />
+              >
+                <Image
+                  source={item}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  resizeMode="contain"
+                />
+              </View>
             )}
           />
 
@@ -416,31 +430,28 @@ export default function RentalHome() {
           </View>
         ) : (
           <FlatList
-            data={filteredData.length > 0 ? filteredData : data}
+            data={filteredData}
             keyExtractor={(item) => item.rtl_id.toString()}
             renderItem={({ item }) => (
               <RentalCard item={item} handleDetailLoc={handleDetailLoc} />
+            )}
+            ListEmptyComponent={() => (
+              <View className="items-center justify-center mt-24 px-6">
+                <Ionicons
+                  name="business-outline"
+                  size={72}
+                  color="#9CA3AF"
+                />
+                {/* abu-abu medium */}
+                <Text className="text-gray-600 text-2xl font-bold mt-6 text-center">
+                  {i18n.t("rentalNull")}
+                </Text>
+              </View>
             )}
             contentContainerStyle={{ paddingBottom: 120 }}
             className="px-4"
           />
         )}
-
-        {/* Bottom Navigation */}
-        {/* <View className="absolute bottom-0 left-0 right-0 flex-row justify-around items-center bg-[#3A217C] py-3 rounded-t-xl">
-          <TouchableOpacity className="items-center">
-            <Ionicons name="home" size={24} color="white" />
-            <Text className="text-white text-xs">Home</Text>
-          </TouchableOpacity>
-          <TouchableOpacity className="items-center">
-            <Ionicons name="game-controller-outline" size={24} color="white" />
-            <Text className="text-white text-xs">Booking</Text>
-          </TouchableOpacity>
-          <TouchableOpacity className="items-center">
-            <Ionicons name="person-outline" size={24} color="white" />
-            <Text className="text-white text-xs">Profile</Text>
-          </TouchableOpacity>
-        </View> */}
 
         <FilterKota
           visible={modalVisible}

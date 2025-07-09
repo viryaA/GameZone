@@ -40,5 +40,7 @@ export default {
     rtlNama: "Rental Name",
     pricePst: "Price / Hour",
     selectCity: "Select City",
-    pstMerk: "Playstation Merk"
+    pstMerk: "Playstation Merk",
+    rentalNull: "Sorry, for the time being, rentals in your area are not yet available.",
+    ruanganNull: "Sorry, this rental room is currently unavailable."
 };
