@@ -23,8 +23,9 @@ import Constants from "expo-constants";
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
+import { useContext } from 'react';
+import { UserContext } from '../../../Konteks/UserContext';
 
-// Component Template
 import ScreenPelangganWithBottomBar from "../../../TemplateComponent/ScreenPelangganWithBottomBar";
 
 // Locale & Constants
@@ -51,6 +52,7 @@ const bannerImages = [
 ];
 
 export default function RentalHome() {
+  const { user } = useContext(UserContext);
   const navigation = useNavigation();
   const flatListRef = useRef(null);
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -74,6 +76,10 @@ export default function RentalHome() {
   const [filterModalVisible, setFilterModalVisible] = useState(false);
 
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+        console.log('User dari Context:', user);
+  }, []);
 
   /** ----------- Lifecycle: Get User Location ------------ */
   useEffect(() => {
@@ -222,10 +228,23 @@ export default function RentalHome() {
                   <Ionicons name="chevron-down" size={16} color="#fff" />
                 </TouchableOpacity>
 
-                <TouchableOpacity>
-                  <Image source={{ uri: "https://i.pravatar.cc/300" }} style={styles.avatar} />
-                </TouchableOpacity>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={styles.greetingText}>
+                    Hai <Text style={{ textDecorationLine: 'underline' }}>{user?.usr_username}!</Text>
+                  </Text>
+                  <TouchableOpacity>
+                    <Image
+                      source={
+                        user?.usr_foto_profile
+                          ? { uri: `${apiUrl}/Images/User/${user.usr_foto_profile}` }
+                          : require('../../../assets/user-icon.png')
+                      }
+                      style={styles.avatar}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
+
 
               {/* ---------- Search + Filter ---------- */}
               <View style={styles.searchRow}>
@@ -472,4 +491,16 @@ const styles = StyleSheet.create({
   rentalList: {
     paddingHorizontal: 16,
   },
+  userContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  greetingText: {
+    color: '#fff',
+    fontSize: 14,
+    marginRight: 8,
+    fontFamily: 'Poppins',
+    textDecorationLine: 'underline',
+  },
+
 });

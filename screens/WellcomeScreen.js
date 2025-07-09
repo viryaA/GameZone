@@ -6,21 +6,29 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import "../global.css"
 
 export default function WellcomeScreen({ navigation }) {
-    const checkFirstLaunch = async () => {
-        const hasLaunched = await AsyncStorage.getItem('hasLaunched')
-        if (hasLaunched) {
-            navigation.navigate('LoginMain')
-        } else {
-            await AsyncStorage.setItem('hasLaunched', 'true')
-        }
-    }
 
-    useEffect(async () => {
-        const hasLaunched = await AsyncStorage.getItem('hasLaunched')
+    const checkFirstLaunch = async () => {
+        const hasLaunched = await AsyncStorage.getItem('hasLaunched');
         if (hasLaunched) {
-            navigation.navigate('LoginMain')
+            navigation.replace('LoginMain'); 
+        } else {
+            await AsyncStorage.setItem('hasLaunched', 'true');
+            navigation.replace('LoginMain'); 
         }
-    },[])
+    };
+
+
+    // useEffect(() => {
+    // const checkFirstLaunch = async () => {
+    //     const hasLaunched = await AsyncStorage.getItem('hasLaunched');
+    //     if (hasLaunched) {
+    //     navigation.navigate('LoginMain');
+    //     }
+    // };
+
+    // checkFirstLaunch();
+    // }, []);
+
 
     return (
         <ImageBackground
@@ -40,7 +48,6 @@ export default function WellcomeScreen({ navigation }) {
                 <TouchableOpacity
                     onPress={() => {
                         checkFirstLaunch();
-                        navigation.replace('SettingsStack')
                     }}
                     style={styles.buttonWrapper}
                     activeOpacity={0.8}

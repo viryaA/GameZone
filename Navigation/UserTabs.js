@@ -3,7 +3,7 @@ import RentalHome from '../screens/Pelanggan/Rental/RentalHome';
 import "../global.css"
 import MasterlHeader from "../Header/MasterlHeader";
 import DetailRentalHome from "../screens/Transaction/DetailRentail/DetailRentalHome";
-import ProfileScreen from "../screens/Admin/ProfileScreenAdmin";
+import ProfileScreen from "../screens/Pelanggan/ProfileScreenPelanggan";
 
 const Stack = createNativeStackNavigator()
 

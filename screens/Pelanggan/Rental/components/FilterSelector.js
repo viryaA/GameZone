@@ -21,7 +21,7 @@ export default function FilterSelector({
 }) {
 
   const statusOptions = ["All", "Aktif", "Tidak Aktif"];
-  const jenisOptions = ["All", "PS 3", "PS 4", "PS 5"]; // Ganti sesuai datamu
+  const jenisOptions = ["All", "PS 3", "PS 4", "PS 5"]; 
 
   const [hargaPerjam, setHargaPerjam] = useState("");
   const [selectedJenis, setSelectedJenis] = useState(selectedJenisPlay || "All");

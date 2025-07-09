@@ -8,6 +8,8 @@ import { useCallback } from 'react';
 import './global.css';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import CustomToast from './CustomToast';
+import { UserProvider } from './Konteks/UserContext';
+
 
 // Optional: prevent splash screen from hiding before font is loaded
 SplashScreen.preventAutoHideAsync();
@@ -15,7 +17,7 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
     const [fontsLoaded] = useFonts({
         'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf'),
-        'Poppins-Bold': require('./assets/fonts/Poppins-Bold.ttf'), // 👈 required!
+        'Poppins-Bold': require('./assets/fonts/Poppins-Bold.ttf'),
     });
 
     const onLayoutRootView = useCallback(async () => {
@@ -29,16 +31,17 @@ export default function App() {
     return (
         <SafeAreaProvider onLayout={onLayoutRootView}>
             <StatusBar style="light" />
-            <NavigationContainer>
-                <RootStack />
-            </NavigationContainer>
+            <UserProvider>
+                <NavigationContainer>
+                    <RootStack />
+                </NavigationContainer>
+            </UserProvider>
             <Toast
               config={{
                 success: (props) => <CustomToast {...props} type="success" />,
                 error: (props) => <CustomToast {...props} type="error" />,
               }}
             />
-
         </SafeAreaProvider>
     );
 }

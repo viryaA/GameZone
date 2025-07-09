@@ -1,96 +1,65 @@
 import {
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    ImageBackground,
-    Image,
-    ScrollView,
-    StyleSheet,
-    KeyboardAvoidingView,
-    Platform,
-    TouchableWithoutFeedback,
-    Keyboard,
+    View, Text, TextInput, TouchableOpacity, ImageBackground,
+    Image, ScrollView, StyleSheet, KeyboardAvoidingView, Platform,
+    TouchableWithoutFeedback, Keyboard
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Constants from 'expo-constants';
 import { useNavigation } from '@react-navigation/native';
-import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
+import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect } from 'react';
-
+import { UserContext } from '../../Konteks/UserContext';
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
-
 
 export default function LoginHome() {
     const navigation = useNavigation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const { setUser } = useContext(UserContext);
 
     useEffect(() => {
-        const state = navigation.getState();
-        console.log('Current Navigation State:', JSON.stringify(state, null, 2));
-    }, []);
-
-    useEffect(() => {
-        const checkLoginStatus = async () => {
-            // await AsyncStorage.removeItem('userData');
-            // await AsyncStorage.removeItem('loginTime');
-            const rawUserData = await AsyncStorage.getItem('userData');
-            const userData = rawUserData ? JSON.parse(rawUserData) : null;
+        const checkSession = async () => {
+            const rawData = await AsyncStorage.getItem('userData');
             const loginTime = await AsyncStorage.getItem('loginTime');
-
+            const userData = rawData && JSON.parse(rawData);
             if (userData && loginTime) {
-                const now = new Date();
-                const savedTime = new Date(loginTime);
-                const daysDiff = (now - savedTime) / (1000 * 60 * 60 * 24);
-
-                if (daysDiff < 3) {
-                    const navigatedd = userData?.usr_role;
-                    console.log(navigatedd);
-                    navigation.navigate(navigatedd);
+                const diffDays = (new Date() - new Date(loginTime)) / (1000 * 60 * 60 * 24);
+                if (diffDays < 0) {
+                    navigation.navigate(userData?.usr_role);
                 } else {
-                    // Sudah lebih dari 3 hari, hapus data login
-                    await AsyncStorage.removeItem('userData');
-                    await AsyncStorage.removeItem('loginTime');
+                    await AsyncStorage.multiRemove(['userData', 'loginTime']);
                 }
             }
         };
-
-        checkLoginStatus();
+        checkSession();
     }, []);
 
     const handleLogin = async () => {
         if (!email || !password) {
-            Toast.show({
+            return Toast.show({
                 type: 'error',
                 text1: 'Input required',
                 text2: 'Please enter both email and password.',
             });
-            return;
         }
 
         try {
             const response = await fetch(`${apiUrl}/MsUser/login`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    usr_email: email,
-                    usr_password: password,
-                }),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ usr_email: email, usr_password: password }),
             });
 
             const result = await response.json();
-
             if (result.result === 1) {
                 await AsyncStorage.setItem('userData', JSON.stringify(result.data));
                 await AsyncStorage.setItem('loginTime', new Date().toISOString());
+                setUser(result.data);
+
                 Toast.show({
                     type: 'success',
                     text1: 'Login berhasil!',
@@ -98,76 +67,36 @@ export default function LoginHome() {
                 });
 
                 navigation.navigate(result.data.usr_role);
-
             } else {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Login gagal',
-                    text2: 'Email/password salah.',
-                });
+                Toast.show({ type: 'error', text1: 'Login gagal', text2: 'Email/password salah.' });
             }
-        } catch (error) {
-            console.error(error);
-            Toast.show({
-                type: 'error',
-                text1: 'Server error',
-                text2: 'Terjadi kesalahan saat login.',
-            });
+        } catch (err) {
+            console.error('Login error:', err);
+            Toast.show({ type: 'error', text1: 'Server error', text2: 'Terjadi kesalahan saat login.' });
         }
     };
 
     return (
-        <ImageBackground
-            source={require('../../assets/default-background.png')}
-            style={styles.background}
-            resizeMode="cover"
-        >
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={{ flex: 1 }}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-            >
+        <ImageBackground source={require('../../assets/default-background.png')} style={styles.background}>
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                    <ScrollView
-                        contentContainerStyle={styles.scrollContainer}
-                        keyboardShouldPersistTaps="handled"
-                    >
-                        <Image
-                            source={require('../../assets/login-top-image.png')}
-                            style={styles.topImage}
-                            resizeMode="cover"
-                        />
+                    <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+                        <Image source={require('../../assets/login-top-image.png')} style={styles.topImage} />
+                        <LinearGradient colors={['rgba(58,5,121,255)', 'rgba(66, 4, 137, 0)']} style={styles.card}>
+                            <Image source={require('../../assets/gamezone.png')} style={styles.logo} />
+                            <Text style={styles.slogan}>Your Second Home{'\n'}With a Better Setup.</Text>
+                            <Text style={styles.loginTitle}>Log in to your account</Text>
 
-                        <LinearGradient
-                            colors={['rgba(58,5,121,255)', 'rgba(66, 4, 137, 0)']}
-                            start={{ x: 0.5, y: 0 }}
-                            end={{ x: 0.5, y: 1.5 }}
-                            style={styles.card}
-                        >
-                            <Image
-                                source={require('../../assets/gamezone.png')}
-                                style={styles.logo}
-                            />
-
-                            <Text style={styles.slogan}>
-                                Your Second Home{'\n'}With a Better Setup.
-                            </Text>
-
-                            <Text style={styles.loginTitle}>
-                                Log in to your account
-                            </Text>
-
-                            <Text style={styles.label}>Email</Text>
+                            <InputLabel label="Email" />
                             <TextInput
                                 placeholder="example@gmail.com"
                                 placeholderTextColor="white"
                                 style={styles.input}
                                 value={email}
                                 onChangeText={setEmail}
-                                fontSize={14}
                             />
 
-                            <Text style={[styles.label, { marginTop: 16 }]}>Password</Text>
+                            <InputLabel label="Password" />
                             <View style={styles.passwordContainer}>
                                 <TextInput
                                     placeholder="Enter your password"
@@ -176,47 +105,25 @@ export default function LoginHome() {
                                     style={styles.passwordInput}
                                     value={password}
                                     onChangeText={setPassword}
-                                    fontSize={14}
                                 />
                                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                                    <Ionicons
-                                        name={showPassword ? 'eye' : 'eye-off'}
-                                        size={22}
-                                        color="#fff"
-                                    />
+                                    <Ionicons name={showPassword ? 'eye' : 'eye-off'} size={22} color="#fff" />
                                 </TouchableOpacity>
                             </View>
 
-                            <TouchableOpacity
-                                onPress={() => navigation.navigate('ForgotPasswordEmail')}
-                                style={{ alignSelf: 'flex-end', marginTop: 5 }}
-                            >
-                                <Text style={{ color: '#ccc', fontSize: 12, fontFamily: 'Poppins', textDecorationLine: 'underline' }}>
-                                    Forgot Password?
-                                </Text>
+                            <TouchableOpacity onPress={() => navigation.navigate('ForgotPasswordEmail')} style={styles.forgotPassword}>
+                                <Text style={styles.forgotText}>Forgot Password?</Text>
                             </TouchableOpacity>
 
-                            <LinearGradient
-                                colors={['rgba(38,59,129,1)', 'rgb(141, 100, 229)']}
-                                start={{ x: 0.5, y: 0 }}
-                                end={{ x: 0.5, y: 1 }}
-                                style={styles.buttonGradient}
-                            >
-                                <TouchableOpacity
-                                    onPress={handleLogin}
-                                    activeOpacity={0.8}
-                                    style={styles.buttonTouchable}
-                                >
+                            <LinearGradient colors={['rgba(38,59,129,1)', 'rgb(141, 100, 229)']} style={styles.buttonGradient}>
+                                <TouchableOpacity onPress={handleLogin} style={styles.buttonTouchable}>
                                     <Text style={styles.buttonText}>Log In</Text>
                                 </TouchableOpacity>
                             </LinearGradient>
 
                             <Text style={styles.footerText}>
                                 Don’t have account?{' '}
-                                <Text
-                                    style={styles.footerLink}
-                                    onPress={() => navigation.navigate('CreateAccount')}
-                                >
+                                <Text style={styles.footerLink} onPress={() => navigation.navigate('CreateAccount')}>
                                     Create now
                                 </Text>
                             </Text>
@@ -228,17 +135,14 @@ export default function LoginHome() {
     );
 }
 
+const InputLabel = ({ label }) => (
+    <Text style={[styles.label, label === 'Password' && { marginTop: 16 }]}>{label}</Text>
+);
+
 const styles = StyleSheet.create({
-    background: {
-        flex: 1,
-    },
-    scrollContainer: {
-        flexGrow: 1,
-    },
-    topImage: {
-        width: '100%',
-        height: 256,
-    },
+    background: { flex: 1 },
+    scrollContainer: { flexGrow: 1 },
+    topImage: { width: '100%', height: 256 },
     card: {
         marginTop: -55,
         borderTopLeftRadius: 30,
@@ -247,28 +151,21 @@ const styles = StyleSheet.create({
         paddingBottom: 40,
         flex: 1,
     },
-    logo: {
-        resizeMode: 'contain',
-        marginBottom: 12,
-        marginTop: 15,
-        alignSelf: 'center',
-    },
+    logo: { resizeMode: 'contain', marginVertical: 15, alignSelf: 'center' },
     slogan: {
-        letterSpacing: 3,
         textAlign: 'center',
         color: 'white',
         marginBottom: 16,
-        marginTop: 4,
         fontFamily: 'Poppins',
         lineHeight: 28,
         fontSize: 14,
+        letterSpacing: 3,
     },
     loginTitle: {
         color: 'white',
         textDecorationLine: 'underline',
         fontSize: 14,
-        marginBottom: 8,
-        marginTop: 7,
+        marginVertical: 7,
         fontFamily: 'Poppins',
     },
     label: {
@@ -284,8 +181,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingVertical: 12,
         color: 'white',
-        marginTop: 8,
         fontFamily: 'Poppins',
+        marginTop: 8,
     },
     passwordContainer: {
         flexDirection: 'row',
@@ -301,6 +198,13 @@ const styles = StyleSheet.create({
         color: 'white',
         fontFamily: 'Poppins',
     },
+    forgotPassword: { alignSelf: 'flex-end', marginTop: 5 },
+    forgotText: {
+        color: '#ccc',
+        fontSize: 12,
+        fontFamily: 'Poppins',
+        textDecorationLine: 'underline',
+    },
     buttonGradient: {
         borderRadius: 999,
         width: 350,
@@ -311,10 +215,7 @@ const styles = StyleSheet.create({
         marginTop: 30,
         alignSelf: 'center',
     },
-    buttonTouchable: {
-        width: '100%',
-        alignItems: 'center',
-    },
+    buttonTouchable: { width: '100%', alignItems: 'center' },
     buttonText: {
         color: 'white',
         fontSize: 20,
@@ -327,7 +228,5 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: 'Poppins',
     },
-    footerLink: {
-        textDecorationLine: 'underline',
-    },
+    footerLink: { textDecorationLine: 'underline' },
 });
