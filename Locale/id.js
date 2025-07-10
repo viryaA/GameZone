@@ -5,6 +5,8 @@ export default {
     loading: "Memuat data...",
     success: "Sukses",
     failed: "Gagal",
+    date: "Tanggal",
+    durationBook:"Durasi",
     errorMessage: "Terjadi kesalahan.",
     tapForDetails: "Ketuk untuk detail",
     maxPlayer: "Max Pemain",
@@ -42,6 +44,9 @@ export default {
     searchKota: "Cari Kota...",
     rtlNama: "Nama Rental",
     selectCity: "Pilih Kota",
-    pstMerk: "Playstation Merk"
+    pstMerk: "Playstation Merk",
+    rentalNull: "Maaf rental di area anda belum tersedia.",
+    ruanganNull: "Maaf ruangan di rental ini belum tersedia.",
+    strLabelFormBook: "Pilih Tanggal & Waktu Bermain"
 };
 

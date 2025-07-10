@@ -13,7 +13,7 @@ export default function WellcomeScreen({ navigation }) {
             navigation.replace('LoginMain'); 
         } else {
             await AsyncStorage.setItem('hasLaunched', 'true');
-            navigation.replace('LoginMain'); 
+            navigation.replace('Pelanggan'); 
         }
     };
 

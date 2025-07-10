@@ -23,8 +23,8 @@ import Constants from "expo-constants";
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
-import { useContext } from 'react';
-import { UserContext } from '../../../Konteks/UserContext';
+import { useContext } from "react";
+import { UserContext } from "../../../Konteks/UserContext";
 
 import ScreenPelangganWithBottomBar from "../../../TemplateComponent/ScreenPelangganWithBottomBar";
 
@@ -78,7 +78,7 @@ export default function RentalHome() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-        console.log('User dari Context:', user);
+    console.log("User dari Context:", user);
   }, []);
 
   /** ----------- Lifecycle: Get User Location ------------ */
@@ -90,7 +90,9 @@ export default function RentalHome() {
         if (status !== "granted") return;
 
         const location = await Location.getCurrentPositionAsync({});
-        const reverseGeocode = await Location.reverseGeocodeAsync(location.coords);
+        const reverseGeocode = await Location.reverseGeocodeAsync(
+          location.coords
+        );
         if (reverseGeocode.length > 0) {
           const userCity = reverseGeocode[0].subregion;
           const found = DAFTAR_KOTA.find((kota) =>
@@ -109,10 +111,9 @@ export default function RentalHome() {
     fetchData(); // Initial fetch
   }, []);
 
-  /** ----------- Fetch on Kota Change ------------ */
-  useEffect(() => {
-    if (selectedKota) fetchData();
-  }, [selectedKota]);
+  const handleDetailLoc = (item) => {
+    navigation.navigate("DetailRental", { item });
+  };
 
   /** ----------- Banner Auto Scroll ------------ */
   useEffect(() => {
@@ -124,21 +125,24 @@ export default function RentalHome() {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
+  console.log("kotee", selectedKota);
+
+  /** ----------- Fetch on Kota Change ------------ */
+  useEffect(() => {
+    if (selectedKota) {
+      fetchData();
+    }
+  }, [selectedKota]);
+
   /** ----------- API Fetch ------------ */
   const fetchData = () => {
-    fetch(`${apiUrl}/MsRental`)
+    fetch(`${apiUrl}/MsRental/kota/${selectedKota?.nama || ""}`)
       .then((res) => res.json())
       .then((json) => {
         let items = Array.isArray(json) ? json : json.data || [];
 
         if (sortBy !== "rtl_status") {
           items = items.filter((item) => item.rtl_status === "Aktif");
-        }
-
-        if (selectedKota?.nama) {
-          items = items.filter((item) =>
-            item.rtl_kota?.toLowerCase().includes(selectedKota.nama.toLowerCase())
-          );
         }
 
         setData(items);
@@ -157,11 +161,27 @@ export default function RentalHome() {
   /** ----------- Search ------------ */
   const handleSearch = (query) => {
     setSearchQuery(query);
-    applyAllFilters(data, query, selectedStatus, selectedPrice, selectedJenisPlay, sortBy, sortOrder);
+    applyAllFilters(
+      data,
+      query,
+      selectedStatus,
+      selectedPrice,
+      selectedJenisPlay,
+      sortBy,
+      sortOrder
+    );
   };
 
   /** ----------- Apply Filter, Search, Sort ------------ */
-  const applyAllFilters = (baseData, query, status, price, jenis, sortKey, sortOrder) => {
+  const applyAllFilters = (
+    baseData,
+    query,
+    status,
+    price,
+    jenis,
+    sortKey,
+    sortOrder
+  ) => {
     let filtered = [...baseData];
 
     if (status !== "All") {
@@ -175,14 +195,14 @@ export default function RentalHome() {
     }
 
     if (price !== "All") {
-      filtered = filtered.filter((item) =>
-        item.pst_harga_per_jam?.toString() === price
+      filtered = filtered.filter(
+        (item) => item.pst_harga_per_jam?.toString() === price
       );
     }
 
     if (jenis !== "All") {
-      filtered = filtered.filter((item) =>
-        item.jenisPlaystation?.jps_nama?.toString() === jenis
+      filtered = filtered.filter(
+        (item) => item.jenisPlaystation?.jps_nama?.toString() === jenis
       );
     }
 
@@ -196,7 +216,8 @@ export default function RentalHome() {
       const aVal = a[key];
       const bVal = b[key];
 
-      if (typeof aVal === "number") return order === "asc" ? aVal - bVal : bVal - aVal;
+      if (typeof aVal === "number")
+        return order === "asc" ? aVal - bVal : bVal - aVal;
       return order === "asc"
         ? aVal?.localeCompare(bVal)
         : bVal?.localeCompare(aVal);
@@ -222,29 +243,38 @@ export default function RentalHome() {
             <View style={{ flex: 1 }}>
               {/* ---------- Header ---------- */}
               <View style={styles.header}>
-                <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.locationButton}>
+                <TouchableOpacity
+                  onPress={() => setModalVisible(true)}
+                  style={styles.locationButton}
+                >
                   <Ionicons name="location-outline" size={18} color="#fff" />
-                  <Text style={styles.locationText}>{selectedKota?.nama || "Location"}</Text>
+                  <Text style={styles.locationText}>
+                    {selectedKota?.nama || "Location"}
+                  </Text>
                   <Ionicons name="chevron-down" size={16} color="#fff" />
                 </TouchableOpacity>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Text style={styles.greetingText}>
-                    Hai <Text style={{ textDecorationLine: 'underline' }}>{user?.usr_username}!</Text>
+                    Hai{" "}
+                    <Text style={{ textDecorationLine: "underline" }}>
+                      {user?.usr_username}!
+                    </Text>
                   </Text>
                   <TouchableOpacity>
                     <Image
                       source={
                         user?.usr_foto_profile
-                          ? { uri: `${apiUrl}/Images/User/${user.usr_foto_profile}` }
-                          : require('../../../assets/user-icon.png')
+                          ? {
+                              uri: `${apiUrl}/Images/User/${user.usr_foto_profile}`,
+                            }
+                          : require("../../../assets/user-icon.png")
                       }
                       style={styles.avatar}
                     />
                   </TouchableOpacity>
                 </View>
               </View>
-
 
               {/* ---------- Search + Filter ---------- */}
               <View style={styles.searchRow}>
@@ -280,41 +310,41 @@ export default function RentalHome() {
               {/* ---------- Banners ---------- */}
               <View style={styles.bannerContainer}>
                 <Animated.FlatList
-                    ref={flatListRef}
-                    data={banners}
-                    horizontal
-                    pagingEnabled
-                    keyExtractor={(_, index) => index.toString()}
-                    showsHorizontalScrollIndicator={false}
-                    onScroll={Animated.event(
-                        [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-                        { useNativeDriver: false }
-                    )}
-                    snapToInterval={screenWidth * 0.8 + 16}
-                    decelerationRate="fast"
-                    contentContainerStyle={{ paddingHorizontal: 0 }}
-                    renderItem={({ item }) => (
-                        <View
-                            style={{
-                              width: screenWidth * 0.8,
-                              height: 200,
-                              marginRight: 0,
-                              marginBottom: 12,
-                              borderRadius: 16,
-                              overflow: "hidden",
-                              // backgroundColor: "#f2f2f2", // fallback warna kalau image error
-                            }}
-                        >
-                          <Image
-                              source={item}
-                              style={{
-                                width: "100%",
-                                height: "100%",
-                              }}
-                              resizeMode="contain"
-                          />
-                        </View>
-                    )}
+                  ref={flatListRef}
+                  data={bannerImages}
+                  horizontal
+                  pagingEnabled
+                  keyExtractor={(_, index) => index.toString()}
+                  showsHorizontalScrollIndicator={false}
+                  onScroll={Animated.event(
+                    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+                    { useNativeDriver: false }
+                  )}
+                  snapToInterval={screenWidth * 0.8 + 16}
+                  decelerationRate="fast"
+                  contentContainerStyle={{ paddingHorizontal: 0 }}
+                  renderItem={({ item }) => (
+                    <View
+                      style={{
+                        width: screenWidth * 0.8,
+                        height: 200,
+                        marginRight: 0,
+                        marginBottom: 12,
+                        borderRadius: 16,
+                        overflow: "hidden",
+                        // backgroundColor: "#f2f2f2", // fallback warna kalau image error
+                      }}
+                    >
+                      <Image
+                        source={item}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                        }}
+                        resizeMode="contain"
+                      />
+                    </View>
+                  )}
                 />
                 <View style={styles.dotsContainer}>
                   {bannerImages.map((_, index) => {
@@ -353,28 +383,28 @@ export default function RentalHome() {
                   <Text style={styles.loadingText}>{i18n.t("loading")}</Text>
                 </View>
               ) : (
-                  <FlatList
-                      data={filteredData}
-                      keyExtractor={(item) => item.rtl_id.toString()}
-                      renderItem={({ item }) => (
-                          <RentalCard item={item} handleDetailLoc={handleDetailLoc} />
-                      )}
-                      ListEmptyComponent={() => (
-                          <View className="items-center justify-center mt-24 px-6">
-                            <Ionicons
-                                name="business-outline"
-                                size={72}
-                                color="#9CA3AF"
-                            />
-                            {/* abu-abu medium */}
-                            <Text className="text-gray-600 text-2xl font-bold mt-6 text-center">
-                              {i18n.t("rentalNull")}
-                            </Text>
-                          </View>
-                      )}
-                      contentContainerStyle={{ paddingBottom: 120 }}
-                      className="px-4"
-                  />
+                <FlatList
+                  data={filteredData}
+                  keyExtractor={(item) => item.rtl_id.toString()}
+                  renderItem={({ item }) => (
+                    <RentalCard item={item} handleDetailLoc={handleDetailLoc} />
+                  )}
+                  ListEmptyComponent={() => (
+                    <View className="items-center justify-center mt-24 px-6">
+                      <Ionicons
+                        name="business-outline"
+                        size={72}
+                        color="#9CA3AF"
+                      />
+                      {/* abu-abu medium */}
+                      <Text className="text-gray-600 text-2xl font-bold mt-6 text-center">
+                        {i18n.t("rentalNull")}
+                      </Text>
+                    </View>
+                  )}
+                  contentContainerStyle={{ paddingBottom: 120 }}
+                  className="px-4"
+                />
               )}
 
               {/* ---------- Modals ---------- */}
@@ -406,7 +436,15 @@ export default function RentalHome() {
                 selectedHargaperjam={selectedPrice}
                 selectedJenisPlay={selectedJenisPlay}
                 onApply={(status, price, jenis) =>
-                  applyAllFilters(data, searchQuery, status, price, jenis, sortBy, sortOrder)
+                  applyAllFilters(
+                    data,
+                    searchQuery,
+                    status,
+                    price,
+                    jenis,
+                    sortBy,
+                    sortOrder
+                  )
                 }
                 onClose={() => setFilterModalVisible(false)}
               />
@@ -523,15 +561,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   userContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   greetingText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 14,
     marginRight: 8,
-    fontFamily: 'Poppins',
-    textDecorationLine: 'underline',
+    fontFamily: "Poppins",
+    textDecorationLine: "underline",
   },
-
 });
