@@ -16,6 +16,14 @@ export default function UserTabs() {
                 headerShown: false,
             }}
         >
+            <Stack.Screen
+                name="DetailRuangan"
+                component={DetailRuanganHome}
+                options={{
+                    title: 'Detail Ruangan',
+                    headerShown: false,
+                }}
+            />
 
             <Stack.Screen
                 name="Home"
@@ -42,6 +50,7 @@ export default function UserTabs() {
                     headerShown: false,
                 }}
             />
+
         </Stack.Navigator>
     )
 }

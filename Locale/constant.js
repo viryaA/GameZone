@@ -101,3 +101,14 @@ export const DAFTAR_KOTA = [
   { id: "Tual", nama: "Tual" },
   { id: "Yogyakarta", nama: "Yogyakarta" },
 ];
+
+export const formatCurrencyRupiah = (input) => {
+  const parsed = parseFloat(input.toString().replace(/\./g, "").replace(",", "."));
+  if (isNaN(parsed)) return "";
+
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 2
+  }).format(parsed);
+};

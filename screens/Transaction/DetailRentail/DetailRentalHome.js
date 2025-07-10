@@ -92,6 +92,8 @@ export default function DetailRentalHome() {
     fetchData();
   }, []);
 
+  console.log("data nih", data);
+
   const handleDetailLoc = (item) => {
     setSelectedItem(item);
   };
@@ -299,7 +301,7 @@ export default function DetailRentalHome() {
               />
             </ImageBackground>
           </View>
-
+          
           <TouchableOpacity onPress={() => setSortModalVisible(true)}>
             <ImageBackground
               source={require("../../../assets/Bg.png")}
