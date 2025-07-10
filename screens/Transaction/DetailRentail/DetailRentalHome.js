@@ -92,42 +92,12 @@ export default function DetailRentalHome() {
     fetchData();
   }, []);
 
-  const handleDetailLoc = (item) => {
-    setSelectedItem(item);
-  };
+  /*---------------------- UBAH DI SINI NAVIGATE KE DETAILNYA ----------------------*/
 
-  const handleAdd = () => {
-    setSelectedItem(null);
-    setIsEdit(false);
-    setModalVisible(true);
-  };
-
-  const handleSave = (item) => {
-    const method = isEdit ? "PUT" : "POST";
-    fetch(`${apiUrl}/MsPlaystation`, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(item),
-    })
-      .then((res) => res.json())
-      .then((resJson) => {
-        Toast.show({
-          type: resJson.result === 1 ? "success" : "error",
-          text1: resJson.result === 1 ? i18n.t("success") : i18n.t("failed"),
-          text2: resJson.message,
-        });
-        setModalVisible(false);
-        fetchData();
-      })
-      .catch((error) => {
-        console.error("Save error", error);
-        Toast.show({
-          type: "error",
-          text1: i18n.t("failed"),
-          text2: i18n.t("errorMessage"),
-        });
-        setModalVisible(false);
-      });
+  const handleDetailLoc = (itemsParam) => {
+    setSelectedItem(itemsParam);
+    setModalVisible(false);
+    navigation.navigate("FormBooking", { itemsParam });
   };
 
   const confirmDelete = () => {
@@ -366,7 +336,7 @@ export default function DetailRentalHome() {
                 menuItem={menuItem}
                 setMenuItem={setMenuItem}
                 setDeleteItem={setDeleteItem}
-                handleDetailLoc={handleDetailLoc}
+                onPress={() => handleDetailLoc(item)}
               />
             )}
             ListEmptyComponent={() => (

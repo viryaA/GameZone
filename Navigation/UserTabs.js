@@ -30,7 +30,7 @@ export default function UserTabs() {
                 name="DetailRental"
                 component={DetailRentalHome}
                 options={{
-                    title: 'DetailRental Home',
+                    title: 'Detail Rental Home',
                     headerShown: false,
                 }}
             />

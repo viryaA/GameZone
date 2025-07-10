@@ -47,6 +47,15 @@ export default {
     pstMerk: "Playstation Merk",
     rentalNull: "Maaf rental di area anda belum tersedia.",
     ruanganNull: "Maaf ruangan di rental ini belum tersedia.",
-    strLabelFormBook: "Pilih Tanggal & Waktu Bermain"
+    strLabelFormBook: "Pilih Tanggal & Waktu Bermain",
+    pageReqToPay: "Permintaan Pembayaran",
+    dateTime: "Waktu & Tanggal Bermain",
+    detailPay: "Detail Pembayaran",
+    paymentMethod:"Metode Pembayaran",
+    toPay: "Lanjutkan Pembayaran",
+    jam: "Jam",
+    totalPayment: "Total Pembayaran",
+    diskon: "Diskon",
+    confirmBook: "Konfirmasi untuk Memesan"
 };
 
