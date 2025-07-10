@@ -11,6 +11,7 @@ import ForgotPasswordToken from '../screens/Login/ForgotPasswordToken';
 import ForgotPasswordEmail from '../screens/Login/ForgotPasswordEmail';
 import ForgotPasswordNewPass from '../screens/Login/ForgotPasswordNewPass';
 import DetailRentalHome from "../screens/Transaction/DetailRentail/DetailRentalHome";
+import FormBooking from '../screens/Transaction/FormBooking';
 
 const Stack = createNativeStackNavigator()
 
@@ -33,6 +34,7 @@ export default function SettingsStack() {
                 }}
             />
             <Stack.Screen name="LoginMain" component={LoginHome} options={{ title: 'Login', headerShown: false }} />
+            <Stack.Screen name="FormBooking" component={FormBooking} options={{ title: 'FormBooking', headerShown: false }} />
             <Stack.Screen name="CreateAccount" component={CreateAccount} options={{ title: 'Create Account', headerShown: false }} />
             <Stack.Screen name="ForgotPasswordEmail" component={ForgotPasswordEmail} options={{ title: 'Forgot Password', headerShown: false }}/>
             <Stack.Screen name="ForgotPasswordNewPass" component={ForgotPasswordNewPass} options={{ title: 'Forgot Password', headerShown: false }}/>

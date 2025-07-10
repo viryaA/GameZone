@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   TextInput,
+  StyleSheet,
   Dimensions,
 } from "react-native";
 import { useEffect, useState, useRef } from "react";
@@ -24,6 +25,7 @@ import RoomCard from "./components/RoomCard";
 const apiUrl = Constants.expoConfig.extra.API_URL;
 
 const { width } = Dimensions.get("window");
+const screenWidth = width;
 
 export default function DetailRentalHome() {
   // Navigation
@@ -54,47 +56,36 @@ export default function DetailRentalHome() {
   const route = useRoute();
   const { item } = route.params;
 
+  // console.log("item", item.rtl_id)
   const fetchData = () => {
     setLoading(true);
-    fetch(`${apiUrl}/MsRuangan`)
-        .then((res) => res.json())
-        .then((json) => {
-          let initialData = Array.isArray(json)
-              ? json
-              : Array.isArray(json.data)
-                  ? json.data
-                  : [];
+    fetch(`${apiUrl}/MsRuangan/rental/` + item.rtl_id)
+      .then((res) => res.json())
+      .then((json) => {
+        let initialData = Array.isArray(json)
+          ? json
+          : Array.isArray(json.data)
+            ? json.data
+            : [];
 
-          // Filter hanya data ruangan yang memiliki rental dan cocok dengan ID rental yang sedang aktif (misal item.rtl_id)
-          const filteredData = json.filter(
-              (x) => x.rental.rtl_id === item.rtl_id
-          );
+        // Jika bukan sorting berdasarkan status, hanya ambil yang Aktif
+        const visibleData = initialData.filter(
+          (itemss) => itemss.rng_status == "Aktif"
+        );
 
-          // Jika bukan sorting berdasarkan status, hanya ambil yang Aktif
-          const visibleData =
-              sortBy !== "rng_status"
-                  ? filteredData.filter((item) => item.rng_status === "Aktif")
-                  : filteredData;
-
-          console.log(
-              "visiblde",
-              json.filter((x) => x.rental.rtl_id === 3)
-          );
-          console.log("rtl_id", item.rtl_id);
-
-          setData(visibleData);
-          applySort(initialData, sortBy, sortOrder);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error(err);
-          Toast.show({
-            type: "error",
-            text1: i18n.t("failed"),
-            text2: i18n.t("errorMessage"),
-          });
-          setLoading(false);
+        setData(visibleData);
+        applySort(initialData, sortBy, sortOrder);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        Toast.show({
+          type: "error",
+          text1: i18n.t("failed"),
+          text2: i18n.t("errorMessage"),
         });
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -118,56 +109,56 @@ export default function DetailRentalHome() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(item),
     })
-        .then((res) => res.json())
-        .then((resJson) => {
-          Toast.show({
-            type: resJson.result === 1 ? "success" : "error",
-            text1: resJson.result === 1 ? i18n.t("success") : i18n.t("failed"),
-            text2: resJson.message,
-          });
-          setModalVisible(false);
-          fetchData();
-        })
-        .catch((error) => {
-          console.error("Save error", error);
-          Toast.show({
-            type: "error",
-            text1: i18n.t("failed"),
-            text2: i18n.t("errorMessage"),
-          });
-          setModalVisible(false);
+      .then((res) => res.json())
+      .then((resJson) => {
+        Toast.show({
+          type: resJson.result === 1 ? "success" : "error",
+          text1: resJson.result === 1 ? i18n.t("success") : i18n.t("failed"),
+          text2: resJson.message,
         });
+        setModalVisible(false);
+        fetchData();
+      })
+      .catch((error) => {
+        console.error("Save error", error);
+        Toast.show({
+          type: "error",
+          text1: i18n.t("failed"),
+          text2: i18n.t("errorMessage"),
+        });
+        setModalVisible(false);
+      });
   };
 
   const confirmDelete = () => {
     if (!deleteItem) return;
     fetch(`${apiUrl}/MsPlaystation/${deleteItem.pst_id}`, { method: "DELETE" })
-        .then((res) => res.json())
-        .then(() => {
-          Toast.show({
-            type: "success",
-            text1: i18n.t("success"),
-            text2: i18n.t("deleteSuccess"),
-          });
-          fetchData();
-        })
-        .catch(() => {
-          Toast.show({
-            type: "error",
-            text1: i18n.t("failed"),
-            text2: i18n.t("errorMessage"),
-          });
-        })
-        .finally(() => setDeleteItem(null));
+      .then((res) => res.json())
+      .then(() => {
+        Toast.show({
+          type: "success",
+          text1: i18n.t("success"),
+          text2: i18n.t("deleteSuccess"),
+        });
+        fetchData();
+      })
+      .catch(() => {
+        Toast.show({
+          type: "error",
+          text1: i18n.t("failed"),
+          text2: i18n.t("errorMessage"),
+        });
+      })
+      .finally(() => setDeleteItem(null));
   };
 
   const applyAll = (
-      baseData,
-      searchQuery,
-      status,
-      Price,
-      sortKey,
-      sortOrder
+    baseData,
+    searchQuery,
+    status,
+    Price,
+    sortKey,
+    sortOrder
   ) => {
     let filtered = [...baseData];
 
@@ -180,7 +171,7 @@ export default function DetailRentalHome() {
     if (searchQuery) {
       const lowerQuery = searchQuery.toLowerCase();
       filtered = filtered.filter((item) =>
-          item.rtl_nama.toLowerCase().includes(lowerQuery)
+        item.rtl_nama.toLowerCase().includes(lowerQuery)
       );
     }
 
@@ -194,8 +185,8 @@ export default function DetailRentalHome() {
           return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
         }
         return sortOrder === "asc"
-            ? aVal.localeCompare(bVal)
-            : bVal.localeCompare(aVal);
+          ? aVal.localeCompare(bVal)
+          : bVal.localeCompare(aVal);
       });
     }
 
@@ -222,8 +213,8 @@ export default function DetailRentalHome() {
       }
 
       return order === "asc"
-          ? aVal.localeCompare(bVal)
-          : bVal.localeCompare(aVal);
+        ? aVal.localeCompare(bVal)
+        : bVal.localeCompare(aVal);
     });
 
     setFilteredData(sorted);
@@ -238,20 +229,20 @@ export default function DetailRentalHome() {
 
     if (Price !== "All") {
       filtered = filtered.filter(
-          (item) => item.pst_harga_per_jam.toString() === Price
+        (item) => item.pst_harga_per_jam.toString() === Price
       );
     }
 
     if (jenis !== "All") {
       filtered = filtered.filter(
-          (item) => item.jenisPlaystation.jps_nama.toString() === jenis
+        (item) => item.jenisPlaystation.jps_nama.toString() === jenis
       );
     }
 
     if (searchQuery) {
       const lowerQuery = searchQuery.toLowerCase();
       filtered = filtered.filter((item) =>
-          item.pst_deskripsi.toLowerCase().includes(lowerQuery)
+        item.pst_deskripsi.toLowerCase().includes(lowerQuery)
       );
     }
 
@@ -263,131 +254,141 @@ export default function DetailRentalHome() {
   };
 
   return (
-      <ImageBackground
-          source={require("../../../assets/background-hal.png")} // ← Ganti dengan path ke gambar lokal kamu
-          style={{ flex: 1 }}
-          resizeMode="cover"
-      >
-        <View className="flex-1 bg-black/40">
-          {/* Optional: overlay agar isi tetap kontras */}
-          {/* App Bar */}
-          <View className="pt-12 pb-4 mb-2 px-4">
-            <View className="relative items-center justify-center">
-              {/* Tombol Back */}
-              <TouchableOpacity
-                  onPress={() => navigation.goBack()}
-                  className="absolute left-0 w-9 h-9 rounded-full bg-white/20 justify-center items-center"
-              >
-                <Ionicons name="chevron-back" size={20} color="white" />
-              </TouchableOpacity>
-
-              {/* Title di Tengah */}
-              <Text className="text-white font-semibold text-base">
-                {item.rtl_nama}
-              </Text>
-            </View>
-          </View>
-
-          {/* Search Bar */}
-          <View className="flex-row items-center px-4 mb-4">
-            <View className="flex-1 h-12">
-              <ImageBackground
-                  source={require("../../../assets/Search-Box.png")}
-                  resizeMode="cover"
-                  className="w-full h-full flex-row items-center pl-4 pr-4"
-                  imageStyle={{ borderRadius: 16 }}
-                  style={{ overflow: "hidden" }}
-              >
-                <Ionicons name="search-outline" size={18} color="#B0A6D9" />
-                <TextInput
-                    placeholder="Search.."
-                    placeholderTextColor="#B0A6D9"
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                    className="ml-2 text-white flex-1"
-                />
-              </ImageBackground>
-            </View>
-
-            <TouchableOpacity onPress={() => setSortModalVisible(true)}>
-              <ImageBackground
-                  source={require("../../../assets/Bg.png")}
-                  resizeMode="cover"
-                  className="w-16 h-12 justify-center items-center"
-                  imageStyle={{ borderRadius: 12 }}
-                  style={{ overflow: "hidden" }}
-              >
-                <Ionicons name="options-outline" size={20} color="#fff" />
-              </ImageBackground>
-            </TouchableOpacity>
-          </View>
-
-          <View className="mx-4 mb-4 mt-4 rounded-2xl overflow-hidden">
-            {/* Peta */}
-            <MapView
-                style={{ width: "100%", height: 200 }}
-                initialRegion={{
-                  latitude: item.rtl_latitude,
-                  longitude: item.rtl_longitude,
-                  latitudeDelta: 0.01,
-                  longitudeDelta: 0.01,
-                }}
-                scrollEnabled={true}
-                zoomEnabled={true}
+    <ImageBackground
+      source={require("../../../assets/background-hal.png")} // ← Ganti dengan path ke gambar lokal kamu
+      style={{ flex: 1 }}
+      resizeMode="cover"
+    >
+      <View className="flex-1 bg-black/40">
+        {/* Optional: overlay agar isi tetap kontras */}
+        {/* App Bar */}
+        <View className="pt-12 pb-4 mb-2 px-4">
+          <View className="relative items-center justify-center">
+            {/* Tombol Back */}
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              className="absolute left-0 w-9 h-9 rounded-full bg-white/20 justify-center items-center"
             >
-              <Marker
-                  coordinate={{
-                    latitude: item.rtl_latitude,
-                    longitude: item.rtl_longitude,
-                  }}
-                  title={item.rtl_nama}
-                  description={item.rtl_alamat}
-              />
-            </MapView>
+              <Ionicons name="chevron-back" size={20} color="white" />
+            </TouchableOpacity>
 
-            {/* Alamat */}
-            <View className="bg-[#3A217C] px-4 py-3 flex-row items-start space-x-2">
-              <Ionicons
-                  name="location-outline"
-                  size={18}
-                  color="#fff"
-                  className="mt-1"
+            {/* Title di Tengah */}
+            <Text className="text-white font-semibold text-base">
+              {item.rtl_nama}
+            </Text>
+          </View>
+        </View>
+
+        {/* Search Bar */}
+        <View className="flex-row items-center px-4 mb-4">
+          <View className="flex-1 h-12">
+            <ImageBackground
+              source={require("../../../assets/Search-Box.png")}
+              resizeMode="cover"
+              className="w-full h-full flex-row items-center pl-4 pr-4"
+              imageStyle={{ borderRadius: 16 }}
+              style={{ overflow: "hidden" }}
+            >
+              <Ionicons name="search-outline" size={18} color="#B0A6D9" />
+              <TextInput
+                placeholder="Search.."
+                placeholderTextColor="#B0A6D9"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                className="ml-2 text-white flex-1"
               />
-              <Text className="text-white ml-4 text-xs leading-5 flex-1">
-                {item.rtl_alamat}
-              </Text>
-            </View>
+            </ImageBackground>
           </View>
 
-          {/* List Lokasi Rental */}
-          {/* List Lokasi Rental */}
-          <FlatList
-              data={data}
-              keyExtractor={(item) => item.rng_id.toString()}
-              renderItem={({ item }) => (
-                  <RoomCard
-                      item={item}
-                      menuItem={menuItem}
-                      setMenuItem={setMenuItem}
-                      setDeleteItem={setDeleteItem}
-                      handleDetailLoc={handleDetailLoc}
-                  />
-              )}
-              ListEmptyComponent={() => (
-                  <View className="items-center justify-center mt-24 px-6">
-                    <Ionicons name="game-controller-outline" size={72} color="#9CA3AF" />
-                    {/* abu-abu medium */}
-                    <Text className="text-gray-600 text-2xl font-bold mt-6 text-center">
-                      {i18n.t("ruanganNull")}
-                    </Text>
-                  </View>
-              )}
-              contentContainerStyle={{ paddingBottom: 120, flexGrow: 1 }}
-              className="px-4"
-          />
+          <TouchableOpacity onPress={() => setSortModalVisible(true)}>
+            <ImageBackground
+              source={require("../../../assets/Bg.png")}
+              resizeMode="cover"
+              className="w-16 h-12 justify-center items-center"
+              imageStyle={{ borderRadius: 12 }}
+              style={{ overflow: "hidden" }}
+            >
+              <Ionicons name="options-outline" size={20} color="#fff" />
+            </ImageBackground>
+          </TouchableOpacity>
+        </View>
 
-          {/* Bottom Navigation */}
-          {/* <View className="absolute bottom-0 left-0 right-0 flex-row justify-around items-center bg-[#3A217C] py-3 rounded-t-xl">
+        <View className="mx-4 mb-4 mt-4 rounded-2xl overflow-hidden">
+          {/* Peta */}
+          <MapView
+            style={{ width: "100%", height: 200 }}
+            initialRegion={{
+              latitude: item.rtl_latitude,
+              longitude: item.rtl_longitude,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
+            }}
+            scrollEnabled={true}
+            zoomEnabled={true}
+          >
+            <Marker
+              coordinate={{
+                latitude: item.rtl_latitude,
+                longitude: item.rtl_longitude,
+              }}
+              title={item.rtl_nama}
+              description={item.rtl_alamat}
+            />
+          </MapView>
+
+          {/* Alamat */}
+          <View className="bg-[#3A217C] px-4 py-3 flex-row items-start space-x-2">
+            <Ionicons
+              name="location-outline"
+              size={18}
+              color="#fff"
+              className="mt-1"
+            />
+            <Text className="text-white ml-4 text-xs leading-5 flex-1">
+              {item.rtl_alamat}
+            </Text>
+          </View>
+        </View>
+
+        {/* List Lokasi Rental */}
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="green" />
+            <Text style={styles.loadingText}>{i18n.t("loading")}</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={data}
+            keyExtractor={(item) => item.rng_id.toString()}
+            renderItem={({ item }) => (
+              <RoomCard
+                item={item}
+                menuItem={menuItem}
+                setMenuItem={setMenuItem}
+                setDeleteItem={setDeleteItem}
+                handleDetailLoc={handleDetailLoc}
+              />
+            )}
+            ListEmptyComponent={() => (
+              <View className="items-center justify-center mt-24 px-6">
+                <Ionicons
+                  name="game-controller-outline"
+                  size={72}
+                  color="#9CA3AF"
+                />
+                {/* abu-abu medium */}
+                <Text className="text-gray-600 text-2xl font-bold mt-6 text-center">
+                  {i18n.t("ruanganNull")}
+                </Text>
+              </View>
+            )}
+            contentContainerStyle={{ paddingBottom: 120, flexGrow: 1 }}
+            className="px-4"
+          />
+        )}
+
+        {/* Bottom Navigation */}
+        {/* <View className="absolute bottom-0 left-0 right-0 flex-row justify-around items-center bg-[#3A217C] py-3 rounded-t-xl">
           <TouchableOpacity className="items-center">
             <Ionicons name="home" size={24} color="white" />
             <Text className="text-white text-xs">Home</Text>
@@ -402,35 +403,152 @@ export default function DetailRentalHome() {
           </TouchableOpacity>
         </View> */}
 
-          <SortSelector
-              visible={sortModalVisible}
-              onClose={() => setSortModalVisible(false)}
-              sortBy={sortBy}
-              sortOrder={sortOrder}
-              onSortChange={(key, order) => {
-                setSortBy(key);
-                setSortOrder(order);
-                if (key === "pst_status") {
-                  applySort(data, key, order);
-                } else {
-                  const aktifOnly = data.filter(
-                      (item) => item.pst_status === "Aktif"
-                  );
-                  applySort(aktifOnly, key, order);
-                }
-              }}
-          />
-          <FilterSelector
-              visible={filterModalVisible}
-              selectedStatus={selectedStatus}
-              selectedHargaperjam={selectedPrice}
-              selectedJenisPlay={selectedJenisPlay}
-              onApply={(status, Price, Jenis) => {
-                applyFilterAndSearch(data, status, Price, Jenis);
-              }}
-              onClose={() => setFilterModalVisible(false)}
-          />
-        </View>
-      </ImageBackground>
+        <SortSelector
+          visible={sortModalVisible}
+          onClose={() => setSortModalVisible(false)}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onSortChange={(key, order) => {
+            setSortBy(key);
+            setSortOrder(order);
+            if (key === "pst_status") {
+              applySort(data, key, order);
+            } else {
+              const aktifOnly = data.filter(
+                (item) => item.pst_status === "Aktif"
+              );
+              applySort(aktifOnly, key, order);
+            }
+          }}
+        />
+        <FilterSelector
+          visible={filterModalVisible}
+          selectedStatus={selectedStatus}
+          selectedHargaperjam={selectedPrice}
+          selectedJenisPlay={selectedJenisPlay}
+          onApply={(status, Price, Jenis) => {
+            applyFilterAndSearch(data, status, Price, Jenis);
+          }}
+          onClose={() => setFilterModalVisible(false)}
+        />
+      </View>
+    </ImageBackground>
   );
 }
+
+/** ----------- Stylesheet ------------ */
+const styles = StyleSheet.create({
+  background: { flex: 1 },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 40,
+    paddingBottom: 16,
+  },
+  locationButton: {
+    flexDirection: "row",
+    backgroundColor: "#5829AB",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    alignItems: "center",
+  },
+  locationText: {
+    color: "#fff",
+    marginHorizontal: 8,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 999,
+    borderWidth: 2,
+    borderColor: "#fff",
+  },
+  searchRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    marginBottom: 16,
+  },
+  searchBox: {
+    flex: 1,
+    height: 55,
+    marginRight: 8,
+  },
+  searchBackground: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+  searchImage: {
+    borderRadius: 16,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 8,
+    color: "#fff",
+  },
+  optionButton: {
+    width: 64,
+    height: 55,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  bannerContainer: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+    marginTop: 10,
+  },
+  bannerSlide: {
+    width: screenWidth * 0.8,
+    height: 200,
+    marginRight: 12,
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+  bannerImage: {
+    width: "100%",
+    height: "100%",
+  },
+  dotsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  dot: {
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: "rgb(0, 183, 255)",
+    marginHorizontal: 4,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 40,
+  },
+  loadingText: {
+    marginTop: 12,
+    color: "#aaa",
+  },
+  rentalList: {
+    paddingHorizontal: 16,
+  },
+  userContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  greetingText: {
+    color: "#fff",
+    fontSize: 14,
+    marginRight: 8,
+    fontFamily: "Poppins",
+    textDecorationLine: "underline",
+  },
+});

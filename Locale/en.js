@@ -5,6 +5,8 @@ export default {
     loading: "Loading data...",
     success: "Success",
     failed: "Failed",
+    date: "Date",
+    durationBook: "Duration",
     errorMessage: "An error occurred.",
     tapForDetails: "Tap for details",
     maxPlayer: "Max Players",
@@ -40,5 +42,8 @@ export default {
     rtlNama: "Rental Name",
     pricePst: "Price / Hour",
     selectCity: "Select City",
-    pstMerk: "Playstation Merk"
+    pstMerk: "Playstation Merk",
+    rentalNull: "Sorry, rentals in your area are not yet available.",
+    ruanganNull: "Sorry, room in your rental are not yet available.",
+    strLabelFormBook: "Select Play Date & Time."
 };
