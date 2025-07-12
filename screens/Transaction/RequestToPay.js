@@ -83,8 +83,13 @@ export default function RequestToPay() {
   const [duration, setDuration] = useState(0); // durasi dalam jam atau menit
 
   const formatDate = (date) => {
-    if (!date) return "";
-    return date.toLocaleDateString("id-ID", {
+    let dates;
+    if (!date) {
+      return "";
+    } else {
+      dates = new Date(date)
+    }
+    return dates.toLocaleDateString("id-ID", {
       day: "2-digit",
       month: "short",
       weekday: "short",
@@ -106,7 +111,7 @@ export default function RequestToPay() {
       }
 
       // Jika tidak ada modal yang terbuka, lanjutkan dengan back ke halaman sebelumnya
-      navigation.navigate("Home"); 
+      navigation.navigate("Home");
       return true; // Mencegah kembali ke halaman sebelumnya
     };
 
@@ -157,13 +162,13 @@ export default function RequestToPay() {
   };
 
   const handleSave = () => {
-    if (selectedPaymentMethod == null){
+    if (selectedPaymentMethod == null) {
       Toast.show({
-          type: "error",
-          text1: i18n.t("failed"),
-          text2: i18n.t("fieldRequired"),
-        });
-        return;
+        type: "error",
+        text1: i18n.t("failed"),
+        text2: i18n.t("fieldRequired"),
+      });
+      return;
     }
     const payloads = {
       booking: { bok_id: params.book_id },

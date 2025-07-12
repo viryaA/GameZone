@@ -40,19 +40,19 @@ export default function LoginHome() {
     }, []);
 
     const handleLogin = async () => {
-        if (!email || !password) {
-            return Toast.show({
-                type: 'error',
-                text1: 'Input required',
-                text2: 'Please enter both email and password.',
-            });
-        }
+        // if (!email || !password) {
+        //     return Toast.show({
+        //         type: 'error',
+        //         text1: 'Input required',
+        //         text2: 'Please enter both email and password.',
+        //     });
+        // }
 
         try {
             const response = await fetch(`${apiUrl}/MsUser/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ usr_email: email, usr_password: password }),
+                body: JSON.stringify({ usr_email: "muhafriza49@gmail.com", usr_password: "Pelanggan123" }),
             });
 
             const result = await response.json();

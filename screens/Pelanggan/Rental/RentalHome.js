@@ -122,8 +122,6 @@ export default function RentalHome() {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
-  console.log("kotee", selectedKota);
-
   /** ----------- Fetch on Kota Change ------------ */
   useEffect(() => {
     if (selectedKota) {

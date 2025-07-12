@@ -13,6 +13,7 @@ export default function DetailRuanganHome() {
     const route = useRoute();
     const navigation = useNavigation();
     const { item } = route.params;
+    const itemsParam  = item;
 
     const [activeTab, setActiveTab] = useState('description');
     const detailRuanganImageUri = require("../../../assets/detail-ruangan.png");
@@ -20,6 +21,7 @@ export default function DetailRuanganHome() {
     const keranjang = require("../../../assets/keranjang.png");
 
     const listData = Array.isArray(item) ? item : [item];
+    console.log("itemsParam", item)
     return (
         <ImageBackground
             source={require("../../../assets/background-hal.png")} // ← Ganti dengan path ke gambar lokal kamu
@@ -153,7 +155,7 @@ export default function DetailRuanganHome() {
             className="w-full px-4 absolute bottom-5 left-0 right-0 bg-[#3F217A] pt-5 pb-8 px-4"
             >
                 <View className="absolute bottom-0 left-0 right-0 px-6 pb-6 pt-3 bg-[#3F217A]">
-                    <TouchableOpacity className="bg-[#F75E7E] py-3 rounded-xl flex-row items-center justify-center gap-3">
+                    <TouchableOpacity onPress={() => navigation.navigate("FormBooking", { itemsParam })} className="bg-[#F75E7E] py-3 rounded-xl flex-row items-center justify-center gap-3">
                     <Ionicons name="cart-outline" size={20} color="white" />
                     <Text className="text-white font-poppins-bold text-lg">Book now</Text>
                     </TouchableOpacity>

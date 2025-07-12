@@ -1,5 +1,5 @@
 import moment from "moment";
-import "moment/dist/locale/en-gb";
+import "moment/locale/id";
 
 export const COLOR_PRIMARY = '#004080';
 export const COLOR_SECONDARY = '#f6a12c';
@@ -116,10 +116,11 @@ export const formatCurrencyRupiah = (input) => {
   }).format(parsed);
 };
 
+moment.locale('id');
 export const formatDate = (input, dateOnly = false, justTime = false) => {
   return dateOnly
-    ? moment(input).format("DD MMM yyyy")
+    ? moment.utc(input).format("DD MMM yyyy")  // Menggunakan UTC untuk tanggal
     : justTime && !dateOnly
-    ? moment(input).format("HH:mm")
-    : moment(input).format("DD MMM yyyy (HH:mm)");
+    ? moment.utc(input).format("HH:mm")  // Menggunakan UTC untuk waktu
+    : moment.utc(input).format("DD MMM yyyy (HH:mm)");  // Menggunakan UTC untuk tanggal dan waktu
 };
