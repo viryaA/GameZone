@@ -3,6 +3,7 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
   TextInput,
   StyleSheet,
   Dimensions,
@@ -278,39 +279,39 @@ export default function DetailRentalHome() {
             </View>
           </View>
 
-          {/* Search Bar */}
-          <View className="flex-row items-center px-4 mb-4">
-            <View className="flex-1 h-12">
-              <ImageBackground
-                  source={require("../../../assets/Search-Box.png")}
-                  resizeMode="cover"
-                  className="w-full h-full flex-row items-center pl-4 pr-4"
-                  imageStyle={{ borderRadius: 16 }}
-                  style={{ overflow: "hidden" }}
-              >
-                <Ionicons name="search-outline" size={18} color="#B0A6D9" />
-                <TextInput
-                    placeholder="Search.."
-                    placeholderTextColor="#B0A6D9"
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                    className="ml-2 text-white flex-1"
-                />
-              </ImageBackground>
-            </View>
-
-            <TouchableOpacity onPress={() => setSortModalVisible(true)}>
-              <ImageBackground
-                  source={require("../../../assets/Bg.png")}
-                  resizeMode="cover"
-                  className="w-16 h-12 justify-center items-center"
-                  imageStyle={{ borderRadius: 12 }}
-                  style={{ overflow: "hidden" }}
-              >
-                <Ionicons name="options-outline" size={20} color="#fff" />
-              </ImageBackground>
-            </TouchableOpacity>
+        {/* Search Bar */}
+        <View className="flex-row items-center px-4 mb-4">
+          <View className="flex-1 h-12">
+            <ImageBackground
+              source={require("../../../assets/Search-Box.png")}
+              resizeMode="cover"
+              className="w-full h-full flex-row items-center pl-4 pr-4"
+              imageStyle={{ borderRadius: 16 }}
+              style={{ overflow: "hidden" }}
+            >
+              <Ionicons name="search-outline" size={18} color="#B0A6D9" />
+              <TextInput
+                placeholder="Search.."
+                placeholderTextColor="#B0A6D9"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                className="ml-2 text-white flex-1"
+              />
+            </ImageBackground>
           </View>
+
+          <TouchableOpacity onPress={() => setSortModalVisible(true)}>
+            <ImageBackground
+              source={require("../../../assets/Bg.png")}
+              resizeMode="cover"
+              className="w-16 h-12 justify-center items-center"
+              imageStyle={{ borderRadius: 12 }}
+              style={{ overflow: "hidden" }}
+            >
+              <Ionicons name="options-outline" size={20} color="#fff" />
+            </ImageBackground>
+          </TouchableOpacity>
+        </View>
 
           <View className="mx-4 mb-4 mt-4 rounded-2xl overflow-hidden">
             {/* Peta */}

@@ -9,6 +9,7 @@ import './global.css';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import CustomToast from './CustomToast';
 import { UserProvider } from './Konteks/UserContext';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 
 // Optional: prevent splash screen from hiding before font is loaded
@@ -29,19 +30,21 @@ export default function App() {
     if (!fontsLoaded) return null;
 
     return (
-        <SafeAreaProvider onLayout={onLayoutRootView}>
-            <StatusBar style="light" />
-            <UserProvider>
-                <NavigationContainer>
-                    <RootStack />
-                </NavigationContainer>
-            </UserProvider>
-            <Toast
-              config={{
-                success: (props) => <CustomToast {...props} type="success" />,
-                error: (props) => <CustomToast {...props} type="error" />,
-              }}
-            />
-        </SafeAreaProvider>
+        <GestureHandlerRootView>
+            <SafeAreaProvider onLayout={onLayoutRootView}>
+                <StatusBar style="light" />
+                <UserProvider>
+                    <NavigationContainer>
+                        <RootStack />
+                    </NavigationContainer>
+                </UserProvider>
+                <Toast
+                config={{
+                    success: (props) => <CustomToast {...props} type="success" />,
+                    error: (props) => <CustomToast {...props} type="error" />,
+                }}
+                />
+            </SafeAreaProvider>
+        </GestureHandlerRootView>
     );
 }
