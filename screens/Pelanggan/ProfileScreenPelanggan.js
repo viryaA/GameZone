@@ -85,7 +85,7 @@ export default function ProfileScreenPelanggan() {
     };
 
     fetchData();
-  }, []);
+  }, [usr_id]);
 
   const pickImage = async () => {
     try {
