@@ -12,7 +12,7 @@ import { Image as ImgResolve } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Constants from 'expo-constants';
 import Toast from 'react-native-toast-message';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import ScreenPelangganWithBottomBar from '../../TemplateComponent/ScreenPelangganWithBottomBar';
 import { UserContext } from '../../Konteks/UserContext';
 
