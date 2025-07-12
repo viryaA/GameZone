@@ -64,10 +64,10 @@ export default function RootStack() {
                 headerShown: false,
             }}
         >
-            <Stack.Screen name="Pelanggan" component={UserTabs} />
             <Stack.Screen name="Welcome" component={WellcomeScreen} />
             <Stack.Screen name="FormBooking" component={FormBooking} />
             <Stack.Screen name="Admin" component={AdminTabs} />
+            <Stack.Screen name="Pelanggan" component={UserTabs} />
             <Stack.Screen name="LoginMain" component={LoginHome} />
             <Stack.Screen name="SettingsStack" component={SettingsStack} />
             <Stack.Screen name="CreateAccount" component={CreateAccount} />
