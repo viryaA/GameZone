@@ -10,7 +10,6 @@ import {
   Animated,
   Dimensions,
   StyleSheet,
-  Image,
   ImageBackground,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
@@ -25,8 +24,6 @@ import { useNavigation } from "@react-navigation/native";
 // import * as Location from "expo-location";
 import { useContext } from 'react';
 import { UserContext } from '../../../Konteks/UserContext';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import ScreenAdminWithBottomBar from "../../../TemplateComponent/ScreenAdminWithBottomBar";
 

@@ -1,6 +1,6 @@
 import { CameraView, useCameraPermissions } from 'expo-camera'
 import { useState } from 'react'
-import {View, Text, Alert, Button, TouchableOpacity, Image, Platform, ActivityIndicator} from 'react-native'
+import {View, Text, Alert, Button, TouchableOpacity, ActivityIndicator} from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import Toast from 'react-native-toast-message';
 import { LinearGradient } from 'expo-linear-gradient'
