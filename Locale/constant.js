@@ -106,7 +106,7 @@ export const DAFTAR_KOTA = [
 ];
 
 export const formatCurrencyRupiah = (input) => {
-  const parsed = parseFloat(input.toString().replace(/\./g, "").replace(",", "."));
+  const parsed = parseFloat(input?.toString().replace(/\./g, "").replace(",", "."));
   if (isNaN(parsed)) return "";
 
   return new Intl.NumberFormat('id-ID', {
@@ -116,8 +116,10 @@ export const formatCurrencyRupiah = (input) => {
   }).format(parsed);
 };
 
-export const formatDate = (input, dateOnly = false) => {
+export const formatDate = (input, dateOnly = false, justTime = false) => {
   return dateOnly
     ? moment(input).format("DD MMM yyyy")
+    : justTime && !dateOnly
+    ? moment(input).format("HH:mm")
     : moment(input).format("DD MMM yyyy (HH:mm)");
 };
