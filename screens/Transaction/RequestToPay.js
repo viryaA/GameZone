@@ -7,6 +7,7 @@ import {
   TextInput,
   Dimensions,
   StyleSheet,
+  BackHandler,
   Platform,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -26,6 +27,7 @@ import { UserContext } from "../../Konteks/UserContext";
 import { I18n } from "i18n-js";
 // import { UserContext } from "../../../Konteks/UserContext";
 const apiUrl = Constants.expoConfig.extra.API_URL;
+import { useNavigationState } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 const screenWidth = width;
@@ -59,7 +61,7 @@ export default function RequestToPay() {
 
   // PARAMS
   const route = useRoute();
-  const { payload } = route.params;
+  const { params } = route.params;
 
   // DatePick
   const [date, setDate] = useState(new Date());
@@ -95,14 +97,27 @@ export default function RequestToPay() {
     return hour >= 12 ? "PM" : "AM";
   };
 
-  const calculateEndTime = () => {
-    if (!selectedTime || !duration) return null;
-    const [hour, minute] = selectedTime.split(":").map(Number);
-    const endHour = (hour + duration) % 24;
-    return `${endHour.toString().padStart(2, "0")}:${minute
-      .toString()
-      .padStart(2, "0")}`;
-  };
+  useEffect(() => {
+    const handleBackPress = () => {
+      // Logika untuk mengontrol navigasi saat tombol back ditekan
+      if (modalVisible) {
+        setModalVisible(false);
+        return true;
+      }
+
+      // Jika tidak ada modal yang terbuka, lanjutkan dengan back ke halaman sebelumnya
+      navigation.navigate("Home"); 
+      return true; // Mencegah kembali ke halaman sebelumnya
+    };
+
+    // Menambahkan listener untuk back button
+    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+
+    // Bersihkan listener saat komponen dibersihkan
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+    };
+  }, [modalVisible, navigation]);
 
   useEffect(() => {
     if (duration > 0) {
@@ -130,8 +145,6 @@ export default function RequestToPay() {
     }
   }, [duration]);
 
-  console.log("time", data);
-
   const handleAdd = () => {
     setSelectedItem(null);
     setIsEdit(false);
@@ -144,57 +157,49 @@ export default function RequestToPay() {
   };
 
   const handleSave = () => {
+    if (selectedPaymentMethod == null){
+      Toast.show({
+          type: "error",
+          text1: i18n.t("failed"),
+          text2: i18n.t("fieldRequired"),
+        });
+        return;
+    }
     const payloads = {
-      user: { usr_id: user.usr_id },
-      ruangan: { rng_id: payload.id_ruangan },
-      bok_waktu_mulai: formatDateTime(payload.date, payload.start),
-      bok_waktu_selesai: formatDateTime(payload.date, payload.endTime),
-      bok_durasi_jam: payload.durasi,
-      bok_total_biaya: parseInt(payload.harga_per_jam) * parseInt(payload.durasi),
-      // payment: selectedPaymentMethod.name,
+      booking: { bok_id: params.book_id },
+      pym_metode: selectedPaymentMethod.name,
+      pym_nominal: parseInt(params.harga_per_jam) * parseInt(params.durasi),
+      pym_status: null,
     };
 
     console.log("payload", payloads);
     const method = "POST";
-    fetch(`${apiUrl}/TrBooking`, {
+    fetch(`${apiUrl}/Payment`, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payloads),
     })
-        .then((res) => res.json())
-        .then((resJson) => {
-          Toast.show({
-            type: resJson.result === 1 ? "success" : "error",
-            text1: resJson.result === 1 ? i18n.t("success") : i18n.t("failed"),
-            text2: resJson.message,
-          });
-          if (resJson.result === 1) {
-            navigation.navigate("Pelanggan")
-          }
-          setModalVisible(false);
-        })
-        .catch((error) => {
-          console.error("Save error", error);
-          Toast.show({
-            type: "error",
-            text1: i18n.t("failed"),
-            text2: i18n.t("errorMessage"),
-          });
-          setModalVisible(false);
+      .then((res) => res.json())
+      .then((resJson) => {
+        Toast.show({
+          type: resJson.result === 1 ? "success" : "error",
+          text1: resJson.result === 1 ? i18n.t("success") : i18n.t("failed"),
+          text2: resJson.message,
         });
-  };
-
-  const handleReset = () => {
-    setDuration(0); // reset durasi
-    setSelectedTime(null); // reset waktu yang dipilih
-    setDate(new Date());
-
-    // aktifkan semua slot waktu kembali
-    const fallback = data.map((item) => ({
-      ...item,
-      disabled: false,
-    }));
-    setAvailableTimes(fallback);
+        if (resJson.result === 1) {
+          navigation.navigate("Home");
+        }
+        setModalVisible(false);
+      })
+      .catch((error) => {
+        console.error("Save error", error);
+        Toast.show({
+          type: "error",
+          text1: i18n.t("failed"),
+          text2: i18n.t("errorMessage"),
+        });
+        setModalVisible(false);
+      });
   };
 
   return (
@@ -206,7 +211,7 @@ export default function RequestToPay() {
       <View className="flex-1 bg-black/40">
         <View className="pt-12 px-4">
           <TouchableOpacity
-            onPress={() => navigation.goBack()}
+            onPress={() => navigation.navigate("Home")}
             className="absolute left-4 top-12 w-9 h-9 bg-white/20 rounded-full justify-center items-center"
           >
             <Ionicons name="chevron-back" size={20} color="white" />
@@ -219,20 +224,24 @@ export default function RequestToPay() {
 
         <View className="px-4 mt-4">
           {/* Room Info */}
-          <View className="flex-row items-center space-x-4 mb-4">
-            <View className="w-20 h-20 rounded-xl overflow-hidden mr-4">
+          <View className="flex-row items-center space-x-4 mb-6">
+            <View className="w-28 h-28 rounded-xl overflow-hidden mr-4">
               <ImageBackground
-                source={require("../../assets/VIPRoom.png")} // Ganti dengan gambar ruangan
+                source={{ uri: `${apiUrl}/Images/Ruangan/${params.gambar}` }} // Ensure that the path is correct
                 className="w-full h-full"
+                resizeMode="cover" // Ensure the image covers the container
               />
             </View>
             <View>
-              <Text className="text-white font-bold mb-1 text-lg">
-                {payload.nama_ruangan}
+              <Text className="text-white font-bold mb-1 text-2xl">
+                {params.nama_ruangan}
               </Text>
-              <Text className="text-green-400 text-xs mb-2 ">★ 200 Rental</Text>
+              {/* Increased text size */}
+              <Text className="text-green-400 text-xs mb-2">
+                ★ {params.totalBooking} Rental
+              </Text>
               <Text className="text-white text-sm">
-                Rp {payload.harga_per_jam} /h
+                Rp {parseInt(params.harga_per_jam).toLocaleString("id-ID")} /h
               </Text>
             </View>
           </View>
@@ -256,21 +265,20 @@ export default function RequestToPay() {
               <View className="flex-row justify-between items-center">
                 <View>
                   <Text className="text-white font-semibold text-sm">
-                    {formatDate(payload.date)}
+                    {formatDate(params.date)}
                   </Text>
                   <Text className="text-white text-center text-xs">
-                    {payload.start ? payload.start : "-"}{" "}
-                    {getAmPm(payload.start)}
+                    {params.start ? params.start : "-"} {getAmPm(params.start)}
                   </Text>
                 </View>
                 <Ionicons name="arrow-forward" size={20} color="white" />
                 <View>
                   <Text className="text-white font-semibold text-sm">
-                    {formatDate(payload.date)}
+                    {formatDate(params.date)}
                   </Text>
                   <Text className="text-white text-center text-xs">
-                    {payload.endTime ? payload.endTime : "-"}{" "}
-                    {getAmPm(payload.endTime)}
+                    {params.endTime ? params.endTime : "-"}{" "}
+                    {getAmPm(params.endTime)}
                   </Text>
                 </View>
               </View>
@@ -296,11 +304,12 @@ export default function RequestToPay() {
 
               <View className="flex-row justify-between">
                 <Text className="text-white text-sm">
-                  Rp {payload.harga_per_jam} × {payload.durasi} {i18n.t("jam")}
+                  Rp {parseInt(params.harga_per_jam).toLocaleString("id-ID")} ×{" "}
+                  {params.durasi} {i18n.t("jam")}
                 </Text>
                 <Text className="text-white text-sm">
-                  Rp{" "}
-                  {(payload.durasi * payload.harga_per_jam).toLocaleString(
+                  Rp
+                  {(params.durasi * params.harga_per_jam).toLocaleString(
                     "id-ID"
                   )}
                 </Text>
@@ -316,8 +325,8 @@ export default function RequestToPay() {
                   {i18n.t("totalPayment")}
                 </Text>
                 <Text className="text-white font-bold text-lg">
-                  Rp{" "}
-                  {(payload.durasi * payload.harga_per_jam).toLocaleString(
+                  Rp
+                  {(params.durasi * params.harga_per_jam).toLocaleString(
                     "id-ID"
                   )}
                 </Text>
@@ -377,7 +386,8 @@ export default function RequestToPay() {
           {/* Amount */}
           <View>
             <Text className="text-white text-xl font-bold">
-              Rp {(payload.durasi * payload.harga_per_jam).toLocaleString("id-ID")}
+              Rp{" "}
+              {(params.durasi * params.harga_per_jam).toLocaleString("id-ID")}
             </Text>
             <Text className="text-white text-sm opacity-60">
               {i18n.t("totalPayment")}

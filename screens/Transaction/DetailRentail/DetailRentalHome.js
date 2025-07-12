@@ -56,7 +56,7 @@ export default function DetailRentalHome() {
   const route = useRoute();
   const { item } = route.params;
 
-  // console.log("item", item.rtl_id)
+  console.log("item", item.rtl_id)
   const fetchData = () => {
     setLoading(true);
     fetch(`${apiUrl}/MsRuangan/rental/` + item.rtl_id)

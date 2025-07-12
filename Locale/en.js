@@ -54,5 +54,6 @@ export default {
     jam: "Hours",
     totalPayment: "Total Payment",
     diskon: "Discount",
-    confirmBook: "Confirm to Book"
+    confirmBook: "Confirm to Book",
+    fieldRequired: "All field are required",
 };

@@ -67,8 +67,6 @@ export default function RootStack() {
         >
             <Stack.Screen name="Welcome" component={WellcomeScreen} />
             <Stack.Screen name="Pelanggan" component={UserTabs} />
-            <Stack.Screen name="FormBooking" component={FormBooking} />
-            <Stack.Screen name="RequestToPay" component={RequestToPay} />
             <Stack.Screen name="Admin" component={AdminTabs} />
             <Stack.Screen name="LoginMain" component={LoginHome} />
             <Stack.Screen name="SettingsStack" component={SettingsStack} />

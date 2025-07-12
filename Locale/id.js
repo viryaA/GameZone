@@ -56,6 +56,7 @@ export default {
     jam: "Jam",
     totalPayment: "Total Pembayaran",
     diskon: "Diskon",
-    confirmBook: "Konfirmasi untuk Memesan"
+    confirmBook: "Konfirmasi untuk Memesan",
+    fieldRequired: "Semua Field Wajib Diisi",
 };
 
