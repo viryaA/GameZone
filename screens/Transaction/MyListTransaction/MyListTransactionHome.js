@@ -30,7 +30,7 @@ export default function MyListTransactionHome() {
 
     const fetchData = () => {
         setLoading(true);
-        fetch(`${apiUrl}/TrBooking/BookingByUser/4`)
+        fetch(`${apiUrl}/TrBooking/BookingByUser/` + user.usr_id)
         .then((res) => res.json())
         .then((json) => {
         let initialData = Array.isArray(json)
