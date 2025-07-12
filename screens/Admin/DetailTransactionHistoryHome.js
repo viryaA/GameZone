@@ -18,7 +18,7 @@ export default function DetailTransactionHistoryHome() {
 
     const barcodeUri = item.rng_image
         ? { uri: `${apiUrl}/Images/QRCodes/${item.bok_qr_code}` }
-        : localImageMap[roomType];
+        : null;
 
     const [activeTab, setActiveTab] = useState('Booking');
     const detailRuanganImageUri = require("../../assets/detail-ruangan.png");
@@ -197,13 +197,13 @@ export default function DetailTransactionHistoryHome() {
                     {/* Payment Method */}
                     <View className="flex-row justify-between mb-1">
                         <Text className="text-white text-sm">Method Of Payment</Text>
-                        <Text className="text-white text-sm">{data.pym_metode}</Text>
+                        <Text className="text-white text-sm">{data?.pym_metode}</Text>
                     </View>
 
                     {/* Status Transaction */}
                     <View className="flex-row justify-between">
                         <Text className="text-white text-sm">Status Transaction</Text>
-                        <Text className="text-white text-sm">{data.pym_status}</Text>
+                        <Text className="text-white text-sm">{data?.pym_status}</Text>
                     </View>
                 </View>
 

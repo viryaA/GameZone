@@ -27,7 +27,8 @@ const defaultImages = [
 
 export default function ProfileScreenPelanggan() {
   const { user } = useContext(UserContext);
-  const usr_id = user.user_id;
+  const [usr_id, setUsrId] = useState(null);
+  const [rtl_id, setRtlId] = useState(null);
 
   const [profileImage, setProfileImage] = useState(null);
   const [isEditingUsername, setIsEditingUsername] = useState(false);
@@ -38,6 +39,25 @@ export default function ProfileScreenPelanggan() {
   const [gender, setGender] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const rawData = await AsyncStorage.getItem('userData');
+        const userData = rawData && JSON.parse(rawData);
+        const id = userData?.usr_id;
+        if(userData?.rtl_id?.rtl_id){
+          setRtlId(userData?.rtl_id?.rtl_id);
+        }
+        console.log('User ID:', id);
+        setUsrId(id);
+      } catch (error) {
+        console.error('Failed to load userData:', error);
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   const formatDate = (date) => date.toISOString().split('T')[0];
 
@@ -94,7 +114,7 @@ export default function ProfileScreenPelanggan() {
 
     formData.append('user', JSON.stringify({
       usr_id, usr_username: userName, usr_nama: fullName, usr_email: email,
-      usr_gender: gender, usr_no_telp: phoneNumber, usr_tgl_lahir: formatDate(birth),
+      usr_gender: gender, usr_no_telp: phoneNumber, usr_tgl_lahir: formatDate(birth),rtl_id:null,
     }));
 
     if (profileImage?.startsWith('file://')) {
