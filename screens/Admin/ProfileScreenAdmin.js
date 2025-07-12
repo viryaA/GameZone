@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   View,
   Text,
@@ -22,12 +22,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Constants from 'expo-constants';
 import Toast from 'react-native-toast-message';
 import { KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback } from 'react-native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
 
-export default function ProfileScreen() {
-  const [profileImage, setProfileImage] = useState(null);
+export default function ProfileScreenAdmin() {
+  const [profileImage, setProfileImage] = useState('');
   const [userName, setUserName] = useState('');
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [fullName, setFullName] = useState('');
@@ -36,8 +36,28 @@ export default function ProfileScreen() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [gender, setGender] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [usr_id, setUsrId] = useState(null);
+  const [rtl_id, setRtlId] = useState(null);
 
-  const usr_id = 20;
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const rawData = await AsyncStorage.getItem('userData');
+        const userData = rawData && JSON.parse(rawData);
+        const id = userData?.usr_id;
+        if(userData?.rtl_id?.rtl_id){
+          setRtlId(userData?.rtl_id?.rtl_id);
+        }
+        console.log('User ID:', id);
+        setUsrId(id);
+      } catch (error) {
+        console.error('Failed to load userData:', error);
+      }
+    };
+
+    fetchUserId();
+  }, []);
+
 
   const defaultProfileImages = [
     require('../../assets/profil/p1.jpg'),
@@ -85,8 +105,10 @@ export default function ProfileScreen() {
       }
     };
 
-    fetchUserData();
-  }, []);
+    if (usr_id > 0) {
+      fetchUserData();
+    }
+  }, [usr_id]);
 
   const handleImagePick = async () => {
     try {
@@ -145,7 +167,8 @@ export default function ProfileScreen() {
     usr_id: usr_id,
     usr_username: userName,
     usr_nama: fullName,
-    usr_tgl_lahir: formatDate(birth),
+    usr_tgl_lahir: formatDate(birth) + 'T17:00:00.000+00:00',
+    rtl_id: {rtl_id:rtl_id},
     usr_gender: gender,
     usr_no_telp: phoneNumber,
     usr_email: email,

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
     View,
     Text,
@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Constants from 'expo-constants';
 import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { height } = Dimensions.get('window');
 const apiUrl = Constants.expoConfig.extra.API_URL;
@@ -21,6 +22,22 @@ const apiUrl = Constants.expoConfig.extra.API_URL;
 export default function BookingModalConfirm({ visible, onClose, data, onConfirm }) {
     const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
+    const [usr_id, setUsrId] = useState(null);
+
+    useEffect(() => {
+        const fetchUserId = async () => {
+            try {
+                const rawData = await AsyncStorage.getItem('userData');
+                const userData = rawData && JSON.parse(rawData);
+                const id = userData?.usr_id;
+                setUsrId(id);
+            } catch (error) {
+                console.error('Failed to load userData:', error);
+            }
+        };
+
+        fetchUserId();
+    }, []);
 
     const translateY = useRef(new Animated.Value(0)).current;
 
@@ -63,7 +80,7 @@ export default function BookingModalConfirm({ visible, onClose, data, onConfirm 
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     bok_qr_code: data.bok_qr_code,
-                    bok_status: 'Sudah Check-in',
+                    bok_status: 'Sesi Dimulai',
                 }),
             });
             const result = await response.json();
@@ -73,6 +90,23 @@ export default function BookingModalConfirm({ visible, onClose, data, onConfirm 
                     text1: 'Check-in Successful',
                     text2: 'Customer has been checked in successfully',
                 });
+                console.log("ddd: ",usr_id)
+                const checklog ={
+                    chk_id:0,
+                    booking:
+                        {bok_id: data.bok_id},
+                    chk_type: 'Mulai Sesi',
+                    chk_time: new Date().toISOString(),
+                    user: {usr_id}
+                }
+
+                const responseLog = await fetch(`${apiUrl}/Checklog`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(checklog),
+                });
+                console.log(checklog);
+                console.log(responseLog);
                 if (onConfirm) onConfirm(result.data);
                 onClose();
             } else {

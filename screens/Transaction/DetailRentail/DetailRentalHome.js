@@ -3,7 +3,6 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
-  ActivityIndicator,
   TextInput,
   StyleSheet,
   Dimensions,

@@ -31,7 +31,6 @@ export default function AdminBottomBar() {
               {isFocused ? (
                 <View style={styles.focusedTab}>
                   <Icon name={icon} size={18} color="#fff" />
-                  <Text style={styles.focusedTabText}>{name}</Text>
                 </View>
               ) : (
                 <Icon name={icon} size={22} color="#fff" style={styles.icon} />

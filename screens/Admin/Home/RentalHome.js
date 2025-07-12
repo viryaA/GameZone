@@ -22,21 +22,19 @@ import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";
-import * as Location from "expo-location";
-import { useContext } from "react";
-import { UserContext } from "../../../Konteks/UserContext";
+// import * as Location from "expo-location";
+import { useContext } from 'react';
+import { UserContext } from '../../../Konteks/UserContext';
 
-import ScreenPelangganWithBottomBar from "../../../TemplateComponent/ScreenPelangganWithBottomBar";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import ScreenAdminWithBottomBar from "../../../TemplateComponent/ScreenAdminWithBottomBar";
 
 // Locale & Constants
 import i18n from "../../../Locale/i18n";
-import { DAFTAR_KOTA } from "../../../Locale/constant";
-
 // Components
 import SortSelector from "./components/SortSelector";
-import FilterSelector from "./components/FilterSelector";
-import FilterKota from "./components/FilterKota";
-import RentalCard from "./components/RentalCard";
+import RoomCard from "./components/RoomCard";
 
 // Assets
 import "../../../global.css";
@@ -57,7 +55,6 @@ export default function RentalHome() {
   const flatListRef = useRef(null);
   const scrollX = useRef(new Animated.Value(0)).current;
 
-  // State
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -67,48 +64,15 @@ export default function RentalHome() {
   const [sortBy, setSortBy] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
 
-  const [selectedStatus, setSelectedStatus] = useState("Aktif");
-  const [selectedPrice, setSelectedPrice] = useState("All");
-  const [selectedJenisPlay, setSelectedJenisPlay] = useState("All");
-
-  const [modalVisible, setModalVisible] = useState(false);
   const [sortModalVisible, setSortModalVisible] = useState(false);
-  const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [bookingStatus, setBookingStatus] = useState(null);
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    console.log("User dari Context:", user);
-  }, []);
-
-  /** ----------- Lifecycle: Get User Location ------------ */
-  useEffect(() => {
-    const getUserLocation = async () => {
-      setLoading(true);
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") return;
-
-        const location = await Location.getCurrentPositionAsync({});
-        const reverseGeocode = await Location.reverseGeocodeAsync(
-          location.coords
-        );
-        if (reverseGeocode.length > 0) {
-          const userCity = reverseGeocode[0].subregion;
-          const found = DAFTAR_KOTA.find((kota) =>
-            userCity.toLowerCase().includes(kota.nama.toLowerCase())
-          );
-          if (found) setSelectedKota(found);
-        }
-      } catch (error) {
-        console.error("Gagal mendapatkan lokasi:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getUserLocation();
+    // console.log('User dari Context:', user);
     fetchData(); // Initial fetch
+    setSelectedKota(user?.rtl_id?.rtl_nama)
   }, []);
 
 
@@ -122,26 +86,14 @@ export default function RentalHome() {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
-  console.log("kotee", selectedKota);
-
-  /** ----------- Fetch on Kota Change ------------ */
-  useEffect(() => {
-    if (selectedKota) {
-      fetchData();
-    }
-  }, [selectedKota]);
-
   /** ----------- API Fetch ------------ */
   const fetchData = () => {
-    fetch(`${apiUrl}/MsRental/kota/${selectedKota?.nama || ""}`)
+    // console.log("inilagifetch");
+    console.log("user",user);
+    fetch(`${apiUrl}/TrBooking/checkin-bookings/`+user?.usr_id)
       .then((res) => res.json())
       .then((json) => {
         let items = Array.isArray(json) ? json : json.data || [];
-
-        if (sortBy !== "rtl_status") {
-          items = items.filter((item) => item.rtl_status === "Aktif");
-        }
-
         setData(items);
         applySort(items, sortBy, sortOrder);
       })
@@ -153,83 +105,67 @@ export default function RentalHome() {
           text2: i18n.t("errorMessage"),
         });
       });
+
+    fetch(`${apiUrl}/TrBooking/booking-status-count/`+user?.rtl_id?.rtl_id)
+        .then((res) => res.json())
+        .then((json) => {
+
+          setBookingStatus(json);
+        })
+        .catch((err) => {
+          console.error(err);
+          Toast.show({
+            type: "error",
+            text1: i18n.t("failed"),
+            text2: i18n.t("errorMessage"),
+          });
+        });
   };
 
   /** ----------- Search ------------ */
   const handleSearch = (query) => {
     setSearchQuery(query);
-    applyAllFilters(
-      data,
-      query,
-      selectedStatus,
-      selectedPrice,
-      selectedJenisPlay,
-      sortBy,
-      sortOrder
-    );
+    applyAllFilters(data, query, sortBy, sortOrder);
   };
 
   /** ----------- Apply Filter, Search, Sort ------------ */
-  const applyAllFilters = (
-    baseData,
-    query,
-    status,
-    price,
-    jenis,
-    sortKey,
-    sortOrder
-  ) => {
+  const applyAllFilters = (baseData, query, sortKey, sortOrder) => {
     let filtered = [...baseData];
-
-    if (status !== "All") {
-      filtered = filtered.filter((item) => item.rtl_status === status);
-    }
 
     if (query) {
       filtered = filtered.filter((item) =>
-        item.rtl_nama.toLowerCase().includes(query.toLowerCase())
-      );
-    }
-
-    if (price !== "All") {
-      filtered = filtered.filter(
-        (item) => item.pst_harga_per_jam?.toString() === price
-      );
-    }
-
-    if (jenis !== "All") {
-      filtered = filtered.filter(
-        (item) => item.jenisPlaystation?.jps_nama?.toString() === jenis
+        item.ruangan?.rng_nama_ruangan.toLowerCase().includes(query.toLowerCase())
       );
     }
 
     applySort(filtered, sortKey, sortOrder);
   };
 
-  const handleDetailLoc = (item) => {
-    navigation.navigate("DetailRental", { item });
-  };
-
   const applySort = (items, key, order) => {
     if (!key) return setFilteredData(items);
 
-    const sorted = [...items].sort((a, b) => {
-      const aVal = a[key];
-      const bVal = b[key];
+    const getValue = (obj, path) =>
+        path.split('.').reduce((acc, part) => acc?.[part], obj);
 
-      if (typeof aVal === "number")
+    const sorted = [...items].sort((a, b) => {
+      const aVal = getValue(a, key.replace(/\?/g, ''));
+      const bVal = getValue(b, key.replace(/\?/g, ''));
+
+      if (typeof aVal === "number") {
         return order === "asc" ? aVal - bVal : bVal - aVal;
+      }
       return order === "asc"
-        ? aVal?.localeCompare(bVal)
-        : bVal?.localeCompare(aVal);
+          ? `${aVal}`.localeCompare(`${bVal}`)
+          : `${bVal}`.localeCompare(`${aVal}`);
     });
 
     setFilteredData(sorted);
   };
 
+
   /** ----------- Render UI ------------ */
   return (
-    <ScreenPelangganWithBottomBar>
+    <ScreenAdminWithBottomBar>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -245,37 +181,41 @@ export default function RentalHome() {
               {/* ---------- Header ---------- */}
               <View style={styles.header}>
                 <TouchableOpacity
-                  onPress={() => setModalVisible(true)}
-                  style={styles.locationButton}
+                    style={styles.locationButton}
+                    onLongPress={() => {
+                      if (selectedKota) {
+                        Toast.show({
+                          type: 'info',
+                          text1: selectedKota,
+                        });
+                      }
+                    }}
                 >
                   <Ionicons name="location-outline" size={18} color="#fff" />
                   <Text style={styles.locationText}>
-                    {selectedKota?.nama || "Location"}
+                    {(selectedKota || '').length > 15
+                        ? `${selectedKota.substring(0, 15)}...`
+                        : selectedKota}
                   </Text>
-                  <Ionicons name="chevron-down" size={16} color="#fff" />
                 </TouchableOpacity>
 
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Text style={styles.greetingText}>
-                    Hai{" "}
-                    <Text style={{ textDecorationLine: "underline" }}>
-                      {user?.usr_username}!
-                    </Text>
+                    Hai <Text style={{ textDecorationLine: 'underline' }}>{user?.usr_username}!</Text>
                   </Text>
                   <TouchableOpacity>
                     <Image
                       source={
                         user?.usr_foto_profile
-                          ? {
-                              uri: `${apiUrl}/Images/User/${user.usr_foto_profile}`,
-                            }
-                          : require("../../../assets/user-icon.png")
+                          ? { uri: `${apiUrl}/Images/User/${user.usr_foto_profile}` }
+                          : require('../../../assets/user-icon.png')
                       }
                       style={styles.avatar}
                     />
                   </TouchableOpacity>
                 </View>
               </View>
+
 
               {/* ---------- Search + Filter ---------- */}
               <View style={styles.searchRow}>
@@ -311,41 +251,41 @@ export default function RentalHome() {
               {/* ---------- Banners ---------- */}
               <View style={styles.bannerContainer}>
                 <Animated.FlatList
-                  ref={flatListRef}
-                  data={bannerImages}
-                  horizontal
-                  pagingEnabled
-                  keyExtractor={(_, index) => index.toString()}
-                  showsHorizontalScrollIndicator={false}
-                  onScroll={Animated.event(
-                    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-                    { useNativeDriver: false }
-                  )}
-                  snapToInterval={screenWidth * 0.8 + 16}
-                  decelerationRate="fast"
-                  contentContainerStyle={{ paddingHorizontal: 0 }}
-                  renderItem={({ item }) => (
-                    <View
-                      style={{
-                        width: screenWidth * 0.8,
-                        height: 200,
-                        marginRight: 0,
-                        marginBottom: 12,
-                        borderRadius: 16,
-                        overflow: "hidden",
-                        // backgroundColor: "#f2f2f2", // fallback warna kalau image error
-                      }}
-                    >
-                      <Image
-                        source={item}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                        }}
-                        resizeMode="contain"
-                      />
-                    </View>
-                  )}
+                    ref={flatListRef}
+                    data={bannerImages}
+                    horizontal
+                    pagingEnabled
+                    keyExtractor={(_, index) => index.toString()}
+                    showsHorizontalScrollIndicator={false}
+                    onScroll={Animated.event(
+                        [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+                        { useNativeDriver: false }
+                    )}
+                    snapToInterval={screenWidth * 0.8 + 16}
+                    decelerationRate="fast"
+                    contentContainerStyle={{ paddingHorizontal: 0 }}
+                    renderItem={({ item }) => (
+                        <View
+                            style={{
+                              width: screenWidth * 0.8,
+                              height: 150,
+                              marginRight: 0,
+                              marginBottom: 12,
+                              borderRadius: 16,
+                              overflow: "hidden",
+                              // backgroundColor: "#f2f2f2", // fallback warna kalau image error
+                            }}
+                        >
+                          <Image
+                              source={item}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                              }}
+                              resizeMode="contain"
+                          />
+                        </View>
+                    )}
                 />
                 <View style={styles.dotsContainer}>
                   {bannerImages.map((_, index) => {
@@ -377,6 +317,39 @@ export default function RentalHome() {
                 </View>
               </View>
 
+              <View className="flex-row justify-around items-center">
+                {/* Bookings */}
+                <View className="items-center mx-2">
+                  <View className="bg-[#499DFF] rounded-xl w-20 h-20 items-center justify-center">
+                    <Text className="text-white text-2xl font-bold">
+                      {bookingStatus?.Bookings ? bookingStatus?.Bookings : 0}
+                    </Text>
+                  </View>
+                  <Text className="text-white text-xs mt-2">Bookings</Text>
+                </View>
+
+                {/* Ongoing */}
+                <View className="items-center mx-2">
+                  <View className="bg-[#FF6376] rounded-xl w-20 h-20 items-center justify-center">
+                    <Text className="text-white text-2xl font-bold">
+                      {bookingStatus?.Ongoing ? bookingStatus?.Ongoing : 0}
+                    </Text>
+                  </View>
+                  <Text className="text-white text-xs mt-2">Ongoing</Text>
+                </View>
+
+                {/* Finished */}
+                <View className="items-center mx-2">
+                  <View className="bg-[#F58534] rounded-xl w-20 h-20 items-center justify-center">
+                    <Text className="text-white text-2xl font-bold">
+                      {bookingStatus?.Finished ? bookingStatus?.Finished : 0 }
+                    </Text>
+                  </View>
+                  <Text className="text-white text-xs mt-2">Finished</Text>
+                </View>
+              </View>
+
+
               {/* ---------- Rental List ---------- */}
               {loading ? (
                 <View style={styles.loadingContainer}>
@@ -384,40 +357,53 @@ export default function RentalHome() {
                   <Text style={styles.loadingText}>{i18n.t("loading")}</Text>
                 </View>
               ) : (
-                <FlatList
-                  data={filteredData}
-                  keyExtractor={(item) => item.rtl_id.toString()}
-                  renderItem={({ item }) => (
-                    <RentalCard item={item} handleDetailLoc={handleDetailLoc} />
-                  )}
-                  ListEmptyComponent={() => (
-                    <View className="items-center justify-center mt-24 px-6">
-                      <Ionicons
-                        name="business-outline"
-                        size={72}
-                        color="#9CA3AF"
-                      />
-                      {/* abu-abu medium */}
-                      <Text className="text-gray-600 text-2xl font-bold mt-6 text-center">
-                        {i18n.t("rentalNull")}
-                      </Text>
-                    </View>
-                  )}
-                  contentContainerStyle={{ paddingBottom: 120 }}
-                  className="px-4"
-                />
-              )}
+                  <View className="flex-1">
+                    {/* Fixed header */}
+                    <View className="px-4 pt-2">
+                      <View className="h-px bg-[#5829AB] mb-4" />
 
-              {/* ---------- Modals ---------- */}
-              <FilterKota
-                visible={modalVisible}
-                onClose={() => setModalVisible(false)}
-                onSelectKota={(kota) => {
-                  setSelectedKota(kota);
-                  fetchData();
-                  setModalVisible(false);
-                }}
-              />
+                      <TouchableOpacity className="flex-row items-center justify-between bg-[#5829AB] px-6 py-3 rounded-full">
+                        <View className="flex-row items-center">
+                          <Image
+                              source={require('../../../assets/icon-gamepad.png')}
+                              className="w-6 h-6 mr-2"
+                          />
+                          <Text className="text-white text-base">Add New Booking</Text>
+                        </View>
+                        <Ionicons name="add" size={20} color="white" />
+                      </TouchableOpacity>
+                    </View>
+
+                    {/* Link to History */}
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('History')}
+                        className="px-4 py-3"
+                    >
+                      <Text className="text-white text-base underline">
+                        Recent Activity
+                      </Text>
+                    </TouchableOpacity>
+
+                    {/* Scrollable list */}
+                    <FlatList
+                        data={filteredData}
+                        keyExtractor={(item) => item.bok_id.toString()}
+                        renderItem={({ item }) => <RoomCard item={item} />}
+                        ListEmptyComponent={() => (
+                            <View className="items-center justify-center mt-24">
+                              <Ionicons name="business-outline" size={72} color="#9CA3AF" />
+                              <Text className="text-gray-600 text-2xl font-bold mt-6 text-center">
+                                {i18n.t("rentalNull")}
+                              </Text>
+                            </View>
+                        )}
+                        contentContainerStyle={{ paddingBottom: 80, paddingTop: 16 }}
+                        className="px-4"
+                    />
+                  </View>
+
+
+              )}
 
               <SortSelector
                 visible={sortModalVisible}
@@ -430,30 +416,11 @@ export default function RentalHome() {
                   applySort(data, key, order);
                 }}
               />
-
-              <FilterSelector
-                visible={filterModalVisible}
-                selectedStatus={selectedStatus}
-                selectedHargaperjam={selectedPrice}
-                selectedJenisPlay={selectedJenisPlay}
-                onApply={(status, price, jenis) =>
-                  applyAllFilters(
-                    data,
-                    searchQuery,
-                    status,
-                    price,
-                    jenis,
-                    sortBy,
-                    sortOrder
-                  )
-                }
-                onClose={() => setFilterModalVisible(false)}
-              />
             </View>
           </ImageBackground>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
-    </ScreenPelangganWithBottomBar>
+    </ScreenAdminWithBottomBar>
   );
 }
 
@@ -495,7 +462,7 @@ const styles = StyleSheet.create({
   },
   searchBox: {
     flex: 1,
-    height: 55,
+    height: 35,
     marginRight: 8,
   },
   searchBackground: {
@@ -516,13 +483,19 @@ const styles = StyleSheet.create({
   },
   optionButton: {
     width: 64,
-    height: 55,
+    height: 35,
     justifyContent: "center",
     alignItems: "center",
   },
+  statusContainer: {
+    marginBottom: 12,
+    justifyContent: "space-around",
+    alignItems: "center",
+    flexDirection: "row"
+  },
   bannerContainer: {
     marginHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 4,
     marginTop: 10,
   },
   bannerSlide: {
@@ -562,14 +535,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   userContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   greetingText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 14,
     marginRight: 8,
-    fontFamily: "Poppins",
-    textDecorationLine: "underline",
+    fontFamily: 'Poppins',
+    textDecorationLine: 'underline',
   },
+
 });

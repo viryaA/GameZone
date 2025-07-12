@@ -16,7 +16,7 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
       - EXPO_USE_POLLING=true
-      - REACT_NATIVE_PACKAGER_HOSTNAME=192.168.215.67
+      - REACT_NATIVE_PACKAGER_HOSTNAME=192.168.100.35
     stdin_open: true
     tty: true
 

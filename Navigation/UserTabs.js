@@ -4,6 +4,7 @@ import "../global.css"
 import MasterlHeader from "../Header/MasterlHeader";
 import DetailRentalHome from "../screens/Transaction/DetailRentail/DetailRentalHome";
 import ProfileScreen from "../screens/Pelanggan/ProfileScreenPelanggan";
+import ProfileScreenPelanggan from "../screens/Pelanggan/ProfileScreenPelanggan";
 
 const Stack = createNativeStackNavigator()
 
@@ -36,7 +37,7 @@ export default function UserTabs() {
             />
             <Stack.Screen
                 name="Profile"
-                component={ProfileScreen}
+                component={ProfileScreenPelanggan}
                 options={{
                     title: 'Profile',
                     headerShown: false,

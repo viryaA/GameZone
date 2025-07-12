@@ -31,6 +31,7 @@ export default function ScanQRHome() {
 
             setCameraActive(false);
             setLoading(true); // Start loading
+            console.log(data)
 
             fetch(`${apiUrl}/TrBooking/scan?code=` + data )
                 .then(res => res.json())

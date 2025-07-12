@@ -1,9 +1,11 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import RentalHome from '../screens/Pelanggan/Rental/RentalHome';
+import RentalHome from '../screens/Admin/Home/RentalHome';
 import "../global.css"
 import MasterlHeader from "../Header/MasterlHeader";
 import React from "react";
 import ScanQRHome from "../screens/Admin/ScanQR/ScanQRHome";
+import ProfileScreenAdmin from "../screens/Admin/ProfileScreenAdmin"
+import HistoryHome from "../screens/Admin/History/HistoryHome";
 const Stack = createNativeStackNavigator()
 
 export default function AdminTabs() {
@@ -25,7 +27,18 @@ export default function AdminTabs() {
                 }}
             />
 
+            <Stack.Screen
+                name="History"
+                component={HistoryHome}
+                options={{
+                    header: (props) => <MasterlHeader {...props}  />,
+                    title: 'Rental',
+                    headerShown: false,
+                }}
+            />
+
             <Stack.Screen name="Scan" component={ScanQRHome} options={{ headerShown: false }} />
+            <Stack.Screen name="Profile" component={ProfileScreenAdmin} options={{ headerShown: false }} />
         </Stack.Navigator>
     )
 }

@@ -29,6 +29,7 @@ export default function LoginHome() {
             if (userData && loginTime) {
                 const diffDays = (new Date() - new Date(loginTime)) / (1000 * 60 * 60 * 24);
                 if (diffDays < 0) {
+                    console.error(userData);
                     navigation.navigate(userData?.usr_role);
                 } else {
                     await AsyncStorage.multiRemove(['userData', 'loginTime']);
@@ -65,7 +66,7 @@ export default function LoginHome() {
                     text1: 'Login berhasil!',
                     text2: `Selamat datang, ${result.data.usr_nama || 'user'}!`,
                 });
-
+                console.log(result.data);
                 navigation.navigate(result.data.usr_role);
             } else {
                 Toast.show({ type: 'error', text1: 'Login gagal', text2: 'Email/password salah.' });
