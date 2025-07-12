@@ -92,8 +92,12 @@ export default function DetailRentalHome() {
     fetchData();
   }, []);
 
-  const handleDetailLoc = (item) => {
-    setSelectedItem(item);
+  /*---------------------- UBAH DI SINI NAVIGATE KE DETAILNYA ----------------------*/
+
+  const handleDetailLoc = (itemsParam) => {
+    setSelectedItem(itemsParam);
+    setModalVisible(false);
+    navigation.navigate("FormBooking", { itemsParam });
   };
 
   const handleAdd = () => {
@@ -366,7 +370,7 @@ export default function DetailRentalHome() {
                 menuItem={menuItem}
                 setMenuItem={setMenuItem}
                 setDeleteItem={setDeleteItem}
-                handleDetailLoc={handleDetailLoc}
+                onPress={() => handleDetailLoc(item)}
               />
             )}
             ListEmptyComponent={() => (

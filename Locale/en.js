@@ -45,5 +45,15 @@ export default {
     pstMerk: "Playstation Merk",
     rentalNull: "Sorry, rentals in your area are not yet available.",
     ruanganNull: "Sorry, room in your rental are not yet available.",
-    strLabelFormBook: "Select Play Date & Time."
+    strLabelFormBook: "Select Play Date & Time.",
+    pageReqToPay: "Request To Pay",
+    dateTime: "Play Date & Time",
+    detailPay: "Payment Details",
+    paymentMethod: "Method of Payment",
+    toPay: "Continue Payment",
+    jam: "Hours",
+    totalPayment: "Total Payment",
+    diskon: "Discount",
+    confirmBook: "Confirm to Book",
+    fieldRequired: "All field are required",
 };

@@ -25,6 +25,8 @@ const RoomCard = ({ item, onPress }) => {
       ? { uri: `${apiUrl}/Images/Ruangan/${item.rng_image}` }
       : localImageMap[roomType];
 
+    console.log("images", profileImageUri)
+
   return (
       <TouchableOpacity
           onPress={() => navigation.navigate("DetailRuangan", { item })}
@@ -48,7 +50,7 @@ const RoomCard = ({ item, onPress }) => {
             <View className="flex-row items-center mt-1">
               <Ionicons name="star" size={14} color="#FFB400" />
               <Text className="text-xs text-gray-400 ml-1">
-                ({item.rental_count || 200} Rentals)
+                ({item.totalBooking} Rentals)
               </Text>
             </View>
           </View>

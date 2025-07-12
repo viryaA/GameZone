@@ -11,6 +11,7 @@ import ForgotPasswordToken from "../screens/Login/ForgotPasswordToken";
 import FillAccount from "../screens/SignIn/FillAccount";
 import SettingsStack from './SettingsStack' 
 import FormBooking from '../screens/Transaction/FormBooking';
+import RequestToPay from '../screens/Transaction/RequestToPay';
 
 import UserTabs from"./UserTabs"
 import AdminTabs from"./AdminTabs"
@@ -65,9 +66,8 @@ export default function RootStack() {
             }}
         >
             <Stack.Screen name="Welcome" component={WellcomeScreen} />
-            <Stack.Screen name="FormBooking" component={FormBooking} />
-            <Stack.Screen name="Admin" component={AdminTabs} />
             <Stack.Screen name="Pelanggan" component={UserTabs} />
+            <Stack.Screen name="Admin" component={AdminTabs} />
             <Stack.Screen name="LoginMain" component={LoginHome} />
             <Stack.Screen name="SettingsStack" component={SettingsStack} />
             <Stack.Screen name="CreateAccount" component={CreateAccount} />
