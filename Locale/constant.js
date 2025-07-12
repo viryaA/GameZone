@@ -1,3 +1,6 @@
+import moment from "moment";
+import "moment/dist/locale/en-gb";
+
 export const COLOR_PRIMARY = '#004080';
 export const COLOR_SECONDARY = '#f6a12c';
 
@@ -111,4 +114,10 @@ export const formatCurrencyRupiah = (input) => {
     currency: 'IDR',
     minimumFractionDigits: 2
   }).format(parsed);
+};
+
+export const formatDate = (input, dateOnly = false) => {
+  return dateOnly
+    ? moment(input).format("DD MMM yyyy")
+    : moment(input).format("DD MMM yyyy (HH:mm)");
 };

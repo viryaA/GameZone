@@ -1,10 +1,12 @@
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
+import { useNavigation } from "@react-navigation/native";
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
 
 const RoomCard = ({ item, onPress }) => {
+  const navigation = useNavigation();
   const localImageMap = {
     VIP: require("../../../../assets/VIPRoom.png"),
     Private: require("../../../../assets/PrivateRoom.png"),
@@ -25,7 +27,7 @@ const RoomCard = ({ item, onPress }) => {
 
   return (
       <TouchableOpacity
-          onPress={() => onPress(item)}
+          onPress={() => navigation.navigate("DetailRuangan", { item })}
           activeOpacity={0.9}
           className="flex-row bg-[#1B1440] rounded-2xl px-3 py-3 mb-3 relative"
           style={{ minHeight: 100 }}
