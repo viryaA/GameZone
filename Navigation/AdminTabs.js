@@ -6,6 +6,7 @@ import React from "react";
 import ScanQRHome from "../screens/Admin/ScanQR/ScanQRHome";
 import ProfileScreenAdmin from "../screens/Admin/ProfileScreenAdmin"
 import HistoryHome from "../screens/Admin/History/HistoryHome";
+import DetailTransactionHistoryHome from "../screens/Admin/DetailTransactionHistoryHome";
 const Stack = createNativeStackNavigator()
 
 export default function AdminTabs() {
@@ -30,6 +31,17 @@ export default function AdminTabs() {
             <Stack.Screen
                 name="History"
                 component={HistoryHome}
+                options={{
+                    header: (props) => <MasterlHeader {...props}  />,
+                    title: 'Rental',
+                    headerShown: false,
+                }}
+            />
+
+
+            <Stack.Screen
+                name="HistoryDetail"
+                component={DetailTransactionHistoryHome}
                 options={{
                     header: (props) => <MasterlHeader {...props}  />,
                     title: 'Rental',
