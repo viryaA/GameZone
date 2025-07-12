@@ -95,9 +95,9 @@ export default function DetailRentalHome() {
   /*---------------------- UBAH DI SINI NAVIGATE KE DETAILNYA ----------------------*/
 
   const handleDetailLoc = (itemsParam) => {
-    setSelectedItem(itemsParam);
-    setModalVisible(false);
-    navigation.navigate("FormBooking", { itemsParam });
+      setSelectedItem(itemsParam);
+      setModalVisible(false);
+      navigation.navigate("FormBooking", {itemsParam});
   };
 
   const handleAdd = () => {

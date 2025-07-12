@@ -3,8 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ImageBackground } from 'react-native';
 import { formatCurrencyRupiah } from '../../Locale/constant';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Ionicons } from "@expo/vector-icons";
-import Constants from "expo-constants";
 import Toast from "react-native-toast-message";
 import i18n from "../../Locale/i18n";
 import Constants from 'expo-constants';
