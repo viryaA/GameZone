@@ -30,7 +30,7 @@ const screenWidth = width;
 export default function DetailRentalHome() {
   // Navigation
   const navigation = useNavigation();
-
+  const [searchedData, setSearchedData] = useState([]);
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -42,16 +42,7 @@ export default function DetailRentalHome() {
   const [sortBy, setSortBy] = useState(null); // e.g. 'jps_nama'
   const [sortOrder, setSortOrder] = useState("asc"); // or 'desc'
   const [sortModalVisible, setSortModalVisible] = useState(false);
-  const [filterModalVisible, setFilterModalVisible] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState("Aktif");
-  const [selectedPrice, setSelectedPrice] = useState("All");
-  const [selectedJenisPlay, setselectedJenisPlay] = useState("All");
   const [menuItem, setMenuItem] = useState(null);
-
-  // TAB Promotion
-  const flatListRef = useRef(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-
   // PARAMS
   const route = useRoute();
   const { item } = route.params;
@@ -100,106 +91,46 @@ export default function DetailRentalHome() {
       navigation.navigate("FormBooking", {itemsParam});
   };
 
-  const applyAll = (
-      baseData,
-      searchQuery,
-      status,
-      Price,
-      sortKey,
-      sortOrder
-  ) => {
-    let filtered = [...baseData];
-
-    // Apply filter
-    if (status !== "All") {
-      filtered = filtered.filter((item) => item.rtl_status === status);
+  useEffect(() => {
+    if (!searchQuery) {
+      setSearchedData(filteredData); // if no search, show all filtered
+      return;
     }
 
-    // Apply search
-    if (searchQuery) {
-      const lowerQuery = searchQuery.toLowerCase();
-      filtered = filtered.filter((item) =>
-          item.rtl_nama.toLowerCase().includes(lowerQuery)
-      );
-    }
+    const lowerQuery = searchQuery.toLowerCase();
+    const searched = filteredData.filter(item =>
+        item.rng_nama_ruangan?.toLowerCase().includes(lowerQuery)
+    );
 
-    // Apply sort
-    if (sortKey) {
-      filtered.sort((a, b) => {
-        const aVal = a[sortKey];
-        const bVal = b[sortKey];
+    setSearchedData(searched);
+  }, [searchQuery, filteredData]);
 
-        if (typeof aVal === "number") {
-          return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
-        }
-        return sortOrder === "asc"
-            ? aVal.localeCompare(bVal)
-            : bVal.localeCompare(aVal);
-      });
-    }
-
-    setFilteredData(filtered);
-  };
-
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    applyAll(data, query, selectedStatus, selectedPrice, sortBy, sortOrder);
-  };
 
   const applySort = (items, key, order) => {
     if (!key) {
       setFilteredData(items);
+      setSearchedData(items); // also reset search layer
       return;
     }
 
+    const getValue = (obj, path) =>
+        path.split('.').reduce((acc, part) => acc?.[part], obj);
+
     const sorted = [...items].sort((a, b) => {
-      const aVal = a[key];
-      const bVal = b[key];
+      const aVal = getValue(a, key.replace(/\?/g, ''));
+      const bVal = getValue(b, key.replace(/\?/g, ''));
 
       if (typeof aVal === "number") {
         return order === "asc" ? aVal - bVal : bVal - aVal;
       }
-
       return order === "asc"
-          ? aVal.localeCompare(bVal)
-          : bVal.localeCompare(aVal);
+          ? `${aVal}`.localeCompare(`${bVal}`)
+          : `${bVal}`.localeCompare(`${aVal}`);
     });
-
     setFilteredData(sorted);
+    setSearchedData(sorted); // also reset search layer
   };
 
-  const applyFilterAndSearch = (items, status, Price, jenis) => {
-    let filtered = [...items];
-
-    if (status !== "All") {
-      filtered = filtered.filter((item) => item.pst_status === status);
-    }
-
-    if (Price !== "All") {
-      filtered = filtered.filter(
-          (item) => item.pst_harga_per_jam.toString() === Price
-      );
-    }
-
-    if (jenis !== "All") {
-      filtered = filtered.filter(
-          (item) => item.jenisPlaystation.jps_nama.toString() === jenis
-      );
-    }
-
-    if (searchQuery) {
-      const lowerQuery = searchQuery.toLowerCase();
-      filtered = filtered.filter((item) =>
-          item.pst_deskripsi.toLowerCase().includes(lowerQuery)
-      );
-    }
-
-    applySort(filtered, sortBy, sortOrder);
-
-    setselectedJenisPlay(jenis);
-    setSelectedPrice(Price);
-    setSelectedStatus(status);
-  };
 
   return (
       <ImageBackground
@@ -306,7 +237,7 @@ export default function DetailRentalHome() {
           </View>
         ) : (
           <FlatList
-            data={data}
+            data={searchedData}
             keyExtractor={(item) => item.rng_id.toString()}
             renderItem={({ item }) => (
               <RoomCard
@@ -335,22 +266,6 @@ export default function DetailRentalHome() {
           />
         )}
 
-          {/* Bottom Navigation */}
-          {/* <View className="absolute bottom-0 left-0 right-0 flex-row justify-around items-center bg-[#3A217C] py-3 rounded-t-xl">
-          <TouchableOpacity className="items-center">
-            <Ionicons name="home" size={24} color="white" />
-            <Text className="text-white text-xs">Home</Text>
-          </TouchableOpacity>
-          <TouchableOpacity className="items-center">
-            <Ionicons name="game-controller-outline" size={24} color="white" />
-            <Text className="text-white text-xs">Booking</Text>
-          </TouchableOpacity>
-          <TouchableOpacity className="items-center">
-            <Ionicons name="person-outline" size={24} color="white" />
-            <Text className="text-white text-xs">Profile</Text>
-          </TouchableOpacity>
-        </View> */}
-
           <SortSelector
               visible={sortModalVisible}
               onClose={() => setSortModalVisible(false)}
@@ -359,25 +274,9 @@ export default function DetailRentalHome() {
               onSortChange={(key, order) => {
                 setSortBy(key);
                 setSortOrder(order);
-                if (key === "pst_status") {
-                  applySort(data, key, order);
-                } else {
-                  const aktifOnly = data.filter(
-                      (item) => item.pst_status === "Aktif"
-                  );
-                  applySort(aktifOnly, key, order);
-                }
+                applySort(data, key, order);
+
               }}
-          />
-          <FilterSelector
-              visible={filterModalVisible}
-              selectedStatus={selectedStatus}
-              selectedHargaperjam={selectedPrice}
-              selectedJenisPlay={selectedJenisPlay}
-              onApply={(status, Price, Jenis) => {
-                applyFilterAndSearch(data, status, Price, Jenis);
-              }}
-              onClose={() => setFilterModalVisible(false)}
           />
         </View>
       </ImageBackground>
