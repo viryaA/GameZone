@@ -23,7 +23,8 @@ export default function MyListTransactionHome() {
 
     const tabToStatus = {
         "To Pay": "Menunggu Pembayaran",
-        "Confirmed": "Sesi Dimulai",
+        "Confirmed": "Pembayaran Diterima",
+        "On Going": "Sesi Dimulai",
         "Completed": "Sesi Selesai",
         "Cancelled": "Dibatalkan"
     };

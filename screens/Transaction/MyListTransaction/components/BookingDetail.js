@@ -14,7 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import Toast from "react-native-toast-message";
 import i18n from "../../../../Locale/i18n";
-import { formatCurrencyRupiah, formatDate } from "../../../../Locale/constant";
+import { formatCurrencyRupiah, formatDatePlus7,formatDate } from "../../../../Locale/constant";
 import QRCodeCard from "./QRCodeCard";
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
@@ -217,19 +217,19 @@ export default function BookingDetail() {
             <View className="flex-row justify-between items-center">
               <View className="items-center">
                 <Text className="text-white font-poppins-bold text-sm">
-                  {formatDate(item.bok_waktu_mulai, true)}
+                  {formatDatePlus7(item.bok_waktu_mulai, true)}
                 </Text>
                 <Text className="text-white text-xs font-poppins">
-                  {formatDate(item.bok_waktu_mulai, false, true)}
+                  {formatDatePlus7(item.bok_waktu_mulai, false, true)}
                 </Text>
               </View>
               <Text className="text-white font-bold">→</Text>
               <View className="items-center">
                 <Text className="text-white font-poppins-bold text-sm">
-                  {formatDate(item.bok_waktu_selesai, true)}
+                  {formatDatePlus7(item.bok_waktu_selesai, true)}
                 </Text>
                 <Text className="text-white text-xs font-poppins">
-                  {formatDate(item.bok_waktu_selesai, false, true)}
+                  {formatDatePlus7(item.bok_waktu_selesai, false, true)}
                 </Text>
               </View>
             </View>

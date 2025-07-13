@@ -23,14 +23,13 @@ export default function DetailTransactionHistoryHome() {
 
     useEffect(() => {
         const PaymentMethod = async () => {
-            fetch(`${apiUrl}/Payment/GetByBookId` + item.bok_id )
+            console.log("Payment Method");
+            console.log('Item: ', item);
+            fetch(`${apiUrl}/Payment/GetByBookId/` + item.bok_id )
                 .then(res => res.json())
                 .then(json => {
                     setLoading(false); // Stop loading
-                    if (json['result']) {
-                        setData(json.data);
-                        console.log(json.data.user.usr_email);
-                    }
+                    setData(json);
                 })
                 .catch(err => {
                     setLoading(false); // Stop loading

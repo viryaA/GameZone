@@ -23,6 +23,7 @@ import MapView, { Marker } from "react-native-maps";
 import PaymentModal from "./DetailRentail/components/PaymentModal";
 import { useContext } from "react";
 import { UserContext } from "../../Konteks/UserContext";
+import {formatDate} from "../../Locale/constant";
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
 
@@ -86,6 +87,7 @@ export default function FormBooking() {
           : Array.isArray(json.data)
             ? json.data
             : [];
+        console.log('jsont: ' + formattedDate,json);
 
         setData(json);
         setLoading(false);
@@ -105,7 +107,7 @@ export default function FormBooking() {
     if (date != null) {
       fetchData();
     }
-  }, []);
+  }, [date]);
 
   useEffect(() => {
     if (duration > 0) {

@@ -56,4 +56,5 @@ export default {
     diskon: "Discount",
     confirmBook: "Confirm to Book",
     fieldRequired: "All field are required",
+    error_message_worng_rental: "QR Code Not Found",
 };

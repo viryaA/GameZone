@@ -124,3 +124,13 @@ export const formatDate = (input, dateOnly = false, justTime = false) => {
     ? moment.utc(input).format("HH:mm")  // Menggunakan UTC untuk waktu
     : moment.utc(input).format("DD MMM yyyy (HH:mm)");  // Menggunakan UTC untuk tanggal dan waktu
 };
+
+
+export const formatDatePlus7 = (input, dateOnly = false, justTime = false) => {
+  const m = moment.utc(input).utcOffset(420); // UTC +7
+  return dateOnly
+      ? m.format("DD MMM yyyy")
+      : justTime && !dateOnly
+          ? m.format("HH:mm")
+          : m.format("DD MMM yyyy (HH:mm)");
+};

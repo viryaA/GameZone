@@ -90,26 +90,41 @@ export default function RentalHome() {
   const fetchData = () => {
     // console.log("inilagifetch");
     // console.log("user",user);
-    fetch(`${apiUrl}/TrBooking/checkin-bookings/`+user?.usr_id)
-      .then((res) => res.json())
-      .then((json) => {
-        let items = Array.isArray(json) ? json : json.data || [];
-        setData(items);
-        applySort(items, sortBy, sortOrder);
-      })
-      .catch((err) => {
-        console.error(err);
-        Toast.show({
-          type: "error",
-          text1: i18n.t("failed"),
-          text2: i18n.t("errorMessage"),
+    fetch(`${apiUrl}/TrBooking/checkin-bookings/` + user?.usr_id)
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+          return res.text(); // use text() first
+        })
+        .then((text) => {
+          if (!text) {
+            console.warn("Empty response body");
+            return null;
+          }
+          return JSON.parse(text);
+        })
+        .then((json) => {
+          if (json) {
+            console.log(json);
+            let items = Array.isArray(json) ? json : json.data || [];
+            setData(items);
+            applySort(items, sortBy, sortOrder);
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          Toast.show({
+            type: "error",
+            text1: i18n.t("failed"),
+            text2: i18n.t("errorMessage"),
+          });
         });
-      });
+
 
     fetch(`${apiUrl}/TrBooking/booking-status-count/`+user?.rtl_id?.rtl_id)
         .then((res) => res.json())
         .then((json) => {
-
           setBookingStatus(json);
         })
         .catch((err) => {

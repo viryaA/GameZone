@@ -2,7 +2,8 @@ import { useNavigation } from '@react-navigation/native';
 import React from 'react'
 import { Image, TouchableOpacity, View, Text } from 'react-native'
 import { Ionicons } from "@expo/vector-icons";
-import { formatDate } from '../../../../Locale/constant';
+import {formatDate, formatDatePlus7} from '../../../../Locale/constant';
+import confirmed from "../../../../assets/confirmed.png";
 
 export default function MyTransactionCard({ item }) {
     const navigation = useNavigation();
@@ -34,7 +35,7 @@ export default function MyTransactionCard({ item }) {
                 </Text>
                 <View className="flex-row items-center mt-1">
                     <Text className="text-sm text-gray-400 font-poppins">
-                    {formatDate(item.bok_waktu_mulai)}
+                    {formatDatePlus7(item.bok_waktu_mulai)}
                     </Text>
                 </View>
                 </View>
@@ -57,7 +58,8 @@ export default function MyTransactionCard({ item }) {
             }}
             >
             <Image source={
-                item.bok_status === "Sesi Selesai" ? completed 
+                item.bok_status === "Sesi Selesai" ? completed
+                : item.bok_status === "Pembayaran Diterima" ? confirmed
                 : item.bok_status === "Sesi Dimulai" ? confirmed
                 : item.bok_status === "Menunggu Pembayaran" ? toPay
                 : cancelled

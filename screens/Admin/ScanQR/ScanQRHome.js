@@ -1,5 +1,5 @@
 import { CameraView, useCameraPermissions } from 'expo-camera'
-import { useState } from 'react'
+import {useEffect, useState} from 'react'
 import {View, Text, Alert, Button, TouchableOpacity, ActivityIndicator} from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import Toast from 'react-native-toast-message';
@@ -9,12 +9,14 @@ import "../../../global.css"
 import ScreenAdminWithBottomBar from "../../../TemplateComponent/ScreenAdminWithBottomBar"
 import i18n from "../../../Locale/i18n";
 import BookingModalConfirm from "./components/BookingModalConfirm";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from "@react-navigation/native";
 import Constants from 'expo-constants';
 const apiUrl = Constants.expoConfig.extra.API_URL;
 
 export default function ScanQRHome() {
     const [permission, requestPermission] = useCameraPermissions()
+    const navigation = useNavigation();
     const [facing, setFacing] = useState('back')
     const [torch, setTorch] = useState(false)
     const [scanned, setScanned] = useState(false)
@@ -23,6 +25,23 @@ export default function ScanQRHome() {
     const [loading, setLoading] = useState(false)
     const [data, setData] = useState({})
     const [modalVisible, setModalVisible] = useState(false)
+    const [rtl_id, setRtlId] = useState(null);
+
+    useEffect(() => {
+        const fetchUserId = async () => {
+            try {
+                const rawData = await AsyncStorage.getItem('userData');
+                const userData = rawData && JSON.parse(rawData);
+                if(userData?.rtl_id?.rtl_id){
+                    setRtlId(userData?.rtl_id?.rtl_id);
+                }
+            } catch (error) {
+                console.error('Failed to load userData:', error);
+            }
+        };
+
+        fetchUserId();
+    }, []);
 
     const handleBarcodeScanned = ({ data, type }) => {
         if (!scanned && cameraActive) {
@@ -38,8 +57,20 @@ export default function ScanQRHome() {
                 .then(json => {
                     setLoading(false); // Stop loading
                     if (json['result']) {
-                        setData(json.data);
-                        console.log(json.data.user.usr_email);
+                        if(json.data.ruangan.rental.rtl_id === rtl_id){
+                            setData(json.data);
+                            console.log('fulldata:',json.data)
+                            console.log(json.data.user.usr_email);
+                            setModalVisible(true)
+                        }else{
+                            Toast.show({
+                                type: 'error',
+                                text1: i18n.t("failed"),
+                                text2: i18n.t("error_message_worng_rental")
+                            });
+                            navigation.navigate('Home')
+                            // resetScanner();
+                        }
                     }
                 })
                 .catch(err => {
@@ -51,9 +82,9 @@ export default function ScanQRHome() {
                         text2: i18n.t("error_message")
                     });
                 });
-            setModalVisible(true)
         }
     };
+
 
     const resetScanner = () => {
         setScanned(false)
