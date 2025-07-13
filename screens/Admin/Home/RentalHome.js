@@ -89,7 +89,7 @@ export default function RentalHome() {
   /** ----------- API Fetch ------------ */
   const fetchData = () => {
     // console.log("inilagifetch");
-    console.log("user",user);
+    // console.log("user",user);
     fetch(`${apiUrl}/TrBooking/checkin-bookings/`+user?.usr_id)
       .then((res) => res.json())
       .then((json) => {
@@ -387,7 +387,7 @@ export default function RentalHome() {
                     {/* Scrollable list */}
                     <FlatList
                         data={filteredData}
-                        keyExtractor={(item) => item.bok_id.toString()}
+                        // keyExtractor={(item) => item.bok_id.toString()}
                         renderItem={({ item }) => <RoomCard item={item} />}
                         ListEmptyComponent={() => (
                             <View className="items-center justify-center mt-24">

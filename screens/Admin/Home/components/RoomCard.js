@@ -32,10 +32,10 @@ const RoomCard = ({ item }) => {
   }
 
 // Usage:
-  console.log(formatDateToCustomText('2025-06-22T03:00:00.000+00:00'));
+//   console.log(formatDateToCustomText('2025-06-22T03:00:00.000+00:00'));
 
 
-  console.log("item",item);
+  // console.log("item",item);
 
   // Tentukan tipe ruangan berdasarkan nama
   let roomType = "Reguler"; // default

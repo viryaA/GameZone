@@ -14,14 +14,13 @@ export default function DetailTransactionHistoryHome() {
     const { item } = route.params;
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState(null);
-    console.log("item:",item);
-
-    const barcodeUri = item.rng_image
-        ? { uri: `${apiUrl}/Images/QRCodes/${item.bok_qr_code}` }
-        : null;
+    const [barcodeUrl, setBarcodeUrl] = useState(null);
 
     const [activeTab, setActiveTab] = useState('Booking');
     const detailRuanganImageUri = require("../../assets/detail-ruangan.png");
+    console.log("bok_qr_code:", item.bok_qr_code);
+    console.log("rng_image:", barcodeUrl);
+
     useEffect(() => {
         const PaymentMethod = async () => {
             fetch(`${apiUrl}/Payment/GetByBookId` + item.bok_id )
@@ -45,6 +44,9 @@ export default function DetailTransactionHistoryHome() {
         };
 
         PaymentMethod();
+        setBarcodeUrl( item.bok_qr_code
+            ? { uri: `${apiUrl}/Images/QRCodes/${item.bok_qr_code}.png` }
+            : null);
     }, []);
     return (
         <ImageBackground
@@ -92,7 +94,7 @@ export default function DetailTransactionHistoryHome() {
                         <Text className={`text-base font-poppins ${
                         activeTab === 'Booking' ? 'text-white' : 'text-white'
                         }`}>
-                        Description
+                        Booking
                         </Text>
                     </TouchableOpacity>
 
@@ -105,121 +107,126 @@ export default function DetailTransactionHistoryHome() {
                         <Text className={`text-base font-poppins ${
                         activeTab === 'Barcode' ? 'text-white' : 'text-white'
                         }`}>
-                        Specifications
+                        Barcode
                         </Text>
                     </TouchableOpacity>
                 </View>
             </View>
+            {activeTab === 'Booking' && (
 
-            <ScrollView
-            className="p-5 rounded-2xl"
-            showsVerticalScrollIndicator={false}
-            >
-                <View className="bg-[#3F217A] rounded-2xl px-4 py-3 mb-3 border border-gray-400">
-                    <View className="flex-row justify-between items-center">
-                        <View className="flex-1 gap-1">
-                            <Text className="text-white font-poppins-bold text-sm">
-                                Customer Info
-                            </Text>
-                            <View className="flex-row flex-wrap">
-                                <Text className="text-sm text-white font-poppins">
-                                    {item.user.usr_nama}
+                <ScrollView
+                className="p-5 rounded-2xl"
+                showsVerticalScrollIndicator={false}
+                >
+                    <View className="bg-[#3F217A] rounded-2xl px-4 py-3 mb-3 border border-gray-400">
+                        <View className="flex-row justify-between items-center">
+                            <View className="flex-1 gap-1">
+                                <Text className="text-white font-poppins-bold text-sm">
+                                    Customer Info
                                 </Text>
-                                <Text className="text-sm text-white font-poppins">{"  - "}</Text>
-                                <Text className="text-sm text-white font-poppins underline">
-                                    {item.user.usr_email}
-                                </Text>
+                                <View className="flex-row flex-wrap">
+                                    <Text className="text-sm text-white font-poppins">
+                                        {item.user.usr_nama}
+                                    </Text>
+                                    <Text className="text-sm text-white font-poppins">{"  - "}</Text>
+                                    <Text className="text-sm text-white font-poppins underline">
+                                        {item.user.usr_email}
+                                    </Text>
+                                </View>
                             </View>
                         </View>
                     </View>
-                </View>
 
-                <View className="bg-[#3F217A] rounded-2xl px-4 py-3 mb-3 border border-gray-400">
-                    <Text className="text-white font-semibold text-sm mb-2">Play Date & Time</Text>
-                    <View className="flex-row justify-between items-center">
-                        <View>
-                            <Text className="text-white text-base">
-                                {new Date(item.bok_waktu_mulai).toLocaleDateString('en-GB', {
-                                    day: '2-digit',
-                                    month: 'short',
-                                    weekday: 'short',
-                                })}
-                            </Text>
-                            <Text className="text-white text-sm">{formatTime(item.bok_waktu_mulai)}</Text>
+                    <View className="bg-[#3F217A] rounded-2xl px-4 py-3 mb-3 border border-gray-400">
+                        <Text className="text-white font-semibold text-sm mb-2">Play Date & Time</Text>
+                        <View className="flex-row justify-between items-center">
+                            <View>
+                                <Text className="text-white text-base">
+                                    {new Date(item.bok_waktu_mulai).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: 'short',
+                                        weekday: 'short',
+                                    })}
+                                </Text>
+                                <Text className="text-white text-sm">{formatTime(item.bok_waktu_mulai)}</Text>
+                            </View>
+                            <Text className="text-white text-xl">→</Text>
+                            <View>
+                                <Text className="text-white text-base">
+                                    {new Date(item.bok_waktu_selesai).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: 'short',
+                                        weekday: 'short',
+                                    })}
+                                </Text>
+                                <Text className="text-white text-sm">{formatTime(item.bok_waktu_selesai)}</Text>
+                            </View>
                         </View>
-                        <Text className="text-white text-xl">→</Text>
-                        <View>
+                    </View>
+
+                    <View className="bg-[#3F217A] rounded-2xl px-4 py-3 mb-3 border border-gray-400">
+                        {/* Title */}
+                        <Text className="text-white font-poppins-bold text-sm mb-3">
+                            Payment Details
+                        </Text>
+
+                        {/* Line item: Rp 35.000 × 3 days */}
+                        <View className="flex-row justify-between mb-1">
                             <Text className="text-white text-base">
-                                {new Date(item.bok_waktu_selesai).toLocaleDateString('en-GB', {
-                                    day: '2-digit',
-                                    month: 'short',
-                                    weekday: 'short',
-                                })}
+                                Rp {item.ruangan?.rng_harga_per_jam} × {item.bok_durasi_jam} days
                             </Text>
-                            <Text className="text-white text-sm">{formatTime(item.bok_waktu_selesai)}</Text>
+                            <Text className="text-white text-base">
+                                {formatCurrencyRupiah(Number(item.ruangan?.rng_harga_per_jam) * Number(item.bok_durasi_jam))}
+                            </Text>
+                        </View>
+
+                        {/* Discount */}
+                        <View className="flex-row justify-between mb-2">
+                            <Text className="text-white text-base">Discount</Text>
+                            <Text className="text-white text-base">-</Text>
+                        </View>
+
+                        {/* Total Amount */}
+                        <View className="flex-row justify-between mb-3">
+                            <Text className="text-white font-poppins-bold text-base">Total Amount</Text>
+                            <Text className="text-white font-poppins-bold text-base">
+                                {formatCurrencyRupiah(Number(item.ruangan?.rng_harga_per_jam) * Number(item.bok_durasi_jam))}
+                            </Text>
+                        </View>
+
+                        {/* Divider line */}
+                        <View className="border-t border-gray-400 mb-2" />
+
+                        {/* Payment Method */}
+                        <View className="flex-row justify-between mb-1">
+                            <Text className="text-white text-sm">Method Of Payment</Text>
+                            <Text className="text-white text-sm">{data?.pym_metode}</Text>
+                        </View>
+
+                        {/* Status Transaction */}
+                        <View className="flex-row justify-between">
+                            <Text className="text-white text-sm">Status Transaction</Text>
+                            <Text className="text-white text-sm">{data?.pym_status}</Text>
                         </View>
                     </View>
-                </View>
-
-                <View className="bg-[#3F217A] rounded-2xl px-4 py-3 mb-3 border border-gray-400">
-                    {/* Title */}
-                    <Text className="text-white font-poppins-bold text-sm mb-3">
-                        Payment Details
-                    </Text>
-
-                    {/* Line item: Rp 35.000 × 3 days */}
-                    <View className="flex-row justify-between mb-1">
-                        <Text className="text-white text-base">
-                            Rp {item.ruangan?.rng_harga_per_jam} × {item.bok_durasi_jam} days
-                        </Text>
-                        <Text className="text-white text-base">
-                            {formatCurrencyRupiah(Number(item.ruangan?.rng_harga_per_jam) * Number(item.bok_durasi_jam))}
-                        </Text>
-                    </View>
-
-                    {/* Discount */}
-                    <View className="flex-row justify-between mb-2">
-                        <Text className="text-white text-base">Discount</Text>
-                        <Text className="text-white text-base">-</Text>
-                    </View>
-
-                    {/* Total Amount */}
-                    <View className="flex-row justify-between mb-3">
-                        <Text className="text-white font-poppins-bold text-base">Total Amount</Text>
-                        <Text className="text-white font-poppins-bold text-base">
-                            {formatCurrencyRupiah(Number(item.ruangan?.rng_harga_per_jam) * Number(item.bok_durasi_jam))}
-                        </Text>
-                    </View>
-
-                    {/* Divider line */}
-                    <View className="border-t border-gray-400 mb-2" />
-
-                    {/* Payment Method */}
-                    <View className="flex-row justify-between mb-1">
-                        <Text className="text-white text-sm">Method Of Payment</Text>
-                        <Text className="text-white text-sm">{data?.pym_metode}</Text>
-                    </View>
-
-                    {/* Status Transaction */}
-                    <View className="flex-row justify-between">
-                        <Text className="text-white text-sm">Status Transaction</Text>
-                        <Text className="text-white text-sm">{data?.pym_status}</Text>
-                    </View>
-                </View>
 
 
-            </ScrollView>
+                </ScrollView>
+            )}
 
             {activeTab === "Barcode" && (
-                <View className="mb-4 items-center">
+                <View
+                    className="bg-[#3F217A] border border-white rounded-xl mx-4 mt-6 p-4"
+                    style={{ justifyContent: 'center', alignItems: 'center' }}
+                >
                     <Image
-                        source={barcodeUri}
-                        className="w-40 h-40 rounded-xl"
+                        source={barcodeUrl}
+                        style={{ width: 200, height: 200, borderRadius: 12 }}
                         resizeMode="cover"
                     />
-                    <Text className="text-white mt-2">{item.rng_name}</Text>
                 </View>
             )}
+
         </View>
         </ImageBackground>
     );
