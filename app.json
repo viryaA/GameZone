@@ -13,7 +13,10 @@
       "backgroundColor": "#ffffff"
     },
     "extra": {
-      "API_URL": "http://192.168.1.9:8080"
+      "API_URL": "http://192.168.100.35:8080",
+      "eas": {
+        "projectId": "e24ef2b0-92ab-47c1-b1eb-79535783d067"
+      }
     },
     "ios": {
       "supportsTablet": true
@@ -23,7 +26,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.q1q.GameZone"
     },
     "web": {
       "favicon": "./assets/favicon.png",

@@ -362,7 +362,12 @@ export default function RentalHome() {
                     <View className="px-4 pt-2">
                       <View className="h-px bg-[#5829AB] mb-4" />
 
-                      <TouchableOpacity className="flex-row items-center justify-between bg-[#5829AB] px-6 py-3 rounded-full">
+                      <TouchableOpacity className="flex-row items-center justify-between bg-[#5829AB] px-6 py-3 rounded-full"
+                                        onPress={() => {
+                                          console.log(user)
+                                          navigation.navigate('DetailRental', { item: user.rtl_id })}
+                      }
+                      >
                         <View className="flex-row items-center">
                           <Image
                               source={require('../../../assets/icon-gamepad.png')}

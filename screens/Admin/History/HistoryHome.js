@@ -204,7 +204,6 @@ export default function HistoryHome() {
                     {/* Scrollable list */}
                     <FlatList
                         data={filteredData}
-                        keyExtractor={(item) => item.bok_id.toString()}
                         renderItem={({ item }) => <RoomCard item={item} />}
                         ListEmptyComponent={() => (
                             <View className="items-center justify-center mt-24">

@@ -28,12 +28,6 @@ const RoomCard = ({ item }) => {
     return `${datePart} (${timePart.replace(':', '.')})`;
   }
 
-// Usage:
-  console.log(formatDateToCustomText('2025-06-22T03:00:00.000+00:00'));
-
-
-  console.log("item",item);
-
   // Tentukan tipe ruangan berdasarkan nama
   let roomType = "Reguler"; // default
   if (item.ruangan.rng_nama_ruangan.includes("VIP")) {
@@ -51,6 +45,7 @@ const RoomCard = ({ item }) => {
           activeOpacity={0.9}
           className="flex-row bg-[#1B1440] rounded-2xl px-3 py-3 mb-3 relative"
           style={{ minHeight: 100 }}
+          onPress={() => navigation.navigate('HistoryDetail', { item })} // 👈 navigate with item
       >
         {/* Gambar */}
         <Image
