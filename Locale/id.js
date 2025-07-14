@@ -58,6 +58,7 @@ export default {
     diskon: "Diskon",
     confirmBook: "Konfirmasi untuk Memesan",
     fieldRequired: "Semua Field Wajib Diisi",
-    error_message_worng_rental: "QR Code tidak ditemukan"
+    error_message_wrong_rental: "QR Code tidak ditemukan",
+    error_message_wrong_time: "Waktu Tidak Dalam Waktu Bermain",
 };
 

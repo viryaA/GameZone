@@ -13,7 +13,7 @@
       "backgroundColor": "#ffffff"
     },
     "extra": {
-      "API_URL": "http://192.168.100.35:8080",
+      "API_URL": "http://192.168.187.67:8080",
       "eas": {
         "projectId": "e24ef2b0-92ab-47c1-b1eb-79535783d067"
       }

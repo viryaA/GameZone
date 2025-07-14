@@ -56,5 +56,6 @@ export default {
     diskon: "Discount",
     confirmBook: "Confirm to Book",
     fieldRequired: "All field are required",
-    error_message_worng_rental: "QR Code Not Found",
+    error_message_wrong_rental: "QR Code Not Found",
+    error_message_wrong_time: "Not In Time Range For Play",
 };
