@@ -307,7 +307,8 @@ export default function BookingDetail() {
             <TouchableOpacity
               className="bg-[#FF5B7F] mx-4 mt-4 rounded-full py-3 flex-row items-center justify-center"
               onPress={() => {
-                /* handle payment */
+                console.log('item to : ', item);
+                navigation.navigate("DetailRental", {item: item.ruangan.rental} );
               }}
             >
               <Ionicons name="cart" size={20} color="white" />

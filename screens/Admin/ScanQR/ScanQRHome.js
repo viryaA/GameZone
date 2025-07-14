@@ -57,8 +57,24 @@ export default function ScanQRHome() {
                 .then(json => {
                     setLoading(false); // Stop loading
                     if (json['result']) {
+                        const waktuMulai = new Date(json.data.bok_waktu_mulai);
+                        const waktuSelesai = new Date(json.data.bok_waktu_selesai);
+                        const now = new Date();
+
                         if(json.data.ruangan.rental.rtl_id === rtl_id){
-                            setData(json.data);
+                            if (now >= waktuMulai && now <= waktuSelesai) {
+                                console.log("Current time is within the booking time range.");
+                            } else {
+                                console.log("Current time is OUTSIDE the booking time range.");
+                                setData(json.data);
+                                Toast.show({
+                                    type: 'error',
+                                    text1: i18n.t("failed"),
+                                    text2: i18n.t("error_message_wrong_time")
+                                });
+                                navigation.navigate('Home')
+                                // do something else here
+                            }
                             console.log('fulldata:',json.data)
                             console.log(json.data.user.usr_email);
                             setModalVisible(true)
@@ -66,7 +82,7 @@ export default function ScanQRHome() {
                             Toast.show({
                                 type: 'error',
                                 text1: i18n.t("failed"),
-                                text2: i18n.t("error_message_worng_rental")
+                                text2: i18n.t("error_message_wrong_rental")
                             });
                             navigation.navigate('Home')
                             // resetScanner();

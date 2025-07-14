@@ -15,7 +15,7 @@ import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ScreenPelangganWithBottomBar from '../../TemplateComponent/ScreenPelangganWithBottomBar';
 import { UserContext } from '../../Konteks/UserContext';
-
+import { useNavigation } from '@react-navigation/native';
 const apiUrl = Constants.expoConfig.extra.API_URL;
 const defaultImages = [
   require('../../assets/profil/p1.jpg'),
@@ -27,9 +27,9 @@ const defaultImages = [
 
 export default function ProfileScreenPelanggan() {
   const { user } = useContext(UserContext);
+  const navigation = useNavigation();
   const [usr_id, setUsrId] = useState(null);
   const [rtl_id, setRtlId] = useState(null);
-
   const [profileImage, setProfileImage] = useState(null);
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [userName, setUserName] = useState('');
@@ -138,6 +138,20 @@ export default function ProfileScreenPelanggan() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      // await AsyncStorage.clear();
+      Toast.show({ type: 'success', text1: 'Logged out successfully!' });
+      // If using React Navigation:
+      // navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+      await AsyncStorage.multiRemove(['userData', 'loginTime']);
+      navigation.navigate('LoginMain');
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+
   const renderInput = (label, value, setter, props = {}) => (
     <>
       <Text style={styles.label}>{label}</Text>
@@ -155,89 +169,95 @@ export default function ProfileScreenPelanggan() {
   return (
     <ImageBackground source={require('../../assets/default-background.png')} style={styles.bg}>
       <ScreenPelangganWithBottomBar>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <ScrollView contentContainerStyle={styles.container}>
-              <View style={styles.imageContainer}>
-                <View style={styles.profileWrapper}>
-                  <Image
-                    source={profileImage ? { uri: profileImage } : require('../../assets/user-icon.png')}
-                    style={styles.profileImage}
-                  />
-                  <TouchableOpacity style={styles.cameraIcon} onPress={pickImage}>
-                    <Feather name="camera" size={18} color="grey" />
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.usernameEditContainer}>
-                  {isEditingUsername ? (
-                    <TextInput
-                      value={userName}
-                      onChangeText={setUserName}
-                      onBlur={() => setIsEditingUsername(false)}
-                      style={styles.usernameInput}
-                      autoFocus
+        <View style={{ flex: 1, position: 'relative' }}>
+          {/* ✅ LOGOUT BUTTON ABSOLUTE */}
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+            <Ionicons name="log-out-outline" size={24} color="white" />
+          </TouchableOpacity>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <ScrollView contentContainerStyle={styles.container}>
+                <View style={styles.imageContainer}>
+                  <View style={styles.profileWrapper}>
+                    <Image
+                      source={profileImage ? { uri: profileImage } : require('../../assets/user-icon.png')}
+                      style={styles.profileImage}
                     />
-                  ) : (
-                    <TouchableOpacity style={styles.usernameDisplay} onPress={() => setIsEditingUsername(true)}>
-                      <Feather name="edit" size={16} color="white" style={{ marginRight: 6 }} />
-                      <Text style={styles.usernameText}>{userName || 'Your Username'}</Text>
+                    <TouchableOpacity style={styles.cameraIcon} onPress={pickImage}>
+                      <Feather name="camera" size={18} color="grey" />
                     </TouchableOpacity>
-                  )}
-                </View>
-              </View>
-
-              <View style={styles.imageOptionsContainer}>
-                {defaultImages.map((img, i) => (
-                  <TouchableOpacity key={i} onPress={async () => {
-                    const uri = ImgResolve.resolveAssetSource(img).uri;
-                    const asset = Asset.fromModule(img);
-                    await asset.downloadAsync();
-                    setProfileImage(asset.localUri || uri);
-                  }}>
-                    <Image source={img} style={styles.optionImage} />
-                  </TouchableOpacity>
-                ))}
-              </View>
-
-              {renderInput('Full Name', fullName, setFullName)}
-              {renderInput('Email', email, setEmail, { keyboardType: 'email-address' })}
-
-              <View style={styles.row}>
-                <View style={styles.half}>
-                  <Text style={styles.label}>Birth</Text>
-                  <TouchableOpacity style={styles.inputRow} onPress={() => setShowDatePicker(true)}>
-                    <Ionicons name="calendar" size={18} color="#fff" style={{ marginRight: 8 }} />
-                    <Text style={styles.dateText}>{formatDate(birth)}</Text>
-                  </TouchableOpacity>
-                  {showDatePicker && (
-                    <DateTimePicker
-                      value={birth} mode="date" display="default"
-                      onChange={(e, d) => { if (d) setBirth(d); setShowDatePicker(false); }}
-                      maximumDate={new Date()}
-                    />
-                  )}
-                </View>
-                <View style={[styles.half, { marginLeft: 10 }]}>
-                  <Text style={styles.label}>Gender</Text>
-                  <View style={styles.pickerContainer}>
-                    <Picker selectedValue={gender} onValueChange={setGender} style={styles.picker}>
-                      <Picker.Item label="Female" value="Female" />
-                      <Picker.Item label="Male" value="Male" />
-                    </Picker>
+                  </View>
+                  <View style={styles.usernameEditContainer}>
+                    {isEditingUsername ? (
+                      <TextInput
+                        value={userName}
+                        onChangeText={setUserName}
+                        onBlur={() => setIsEditingUsername(false)}
+                        style={styles.usernameInput}
+                        autoFocus
+                      />
+                    ) : (
+                      <TouchableOpacity style={styles.usernameDisplay} onPress={() => setIsEditingUsername(true)}>
+                        <Feather name="edit" size={16} color="white" style={{ marginRight: 6 }} />
+                        <Text style={styles.usernameText}>{userName || 'Your Username'}</Text>
+                      </TouchableOpacity>
+                    )}
                   </View>
                 </View>
-              </View>
 
-              {renderInput('Phone Number', phoneNumber, setPhoneNumber, { keyboardType: 'phone-pad' })}
+                <View style={styles.imageOptionsContainer}>
+                  {defaultImages.map((img, i) => (
+                    <TouchableOpacity key={i} onPress={async () => {
+                      const uri = ImgResolve.resolveAssetSource(img).uri;
+                      const asset = Asset.fromModule(img);
+                      await asset.downloadAsync();
+                      setProfileImage(asset.localUri || uri);
+                    }}>
+                      <Image source={img} style={styles.optionImage} />
+                    </TouchableOpacity>
+                  ))}
+                </View>
 
-              <LinearGradient colors={['#263b81', '#8d64e5']} style={styles.button}>
-                <TouchableOpacity onPress={uploadData} style={{ width: '100%', alignItems: 'center' }}>
-                  <Text style={styles.updateButtonText}>Update Profile</Text>
-                </TouchableOpacity>
-              </LinearGradient>
-            </ScrollView>
-          </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
+                {renderInput('Full Name', fullName, setFullName)}
+                {renderInput('Email', email, setEmail, { keyboardType: 'email-address' })}
+
+                <View style={styles.row}>
+                  <View style={styles.half}>
+                    <Text style={styles.label}>Birth</Text>
+                    <TouchableOpacity style={styles.inputRow} onPress={() => setShowDatePicker(true)}>
+                      <Ionicons name="calendar" size={18} color="#fff" style={{ marginRight: 8 }} />
+                      <Text style={styles.dateText}>{formatDate(birth)}</Text>
+                    </TouchableOpacity>
+                    {showDatePicker && (
+                      <DateTimePicker
+                        value={birth} mode="date" display="default"
+                        onChange={(e, d) => { if (d) setBirth(d); setShowDatePicker(false); }}
+                        maximumDate={new Date()}
+                      />
+                    )}
+                  </View>
+                  <View style={[styles.half, { marginLeft: 10 }]}>
+                    <Text style={styles.label}>Gender</Text>
+                    <View style={styles.pickerContainer}>
+                      <Picker selectedValue={gender} onValueChange={setGender} style={styles.picker}>
+                        <Picker.Item label="Female" value="Female" />
+                        <Picker.Item label="Male" value="Male" />
+                      </Picker>
+                    </View>
+                  </View>
+                </View>
+
+                {renderInput('Phone Number', phoneNumber, setPhoneNumber, { keyboardType: 'phone-pad' })}
+
+                <LinearGradient colors={['#263b81', '#8d64e5']} style={styles.button}>
+                  <TouchableOpacity onPress={uploadData} style={{ width: '100%', alignItems: 'center' }}>
+                    <Text style={styles.updateButtonText}>Update Profile</Text>
+                  </TouchableOpacity>
+                </LinearGradient>
+              </ScrollView>
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
+        </View>
       </ScreenPelangganWithBottomBar>
     </ImageBackground>
   );
@@ -283,7 +303,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden', height: 45, justifyContent: 'center', marginTop: 8,
   },
   picker: { color: 'white', height: 45 },
-  row: { flexDirection: 'row', marginTop: 16 },
+  row: { flexDirection: 'row'},
   half: { flex: 1 },
   imageOptionsContainer: { flexDirection: 'row', justifyContent: 'center', gap: 7 },
   optionImage: { width: 63, height: 45, borderRadius: 10, borderColor: 'white', borderWidth: 2 },
@@ -292,4 +312,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center', alignItems: 'center', alignSelf: 'center', width: '100%',
   },
   updateButtonText: { color: 'white', fontSize: 16, fontWeight: 'bold' },
+  logoutButton: {
+    position: 'absolute',
+    top: 40, // adjust for status bar / safe area
+    right: 20,
+    backgroundColor: '#d32f2f',
+    padding: 10,
+    borderRadius: 30,
+    zIndex: 10,
+  },
 });

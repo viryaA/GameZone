@@ -3,13 +3,14 @@ import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
-
+import { useNavigation } from "@react-navigation/native";
 const RoomCard = ({ item }) => {
   const localImageMap = {
     VIP: require("../../../../assets/VIPRoom.png"),
     Private: require("../../../../assets/PrivateRoom.png"),
     Reguler: require("../../../../assets/RegularRoom.png"),
   };
+  const navigation = useNavigation();
 
   function formatDateToCustomText(dateString) {
     const date = new Date(dateString);

@@ -248,7 +248,7 @@ export default function CreateAccount() {
               {/* Footer */}
               <Text style={styles.footerText}>
                 Already have an account?{' '}
-                <Text style={styles.footerLink} onPress={() => navigation.navigate('FillAccount')}>
+                <Text style={styles.footerLink} onPress={() => navigation.navigate('LoginMain')}>
                   Login
                 </Text>
               </Text>

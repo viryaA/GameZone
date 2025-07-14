@@ -30,7 +30,7 @@ export default function LoginHome() {
                 const diffDays = (new Date() - new Date(loginTime)) / (1000 * 60 * 60 * 24);
                 if (diffDays < 0) {
                     console.error(userData);
-                    navigation.navigate(userData?.usr_role);
+                    // navigation.navigate(userData?.usr_role);
                 } else {
                     await AsyncStorage.multiRemove(['userData', 'loginTime']);
                 }

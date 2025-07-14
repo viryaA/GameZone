@@ -23,10 +23,12 @@ import Constants from 'expo-constants';
 import Toast from 'react-native-toast-message';
 import { KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
 
 export default function ProfileScreenAdmin() {
+  const navigation = useNavigation();
   const [profileImage, setProfileImage] = useState('');
   const [userName, setUserName] = useState('');
   const [isEditingUsername, setIsEditingUsername] = useState(false);
@@ -72,6 +74,18 @@ export default function ProfileScreenAdmin() {
     const month = (`0${date.getMonth() + 1}`).slice(-2);
     const day = (`0${date.getDate()}`).slice(-2);
     return `${year}-${month}-${day}`;
+  };
+  const handleLogout = async () => {
+    try {
+      // await AsyncStorage.clear();
+      Toast.show({ type: 'success', text1: 'Logged out successfully!' });
+      // If using React Navigation:
+      // navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+      await AsyncStorage.multiRemove(['userData', 'loginTime']);
+      navigation.navigate('LoginMain');
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
@@ -245,135 +259,141 @@ export default function ProfileScreenAdmin() {
           style={{ flex: 1 }}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0} 
         >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView contentContainerStyle={styles.container}>
-          <View style={styles.imageContainer}>
-            <View style={styles.profileWrapper}>
-              <Image
-                source={profileImage ? { uri: profileImage } : require('../../assets/user-icon.png')}
-                style={styles.profileImage}
-              />
-              <TouchableOpacity style={styles.cameraIcon} onPress={handleImagePick}>
-                <Feather name="camera" size={18} color="grey" />
-              </TouchableOpacity>
-            </View>
+          <View style={{ flex: 1, position: 'relative' }}>
+            {/* ✅ LOGOUT BUTTON ABSOLUTE */}
+            <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+              <Ionicons name="log-out-outline" size={24} color="white" />
+            </TouchableOpacity>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <ScrollView contentContainerStyle={styles.container}>
+                <View style={styles.imageContainer}>
+                  <View style={styles.profileWrapper}>
+                    <Image
+                      source={profileImage ? { uri: profileImage } : require('../../assets/user-icon.png')}
+                      style={styles.profileImage}
+                    />
+                    <TouchableOpacity style={styles.cameraIcon} onPress={handleImagePick}>
+                      <Feather name="camera" size={18} color="grey" />
+                    </TouchableOpacity>
+                  </View>
 
-            <View style={styles.usernameEditContainer}>
-              {isEditingUsername ? (
+                  <View style={styles.usernameEditContainer}>
+                    {isEditingUsername ? (
+                      <TextInput
+                        value={userName}
+                        onChangeText={setUserName}
+                        onBlur={() => setIsEditingUsername(false)}
+                        style={styles.usernameInput}
+                        autoFocus
+                        placeholder="Your Username"
+                        placeholderTextColor="#ccc"
+                      />
+                    ) : (
+                      <TouchableOpacity
+                        style={styles.usernameDisplay}
+                        onPress={() => setIsEditingUsername(true)}
+                      >
+                        <Feather name="edit" size={16} color="white" style={{ marginRight: 6 }} />
+                        <Text style={styles.usernameText}>{userName || 'Your Username'}</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+
+                <View style={styles.imageOptionsContainer}>
+                  {defaultProfileImages.map((imgSrc, idx) => (
+                    <TouchableOpacity
+                      key={idx}
+                      onPress={async () => {
+                        const uri = ImgResolve.resolveAssetSource(imgSrc).uri;
+                        const assetObj = Asset.fromModule(imgSrc);
+                        await assetObj.downloadAsync();
+                        setProfileImage(assetObj.localUri || uri);
+                      }}
+                    >
+                      <Image source={imgSrc} style={styles.optionImage} />
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                <Text style={styles.label}>Full Name</Text>
                 <TextInput
-                  value={userName}
-                  onChangeText={setUserName}
-                  onBlur={() => setIsEditingUsername(false)}
-                  style={styles.usernameInput}
-                  autoFocus
-                  placeholder="Your Username"
+                  style={styles.input}
+                  placeholder="Enter full name"
                   placeholderTextColor="#ccc"
+                  value={fullName}
+                  onChangeText={setFullName}
                 />
-              ) : (
-                <TouchableOpacity
-                  style={styles.usernameDisplay}
-                  onPress={() => setIsEditingUsername(true)}
-                >
-                  <Feather name="edit" size={16} color="white" style={{ marginRight: 6 }} />
-                  <Text style={styles.usernameText}>{userName || 'Your Username'}</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
 
-          <View style={styles.imageOptionsContainer}>
-            {defaultProfileImages.map((imgSrc, idx) => (
-              <TouchableOpacity
-                key={idx}
-                onPress={async () => {
-                  const uri = ImgResolve.resolveAssetSource(imgSrc).uri;
-                  const assetObj = Asset.fromModule(imgSrc);
-                  await assetObj.downloadAsync();
-                  setProfileImage(assetObj.localUri || uri);
-                }}
-              >
-                <Image source={imgSrc} style={styles.optionImage} />
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <Text style={styles.label}>Full Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter full name"
-            placeholderTextColor="#ccc"
-            value={fullName}
-            onChangeText={setFullName}
-          />
-
-          <Text style={styles.label}>Email</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter email"
-            placeholderTextColor="#ccc"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-          />
-
-          <View style={styles.row}>
-            <View style={styles.halfInputContainer}>
-              <Text style={styles.label}>Birth</Text>
-              <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.inputRow}>
-                <Ionicons name="calendar" size={18} color="#fff" style={styles.calendarIcon} />
-                <Text style={styles.dateText}>{formatDate(birth)}</Text>
-              </TouchableOpacity>
-              {showDatePicker && (
-                <DateTimePicker
-                  value={birth}
-                  mode="date"
-                  display="default"
-                  onChange={onChangeDate}
-                  maximumDate={new Date()}
+                <Text style={styles.label}>Email</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter email"
+                  placeholderTextColor="#ccc"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
                 />
-              )}
-            </View>
 
-            <View style={[styles.halfInputContainer, { marginLeft: 10 }]}>
-              <Text style={styles.label}>Gender</Text>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={gender}
-                  onValueChange={setGender}
-                  dropdownIconColor="white"
-                  style={styles.picker}
+                <View style={styles.row}>
+                  <View style={styles.halfInputContainer}>
+                    <Text style={styles.label}>Birth</Text>
+                    <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.inputRow}>
+                      <Ionicons name="calendar" size={18} color="#fff" style={styles.calendarIcon} />
+                      <Text style={styles.dateText}>{formatDate(birth)}</Text>
+                    </TouchableOpacity>
+                    {showDatePicker && (
+                      <DateTimePicker
+                        value={birth}
+                        mode="date"
+                        display="default"
+                        onChange={onChangeDate}
+                        maximumDate={new Date()}
+                      />
+                    )}
+                  </View>
+
+                  <View style={[styles.halfInputContainer, { marginLeft: 10 }]}>
+                    <Text style={styles.label}>Gender</Text>
+                    <View style={styles.pickerContainer}>
+                      <Picker
+                        selectedValue={gender}
+                        onValueChange={setGender}
+                        dropdownIconColor="white"
+                        style={styles.picker}
+                      >
+                        <Picker.Item style={{ fontSize: 14 }} label="Female" value="Female" />
+                        <Picker.Item style={{ fontSize: 14 }} label="Male" value="Male" />
+                      </Picker>
+                    </View>
+                  </View>
+                </View>
+
+                <Text style={styles.label}>Phone Number</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter phone number"
+                  placeholderTextColor="#ccc"
+                  value={phoneNumber}
+                  onChangeText={setPhoneNumber}
+                  keyboardType="phone-pad"
+                />
+
+                <LinearGradient
+                    colors={['rgba(38,59,129,1)', 'rgb(141, 100, 229)']}
+                    start={{ x: 0.5, y: 0 }}
+                    end={{ x: 0.5, y: 1 }}
+                    style={styles.button}
                 >
-                  <Picker.Item style={{ fontSize: 14 }} label="Female" value="Female" />
-                  <Picker.Item style={{ fontSize: 14 }} label="Male" value="Male" />
-                </Picker>
-              </View>
-            </View>
+                    <TouchableOpacity activeOpacity={0.8} style={styles.buttonTouchable} onPress={uploadAccountData}>
+                        <Text style={styles.updateButtonText}>Update Profile</Text>
+                    </TouchableOpacity>
+                </LinearGradient>
+
+              </ScrollView>
+            </TouchableWithoutFeedback>
           </View>
-
-          <Text style={styles.label}>Phone Number</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter phone number"
-            placeholderTextColor="#ccc"
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-            keyboardType="phone-pad"
-          />
-
-          <LinearGradient
-              colors={['rgba(38,59,129,1)', 'rgb(141, 100, 229)']}
-              start={{ x: 0.5, y: 0 }}
-              end={{ x: 0.5, y: 1 }}
-              style={styles.button}
-          >
-              <TouchableOpacity activeOpacity={0.8} style={styles.buttonTouchable} onPress={uploadAccountData}>
-                  <Text style={styles.updateButtonText}>Update Profile</Text>
-              </TouchableOpacity>
-          </LinearGradient>
-
-        </ScrollView>
-        </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
       </ScreenAdminWithBottomBar>
     </ImageBackground>
   );
@@ -495,4 +515,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scrollContainer: { flexGrow: 1 },
+  logoutButton: {
+    position: 'absolute',
+    top: 40, // adjust for status bar / safe area
+    right: 20,
+    backgroundColor: '#d32f2f',
+    padding: 10,
+    borderRadius: 30,
+    zIndex: 10,
+  },
 });

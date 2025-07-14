@@ -74,7 +74,7 @@ export default function FillAccount() {
         type: 'success',
         text1: 'Data berhasil disimpan!',
       });
-      navigation.navigate('Home');
+      navigation.navigate('LoginMain');
     } catch (error) {
       console.error(error);
       Toast.show({
@@ -293,7 +293,7 @@ export default function FillAccount() {
             </LinearGradient>
 
             <Text style={styles.footerText}>
-              <Text style={styles.footerLink} onPress={() => navigation.navigate('Home')}>
+              <Text style={styles.footerLink} onPress={() => navigation.navigate('LoginMain')}>
                 Skip for now
               </Text>
             </Text>
