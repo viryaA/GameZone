@@ -77,6 +77,7 @@ export default function RequestToPay() {
     { id: 2, name: "OVO", icon: "wallet-outline" },
     { id: 3, name: "DANA", icon: "logo-buffer" },
     { id: 4, name: "Gopay", icon: "logo-google" },
+    { id: 5, name: "Cash", icon: "cash" },
   ];
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 

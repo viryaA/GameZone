@@ -291,6 +291,7 @@ export default function FormBooking() {
             </TouchableOpacity>
           </View>
         </View>
+        
         {/* Tanggal Booking */}
         <View className="px-4 mt-4">
           <Text className="text-white mb-2">{i18n.t("date")}</Text>
