@@ -3,6 +3,7 @@ import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
 import i18n from "../../../../Locale/i18n";
 import "../../../../global.css";
+import { formatCurrencyRupiah } from "../../../../Locale/constant";
 
 export default function PaymentModal({
   visible,
@@ -102,14 +103,11 @@ export default function PaymentModal({
             <Text className="text-white mb-1">{i18n.t("totalPayment")}</Text>
             <View className="flex-row justify-between items-center">
               <Text className="text-white">
-                Rp {item.rng_harga_per_jam.toLocaleString("id-ID")} x{" "}
+                {formatCurrencyRupiah(item.rng_harga_per_jam)} x{" "}
                 {durasi || 0} {i18n.t("jam")}
               </Text>
               <Text className="text-white font-bold text-lg">
-                Rp
-                {(parseInt(item.rng_harga_per_jam) * durasi).toLocaleString(
-                  "id-ID"
-                ) || 0}
+                {formatCurrencyRupiah((parseInt(item.rng_harga_per_jam) * durasi))}
               </Text>
             </View>
           </View>

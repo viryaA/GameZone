@@ -15,6 +15,7 @@ import Constants from 'expo-constants';
 import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { formatCurrencyRupiah } from '../../../../Locale/constant';
 
 const { height } = Dimensions.get('window');
 const apiUrl = Constants.expoConfig.extra.API_URL;
@@ -197,7 +198,7 @@ export default function BookingModalConfirm({ visible, onClose, data, onConfirm 
                             <Text className="text-white font-semibold text-sm mb-2">Total Amount</Text>
                             <View className="flex-row justify-between items-center">
                                 <Text className="text-white text-base">
-                                    Rp {data.ruangan?.rng_harga_per_jam} × {data.bok_durasi_jam} hours
+                                    Rp {formatCurrencyRupiah(data.ruangan?.rng_harga_per_jam)} × {data.bok_durasi_jam} hours
                                 </Text>
                                 <Text className="text-white text-lg font-bold">Rp {data.bok_total_biaya}</Text>
                             </View>

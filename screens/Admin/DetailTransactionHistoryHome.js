@@ -172,7 +172,7 @@ export default function DetailTransactionHistoryHome() {
                         {/* Line item: Rp 35.000 × 3 days */}
                         <View className="flex-row justify-between mb-1">
                             <Text className="text-white text-base">
-                                Rp {item.ruangan?.rng_harga_per_jam} × {item.bok_durasi_jam} days
+                                Rp {formatCurrencyRupiah(item.ruangan?.rng_harga_per_jam)} × {item.bok_durasi_jam} days
                             </Text>
                             <Text className="text-white text-base">
                                 {formatCurrencyRupiah(Number(item.ruangan?.rng_harga_per_jam) * Number(item.bok_durasi_jam))}

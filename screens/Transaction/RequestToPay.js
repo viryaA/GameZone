@@ -28,6 +28,7 @@ import { I18n } from "i18n-js";
 // import { UserContext } from "../../../Konteks/UserContext";
 const apiUrl = Constants.expoConfig.extra.API_URL;
 import { useNavigationState } from "@react-navigation/native";
+import { formatCurrencyRupiah } from "../../Locale/constant";
 
 const { width } = Dimensions.get("window");
 const screenWidth = width;
@@ -247,7 +248,7 @@ export default function RequestToPay() {
                 ★ {params.totalBooking} Rental
               </Text>
               <Text className="text-white text-sm">
-                Rp {parseInt(params.harga_per_jam).toLocaleString("id-ID")} /h
+                {formatCurrencyRupiah(params.harga_per_jam)} /h
               </Text>
             </View>
           </View>
@@ -310,14 +311,11 @@ export default function RequestToPay() {
 
               <View className="flex-row justify-between">
                 <Text className="text-white text-sm">
-                  Rp {parseInt(params.harga_per_jam).toLocaleString("id-ID")} ×{" "}
+                  {formatCurrencyRupiah(params.harga_per_jam)} ×{" "}
                   {params.durasi} {i18n.t("jam")}
                 </Text>
                 <Text className="text-white text-sm">
-                  Rp
-                  {(params.durasi * params.harga_per_jam).toLocaleString(
-                    "id-ID"
-                  )}
+                  {formatCurrencyRupiah(params.durasi * params.harga_per_jam)}
                 </Text>
               </View>
 
@@ -331,10 +329,7 @@ export default function RequestToPay() {
                   {i18n.t("totalPayment")}
                 </Text>
                 <Text className="text-white font-bold text-lg">
-                  Rp
-                  {(params.durasi * params.harga_per_jam).toLocaleString(
-                    "id-ID"
-                  )}
+                  {formatCurrencyRupiah(params.durasi * params.harga_per_jam)}
                 </Text>
               </View>
             </View>
@@ -392,8 +387,7 @@ export default function RequestToPay() {
           {/* Amount */}
           <View>
             <Text className="text-white text-xl font-bold">
-              Rp{" "}
-              {(params.durasi * params.harga_per_jam).toLocaleString("id-ID")}
+              {(params.durasi * params.harga_per_jam)}
             </Text>
             <Text className="text-white text-sm opacity-60">
               {i18n.t("totalPayment")}

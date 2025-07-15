@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import { useNavigation } from "@react-navigation/native";
+import { formatCurrencyRupiah } from "../../../../Locale/constant";
 
 const apiUrl = Constants.expoConfig.extra.API_URL;
 
@@ -45,7 +46,7 @@ const RoomCard = ({ item, onPress }) => {
         <View className="flex-1 px-3 justify-between">
           <View>
             <Text className="text-white font-semibold text-sm">
-              {item.rng_nama_ruangan}
+              {item.rng_nama_ruangan.replace(/^Ruangan\s*/i, "")}
             </Text>
             <View className="flex-row items-center mt-1">
               <Ionicons name="star" size={14} color="#FFB400" />
@@ -58,7 +59,7 @@ const RoomCard = ({ item, onPress }) => {
 
         {/* Harga di Pojok Kanan Atas */}
         <Text className="absolute top-2 right-2 text-[#FFB400] font-bold text-sm">
-          Rp {item.rng_harga_per_jam?.toLocaleString("id-ID") || "0"}
+          {formatCurrencyRupiah(item.rng_harga_per_jam)}
         </Text>
 
         {/* Tombol Keranjang di Pojok Kanan Bawah */}
