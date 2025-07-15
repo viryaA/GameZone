@@ -84,33 +84,39 @@ export default function RentalHome() {
   /** ----------- Lifecycle: Get User Location ------------ */
   useEffect(() => {
     const getUserLocation = async () => {
-      setLoading(true);
+      setLoading(true); // Mengatur status loading menjadi true sebelum mulai mengambil data
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") return;
+        if (status !== "granted") return; // Jika izin tidak diberikan, keluar dari fungsi
 
+        // Mendapatkan posisi saat ini dari pengguna
         const location = await Location.getCurrentPositionAsync({});
+
+        // Melakukan reverse geocoding untuk mendapatkan nama kota berdasarkan koordinat
         const reverseGeocode = await Location.reverseGeocodeAsync(
           location.coords
         );
+
         if (reverseGeocode.length > 0) {
-          const userCity = reverseGeocode[0].subregion;
+          const userCity = reverseGeocode[0].subregion; // Mendapatkan nama kota dari hasil reverse geocoding
+
+          // Mencocokkan nama kota yang ditemukan dengan data yang ada di DAFTAR_KOTA
           const found = DAFTAR_KOTA.find((kota) =>
             userCity.toLowerCase().includes(kota.nama.toLowerCase())
           );
-          if (found) setSelectedKota(found);
+
+          if (found) setSelectedKota(found); // Jika kota ditemukan, atur kota yang dipilih
         }
       } catch (error) {
-        console.error("Gagal mendapatkan lokasi:", error);
+        console.error("Gagal mendapatkan lokasi:", error); // Menangani jika terjadi error
       } finally {
-        setLoading(false);
+        setLoading(false); // Mengatur status loading menjadi false setelah proses selesai
       }
     };
 
     getUserLocation();
     fetchData(); // Initial fetch
   }, []);
-
 
   /** ----------- Banner Auto Scroll ------------ */
   useEffect(() => {
